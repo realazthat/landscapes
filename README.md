@@ -12,7 +12,17 @@ by Samuli Laine and Tero Karras of NVIDIA Research.
 
 
 
+License
+----
 
+Libraries have their own license.
+
+Some specific files might have their own license included in them; in this case those files fall under
+that license. Some directories might have their own license; in that case those directories will have
+a README, LICENSE, COPYING or similar file related to licensing.
+
+As for the rest of the project, code written by me in this project is released under the
+[MIT License](https://opensource.org/licenses/MIT).
 
 
 
