@@ -1,0 +1,22 @@
+language: cpp
+compiler:
+  - clang
+  - gcc
+
+before_install:
+    - sudo ./helfpul-scripts/install-deps-via-apt.sh
+    - sudo ./helpful-scripts/download-and-build-libs-with-no-pkg.sh
+
+
+
+scripts:
+    - mkdir build
+    - cd build
+    - cmake ..
+    - cmake --build
+    - ./unittests
+
+
+
+#skip installation step, we don't have an install target
+install: true

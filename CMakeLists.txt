@@ -173,7 +173,7 @@ set_property(TARGET landscapes-mc PROPERTY CXX_STANDARD 11)
 #    )
 
 #-------------------
-add_executable(unittest
+add_executable(unittests
     src/unittests/entree_slices.cpp
     src/unittests/load_mca_region.cpp
     src/unittests/serialization.cpp
@@ -183,7 +183,7 @@ add_executable(unittest
     )
 
 
-target_link_libraries(unittest
+target_link_libraries(unittests
     landscapes
     landscapes-mc
     ${CNBT_LIB}
@@ -195,7 +195,7 @@ target_link_libraries(unittest
     )
 
 
-set_property(TARGET unittest PROPERTY CXX_STANDARD 11)
+set_property(TARGET unittests PROPERTY CXX_STANDARD 11)
 
 
 #-------------------
