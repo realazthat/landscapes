@@ -81,9 +81,6 @@ git clone https://github.com/progschj/ThreadPool.git
 cd ThreadPool
 git checkout "9a42ec1"
 
-mkdir -p build && cd build
-cmake ..
-cmake --build .
 
 
 #############################################################################
