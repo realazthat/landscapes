@@ -1,12 +1,22 @@
+sudo: false
 language: cpp
 compiler:
   - clang
   - gcc
 
-before_install:
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-4.8
+    - g++-4.8
+    - clang
+
+install:
+    - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
     - sudo bash ./helpful-scripts/install-deps-via-apt.sh
     - sudo bash ./helpful-scripts/download-and-build-libs-with-no-pkg.sh
-
 
 
 scripts:
@@ -18,5 +28,3 @@ scripts:
 
 
 
-#skip installation step, we don't have an install target
-install: true
