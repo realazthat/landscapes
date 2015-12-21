@@ -10,6 +10,6 @@ set -exv
 
 apt-get update
 apt-get install libglm-dev
-apt-get install libgtest0 libgtest-dev
+apt-get install libgtest-dev
 
 

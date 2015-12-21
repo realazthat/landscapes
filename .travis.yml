@@ -4,8 +4,8 @@ compiler:
   - gcc
 
 before_install:
-    - sudo ./helfpul-scripts/install-deps-via-apt.sh
-    - sudo ./helpful-scripts/download-and-build-libs-with-no-pkg.sh
+    - sudo bash ./helfpul-scripts/install-deps-via-apt.sh
+    - sudo bash ./helpful-scripts/download-and-build-libs-with-no-pkg.sh
 
 
 
