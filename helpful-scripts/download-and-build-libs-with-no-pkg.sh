@@ -16,15 +16,14 @@ PROJECT_PATH=$PWD
 #############################################################################
 cd $PROJECT_PATH
 cd libs
-mkdir -p cNBT
+mkdir -p cNBT && cd cNBT
 
 #retreive the library
 git clone https://github.com/FliPPeh/cNBT.git
 cd cNBT
 git checkout "5850e3e"
 
-mkdir -p build
-cd build
+mkdir -p build && cd build
 cmake ..
 cmake --build .
 
@@ -41,7 +40,8 @@ cmake --build .
 cd $PROJECT_PATH
 cd libs
 
-mkdir -p bprinter
+mkdir -p bprinter && cd bprinter
+
 git clone https://github.com/dattanchu/bprinter.git
 cd bprinter
 git checkout "29531dc"
@@ -72,13 +72,12 @@ git clone https://github.com/realazthat/cubelib.git
 cd $PROJECT_PATH
 cd libs
 
-mkdir -p threadpool
+mkdir -p ThreadPool && cd ThreadPool
 git clone https://github.com/progschj/ThreadPool.git
 cd ThreadPool
 git checkout "9a42ec1"
 
-mkdir -p build
-cd build
+mkdir -p build && cd build
 cmake ..
 cmake --build .
 
@@ -89,12 +88,12 @@ cmake --build .
 cd $PROJECT_PATH
 cd libs
 
-mkdir -p cppformat
+mkdir -p cppformat && cd cppformat
 git clone https://github.com/cppformat/cppformat.git
+cd cppformat
 git checkout "4797ca0"
 
-mkdir -p build
-cd build
+mkdir -p build && cd build
 cmake ..
 cmake --build .
 
