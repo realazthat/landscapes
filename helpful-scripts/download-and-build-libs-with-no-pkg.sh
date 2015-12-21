@@ -6,6 +6,9 @@
 #####################################################################
 
 
+#exit on failed line
+set -exv
+
 PROJECT_PATH=$PWD
 
 #############################################################################
@@ -23,7 +26,7 @@ git checkout "5850e3e"
 mkdir -p build
 cd build
 cmake ..
-cmake --build
+cmake --build .
 
 
 
@@ -46,7 +49,7 @@ git checkout "29531dc"
 mkdir -p build
 cd build
 cmake ..
-cmake --build
+cmake --build .
 
 
 #############################################################################
@@ -77,8 +80,7 @@ git checkout "9a42ec1"
 mkdir -p build
 cd build
 cmake ..
-cmake --build
-cd $PROJECT_PATH
+cmake --build .
 
 
 #############################################################################
@@ -94,5 +96,5 @@ git checkout "4797ca0"
 mkdir -p build
 cd build
 cmake ..
-cmake --build
+cmake --build .
 
