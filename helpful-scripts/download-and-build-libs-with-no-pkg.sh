@@ -17,9 +17,9 @@ mkdir -p cNBT
 
 #retreive the library
 git clone https://github.com/FliPPeh/cNBT.git
+cd cNBT
 git checkout "5850e3e"
 
-cd cNBT
 mkdir -p build
 cd build
 cmake ..
@@ -40,6 +40,7 @@ cd libs
 
 mkdir -p bprinter
 git clone https://github.com/dattanchu/bprinter.git
+cd bprinter
 git checkout "29531dc"
 
 mkdir -p build
@@ -92,5 +93,6 @@ git checkout "4797ca0"
 
 mkdir -p build
 cd build
+cmake ..
 cmake --build
 
