@@ -410,29 +410,9 @@ struct svo_slice_intralevel_tree_t{
 };
 */
 
-typedef float3_t fat_color_t;
-typedef float3_t fat_normal_t;
-
-struct fat_voxel_t{
-    fat_voxel_t()
-        : color(fat_color_t(0)), normal(fat_normal_t(0))
-    {}
-
-    fat_voxel_t(float3_t color, float3_t normal)
-        : color(fat_color_t(0)), normal(fat_normal_t(0))
-    {}
-
-    fat_color_t color;
-
-    fat_normal_t normal;
-};
-
-
 
 ///A slice represents a cube of voxels at a particular level.
 struct svo_slice_t{
-    ///voxel datum type.
-    typedef fat_voxel_t svo_voxel_t;
 
     ///the slice for cube on the parent level that contains this slice. Can be NULL.
     svo_slice_t* parent_slice;
