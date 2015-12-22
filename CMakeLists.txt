@@ -59,8 +59,8 @@ set(CUBELIB_LIB_DIR "" CACHE STRING "Paths to cubelib libs")
 set(CUBELIB_LIB "" CACHE STRING "Libs for cubelib")
 
 
-set(BPRINTER_INCLUDE_DIR "./libs/bprinter/bprinter-master/bprinter-master/include" CACHE STRING "Paths to bprinter includes")
-set(BPRINTER_LIB_DIR "./libs/bprinter/bprinter-master/bprinter-master/build" CACHE STRING "Paths to bprinter libs")
+set(BPRINTER_INCLUDE_DIR "./libs/bprinter/bprinter/include" CACHE STRING "Paths to bprinter includes")
+set(BPRINTER_LIB_DIR "./libs/bprinter/bprinter/build" CACHE STRING "Paths to bprinter libs")
 set(BPRINTER_LIB "bprinter" CACHE STRING "Libs for bprinter")
 
 

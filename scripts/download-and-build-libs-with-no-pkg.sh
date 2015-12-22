@@ -4,6 +4,9 @@
 ####Run this from the project root directory
 ####This script will delete/overwrite any libraries in the ./libs directory
 #### that it will download and build.
+####
+####Usage (on linux):
+####  CMAKE_GENERATOR="Unix Makefiles" bash ./scripts/download-and-build-libs-with-no-pkg.sh
 #####################################################################
 
 
@@ -26,7 +29,7 @@ cd cNBT
 git checkout "5850e3e"
 
 mkdir -p build && cd build
-cmake ..
+cmake -G"$CMAKE_GENERATOR" ..
 cmake --build .
 
 
@@ -51,7 +54,8 @@ git checkout "29531dc"
 
 mkdir -p build
 cd build
-cmake ..
+cmake -G"$CMAKE_GENERATOR" ..
+cmake . -DUSE_BOOST_KARMA=0
 cmake --build .
 
 
@@ -91,6 +95,6 @@ cd cppformat
 git checkout "4797ca0"
 
 mkdir -p build && cd build
-cmake ..
+cmake -G"$CMAKE_GENERATOR" ..
 cmake --build .
 
