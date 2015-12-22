@@ -76,7 +76,7 @@
         <LibraryPath Value="$(IntermediateDirectory)"/>
         <LibraryPath Value="./libs/cNBT/cNBT/build"/>
         <LibraryPath Value="./libs/cppformat/cppformat/build"/>
-        <LibraryPath Value="./libs/bprinter/bprinter/bprinter/build"/>
+        <LibraryPath Value="./libs/bprinter/bprinter/build"/>
         <LibraryPath Value="./libs/googletest/googletest/googletest/build"/>
         <Library Value="landscapes"/>
         <Library Value="nbt"/>
