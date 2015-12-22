@@ -1,8 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
 #####################################################################
 ####Run this from the project root directory
-####This script assumes that these libraries are already there.
+####This script will delete/overwrite any libraries in the ./libs directory
+#### that it will download and build.
 #####################################################################
 
 
@@ -59,13 +60,7 @@ cmake --build .
 #############################################################################
 
 cd $PROJECT_PATH
-cd libs
-
-mkdir -p cubelib && cd cubelib
-rm -rf ./cubelib/
-git clone https://github.com/realazthat/cubelib.git
-
-
+bash ./scripts/download-and-build-cubelib.sh
 
 
 #############################################################################
