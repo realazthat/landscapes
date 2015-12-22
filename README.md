@@ -26,11 +26,16 @@ As for the rest of the project, code written by me in this project is released u
 
 
 
-Library Dependencies
+Dependencies
 ----
 
+Build system:
 
-* landscapes::svo
+* CMake >= 3.1 (if using CMake)
+
+Libraries:
+
+* To build core landscapes:
     * cubelib
     * [glm](http://glm.g-truc.net/)
         * High-perf math library, useful for vectorized ops required for graphics, and also useful for
@@ -41,26 +46,29 @@ Library Dependencies
         * `released under the WTFPL v2 license, by Gregory Pakosz (@gpakosz)`
     * [bprinter](https://github.com/dattanchu/bprinter/wiki)
         * Pretty-printed tables, useful for debugging
-        * BSD license
+        * BSD License
     * [cppformat](https://github.com/cppformat/cppformat)
         * Formatting strings for C++, mostly useful for debugging, error messages etc.
-        * BSD license
+        * BSD License
         
 
 
-* landscapes::mcdemo
+* To build landscapes-mc
     * landscapes::svo
+    * [cNBT](https://github.com/FliPPeh/cNBT)
+        * `THE BEER-WARE LICENSE`
+    * libz
+    * [ThreadPool](https://github.com/progschj/ThreadPool)
+        * [zlib License](https://github.com/progschj/ThreadPool/blob/master/COPYING)
+
+* For project landscapes-mc-demo
+    * landscapes-mc
     * gfxapi
         * MathGeoLib
         * glut
         * glu
         * glfw
         * cubelib
-    * cNBT
 
 
 
-Building pempek-assert
------
-
-N/A, included in the project
