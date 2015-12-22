@@ -8,6 +8,14 @@
 #exit on failed line
 set -exv
 
+
+if [ "$(cmake --version | grep 'cmake version 3.3.2')" = "cmake version 3.3.2" ]; then
+    echo "CMake is the proper version"
+    exit 0
+else
+    echo "Invalid cmake version"
+fi
+
 PROJECT_PATH=$PWD
 
 cd ./libs
@@ -24,10 +32,10 @@ cd cmake-3.3.2
 make
 make install
 
-if [`cmake --version | grep 3.3.2` -eq "cmake version 3.3.2"]
-then
+if [ "$(cmake --version | grep 'cmake version 3.3.2')" = "cmake version 3.3.2" ]; then
     echo "CMake is the proper version"
 else
     echo "Invalid cmake version"
     exit -1
 fi
+
