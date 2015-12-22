@@ -14,8 +14,8 @@ addons:
     - gcc-4.8
     - g++-4.8
     - clang
-    - wget
-    - ca-certificates #for wget
+    #- wget
+    #- ca-certificates #for wget
 
 install:
     - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
@@ -26,7 +26,7 @@ install:
     - sudo bash ./helpful-scripts/download-and-build-libs-with-no-pkg.sh
 
 
-scripts:
+script:
     - mkdir build
     - cd build
     - cmake ..
