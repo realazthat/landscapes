@@ -23,9 +23,9 @@ set(CEGUI_LIB ""
 
 
 
-set(MGL_INCLUDE_DIR "K:/realz/dump/code/mathgeolib/MathGeoLib-master/MathGeoLib-master/src"
+set(MGL_INCLUDE_DIR "./libs/mathgeolib/MathGeoLib-master/MathGeoLib-master/src"
     CACHE STRING "Paths to MathGeoLib includes")
-set(MGL_LIB_DIR "K:/realz/dump/code/mathgeolib/MathGeoLib-master/MathGeoLib-master/build64"
+set(MGL_LIB_DIR "./libs/mathgeolib/MathGeoLib-master/MathGeoLib-master/build"
     CACHE STRING "Paths to MathGeoLib libs")
 set(MGL_LIB "MathGeoLib"
     CACHE STRING "Libs for MathGeoLib")
@@ -42,14 +42,14 @@ set(GLFW3_LIB "glfw3"
 
 set(CPPFORMAT_INCLUDE_DIR "./libs/cppformat/cppformat"
     CACHE STRING "Paths to cppformat includes")
-set(CPPFORMAT_LIB_DIR "./libs/cppformat/cppformat/build64"
+set(CPPFORMAT_LIB_DIR "./libs/cppformat/cppformat/build"
     CACHE STRING "Paths to cppformat libs")
 set(CPPFORMAT_LIB "cppformat"
     CACHE STRING "Libs for cppformat")
 
 set(CNBT_INCLUDE_DIR "./libs/cNBT/cNBT/"
     CACHE STRING "Paths to cNBT includes")
-set(CNBT_LIB_DIR "./libs/cNBT/cNBT/build64"
+set(CNBT_LIB_DIR "./libs/cNBT/cNBT/build"
     CACHE STRING "Paths to cNBT libs")
 set(CNBT_LIB "nbt"
     CACHE STRING "Libs for cNBT")
@@ -60,7 +60,7 @@ set(CUBELIB_LIB "" CACHE STRING "Libs for cubelib")
 
 
 set(BPRINTER_INCLUDE_DIR "./libs/bprinter/bprinter-master/bprinter-master/include" CACHE STRING "Paths to bprinter includes")
-set(BPRINTER_LIB_DIR "./libs/bprinter/bprinter-master/bprinter-master/build64" CACHE STRING "Paths to bprinter libs")
+set(BPRINTER_LIB_DIR "./libs/bprinter/bprinter-master/bprinter-master/build" CACHE STRING "Paths to bprinter libs")
 set(BPRINTER_LIB "bprinter" CACHE STRING "Libs for bprinter")
 
 
@@ -68,7 +68,7 @@ set(THREADPOOL_INCLUDE_DIR "./libs/ThreadPool/ThreadPool" CACHE STRING "Paths to
 
 
 set(GTEST_INCLUDE_DIR "./libs/googletest/googletest/googletest/include" CACHE STRING "Paths to googletest includes")
-set(GTEST_LIB_DIR "./libs/googletest/googletest/googletest/build64" CACHE STRING "Paths to googletest libs")
+set(GTEST_LIB_DIR "./libs/googletest/googletest/googletest/build" CACHE STRING "Paths to googletest libs")
 set(GTEST_LIB "gtest" CACHE STRING "Libs for googletest")
 
 
