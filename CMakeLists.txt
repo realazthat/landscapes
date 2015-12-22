@@ -6,7 +6,7 @@ project(landscapes)
 cmake_policy(SET CMP0015 NEW)
 
 
-set(GLM_INCLUDE_DIR "./libs/glm/glm-master/glm-master"
+set(GLM_INCLUDE_DIR "./libs/glm/glm"
     CACHE STRING "Paths to glm includes")
 set(GLM_LIB_DIR ""
     CACHE STRING "Paths to glm libs")
