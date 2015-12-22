@@ -39,7 +39,6 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="landscapes">
-      <File Name="src/landscapes/mcloader.cpp"/>
       <File Name="src/landscapes/svo_buffer.cpp"/>
       <File Name="src/landscapes/svo_formatters.cpp"/>
       <File Name="src/landscapes/svo_serialization.v1.cpp"/>

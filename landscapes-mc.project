@@ -64,6 +64,7 @@
         <IncludePath Value="./include"/>
         <IncludePath Value="./libs/cNBT/cNBT"/>
         <IncludePath Value="./libs/cppformat/cppformat"/>
+        <IncludePath Value="./libs/ThreadPool/ThreadPool"/>
         <IncludePath Value="./libs/cubelib/cubelib/include"/>
         <IncludePath Value="./libs/glm/glm-master/glm-master"/>
         <IncludePath Value="./libs/bprinter/bprinter-master/bprinter-master/include"/>
