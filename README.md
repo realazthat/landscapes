@@ -42,15 +42,20 @@ Libraries:
     * [glm](http://glm.g-truc.net/)
         * High-perf math library, useful for vectorized ops required for graphics, and also useful for
             opencl-compatible shim/layer
+        * Tested with commit [78f686b](https://github.com/g-truc/glm/tree/78f686b4be6c623df829db58b974bf8d79461987)
         * "[the Happy Bunny License (Modified MIT) or the MIT License](http://glm.g-truc.net/copying.txt)"
     * [pempek-assert](https://github.com/gpakosz/Assert) (included in the project)
         * Asserts with formatted error messages
+        * Tested with commit [b813764](https://github.com/gpakosz/Assert/commit/b8137646cdd6f48b2508555360d80ac2dd420726)
+            (included in the project at `src/pempek_assert.cpp` and `include/pempek_assert.h`)
         * `released under the WTFPL v2 license, by Gregory Pakosz (@gpakosz)`
     * [bprinter](https://github.com/dattanchu/bprinter/wiki)
         * Pretty-printed tables, useful for debugging
+        * Tested with commit [29531dc](https://github.com/dattanchu/bprinter/tree/29531dcecceb99d759a196f5e44b4729abe18bed)
         * BSD License
     * [cppformat](https://github.com/cppformat/cppformat)
         * Formatting strings for C++, mostly useful for debugging, error messages etc.
+        * Tested with commit [4797ca0](https://github.com/cppformat/cppformat/tree/4797ca025eef17b8df42edd8c9bde83c43806bf1)
         * BSD License
         
 
@@ -58,9 +63,11 @@ Libraries:
 * To build landscapes-mc
     * landscapes::svo
     * [cNBT](https://github.com/FliPPeh/cNBT)
+        * Tested with commit [5850e3e](https://github.com/FliPPeh/cNBT/tree/5850e3eace0e07c73a1a370abd69b7448da702d6)
         * `THE BEER-WARE LICENSE`
     * libz
     * [ThreadPool](https://github.com/progschj/ThreadPool)
+        * Tested with commit [9a42ec1](https://github.com/progschj/ThreadPool/tree/9a42ec1329f259a5f4881a291db1dcb8f2ad9040)
         * [zlib License](https://github.com/progschj/ThreadPool/blob/master/COPYING)
 
 * For project landscapes-mc-demo
