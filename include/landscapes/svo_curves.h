@@ -2,7 +2,7 @@
 #define SVO_CURVES_H 1
 
 
-#include "cubelib.h"
+#include "cubelib/cubelib.h"
 #include "svo_inttypes.h"
 #include "unused.h"
 #include "opencl.shim.h"

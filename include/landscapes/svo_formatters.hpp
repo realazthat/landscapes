@@ -8,6 +8,8 @@
 #include "svo_tree.fwd.hpp"
 #include "svo_buffer.fwd.hpp"
 
+#include "cubelib/formatters.hpp"
+
 struct direction_t;
 struct corner_t;
 struct child_descriptor_t;
@@ -16,8 +18,6 @@ struct child_descriptor_t;
 std::ostream& operator<<(std::ostream& out, const glm::vec3& v);
 std::ostream& operator<<(std::ostream& out, const glm::uvec3& v);
 std::ostream& operator<<(std::ostream& out, const glm::ivec3& v);
-std::ostream& operator<<(std::ostream& out, const direction_t& direction);
-std::ostream& operator<<(std::ostream& out, const corner_t& corner);
 
 std::ostream& operator<<(std::ostream& out, const child_descriptor_t& cd);
 
