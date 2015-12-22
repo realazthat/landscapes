@@ -96,5 +96,5 @@ git checkout "4797ca0"
 
 mkdir -p build && cd build
 cmake -G"$CMAKE_GENERATOR" ..
-cmake --build .
+cmake --build . --target cppformat
 
