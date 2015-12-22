@@ -146,7 +146,7 @@ copy_schema(const svo_schema_t& other, std::size_t new_entries)
 {
     if (this->has_schema())
         throw std::runtime_error(fmt::format("Cannot copy schema, already has a schema"
-                                             ", schema: {}", schema));
+                                             ", schema: {}", schema()));
     
     for (const auto& declaration : other)
     {
