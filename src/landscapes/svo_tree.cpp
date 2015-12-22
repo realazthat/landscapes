@@ -2295,7 +2295,9 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::vector<svo_slice_t*>& sr
     assert(dst_slice->pos_data);
     assert(dst_slice->buffers);
 
-    vcurvesize_t dst_size = vcurvesize(dst_slice->side);
+    //vcurvesize_t dst_size = vcurvesize(dst_slice->side);
+    ///the virtual size of the full space of the parent.
+    /// that is to say, the number of possible voxels in the parent volume.
     vcurvesize_t dst_size_in_parent = vcurvesize(dst_slice->side / 2);
 
     ///Adjust dst_slice data start in parent to the nearest lower @c dst_size_in_parent (in case the first slice was missing
@@ -2344,8 +2346,7 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::vector<svo_slice_t*>& sr
     std::vector<vcurvesize_t> src_vcurve_adjustments(src_slices.size(), 0);
 
     
-    ///copy data over to the destination slice, and also attach the grandchildren directly
-    /// to the destinatin slice.
+    ///copy data over to the destination slice
     {
         for (std::size_t src_slice_index = 0; src_slice_index < src_slices.size(); ++src_slice_index)
         {
@@ -2361,7 +2362,6 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::vector<svo_slice_t*>& sr
 
             assert( src_slice->parent_vcurve_begin >= dst_slice->parent_vcurve_begin );
 
-            const auto& src_children = *src_slice->children;
             const auto& src_pos_data = *src_slice->pos_data;
             const auto& src_buffers = *src_slice->buffers;
 
@@ -2743,7 +2743,7 @@ std::list<svo_slice_child_group_t> svo_find_joinable_groups_of_children(svo_slic
         ///if we partition the parent's space by group's size, we will know where the beginning
         /// of this group is. the child's position in the group is thus the modulus of the group size.
         vcurvesize_t child_parent_vcurve_in_group = child->parent_vcurve_begin % group_size_in_parent;
-        vcurvesize_t child_parent_vcurve_in_group_end = child_parent_vcurve_in_group + child_size_in_parent;
+        //vcurvesize_t child_parent_vcurve_in_group_end = child_parent_vcurve_in_group + child_size_in_parent;
 
         ///make sure the child does not overflow the group.
         assert( child->parent_vcurve_begin + child_size_in_parent <= group_parent_vcurve_end);

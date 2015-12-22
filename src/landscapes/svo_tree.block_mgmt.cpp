@@ -194,7 +194,7 @@ svo_error_t slice_inserter_t::execute()
             assert(parent_block->is_valid_cd_goffset(dst_block->parent_root_cd_goffset));
             
             const auto* parent_root_cd = svo_cget_cd(tree->address_space, dst_block->parent_root_cd_goffset);
-            goffset_t parent_root_children_goffset = svo_get_child_ptr_goffset(tree->address_space, dst_block->parent_root_cd_goffset, parent_root_cd);
+            //goffset_t parent_root_children_goffset = svo_get_child_ptr_goffset(tree->address_space, dst_block->parent_root_cd_goffset, parent_root_cd);
             
             /*
             std::cout << "dst_block->parent_root_cd_goffset: " << dst_block->parent_root_cd_goffset << std::endl;
@@ -301,7 +301,7 @@ void slice_inserter_t::classify_child_descriptors()
 {
 
     const auto& in_pos_data = *slice->pos_data;
-    const auto& children = *slice->children;
+    //const auto& children = *slice->children;
     std::size_t in_data_index = 0;
 
 
@@ -622,10 +622,10 @@ void slice_inserter_t::classify_child_descriptors()
 
     //std::cout << "size0: " << (block->cd_end - block->cd_start)/8 << std::endl;
 
-    for (auto& out_data : out_datas)
-    {
+    //for (auto& out_data : out_datas)
+    //{
         //std::cout << "  out_data.size(): " << out_data.size() << std::endl;
-    }
+    //}
     //std::cout << "  uc_out_data.size(): " << uc_out_data.size() << std::endl;
 
 
