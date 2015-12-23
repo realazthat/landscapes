@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 #####################################################################
@@ -18,7 +17,7 @@ PROJECT_PATH=$PWD
 ## get/build cubelib
 #############################################################################
 
-cd $PROJECT_PATH
+cd "$PROJECT_PATH"
 cd libs
 
 mkdir -p cubelib && cd cubelib

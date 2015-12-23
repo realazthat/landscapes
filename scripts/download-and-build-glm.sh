@@ -24,7 +24,7 @@ PROJECT_PATH=$PWD
 #CMAKE_GTEST_FLAG='-Dgtest_disable_pthreads=1'
  
 
-cd $PROJECT_PATH
+cd "$PROJECT_PATH"
 cd libs
 
 mkdir -p glm && cd glm

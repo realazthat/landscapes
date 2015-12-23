@@ -17,7 +17,7 @@ else
     echo "Invalid cmake version"
 fi
 
-
+cd "$PROJECT_PATH"
 cd ./libs
 mkdir -p cmake3 && cd cmake3
 

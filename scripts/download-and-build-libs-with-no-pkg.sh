@@ -18,7 +18,7 @@ PROJECT_PATH=$PWD
 #############################################################################
 ## get/build cNBT
 #############################################################################
-cd $PROJECT_PATH
+cd "$PROJECT_PATH"
 cd libs
 mkdir -p cNBT && cd cNBT
 
@@ -42,7 +42,7 @@ cmake --build .
 ## get/build bprinter
 #############################################################################
 
-cd $PROJECT_PATH
+cd "$PROJECT_PATH"
 cd libs
 
 mkdir -p bprinter && cd bprinter
@@ -63,7 +63,7 @@ cmake --build .
 ## get/build cubelib
 #############################################################################
 
-cd $PROJECT_PATH
+cd "$PROJECT_PATH"
 bash ./scripts/download-and-build-cubelib.sh
 
 
@@ -71,7 +71,7 @@ bash ./scripts/download-and-build-cubelib.sh
 ## get/build ThreadPool
 #############################################################################
 
-cd $PROJECT_PATH
+cd "$PROJECT_PATH"
 cd libs
 
 mkdir -p ThreadPool && cd ThreadPool
@@ -85,7 +85,7 @@ git checkout "9a42ec1"
 #############################################################################
 ## get/build cppformat
 #############################################################################
-cd $PROJECT_PATH
+cd "$PROJECT_PATH"
 cd libs
 
 mkdir -p cppformat && cd cppformat
