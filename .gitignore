@@ -1,0 +1,13 @@
+/Debug64
+/build
+/.build-debug64
+/.clang
+/.codelite
+/landscapes-unittests.txt
+/Makefile
+/landscapes.mk
+/landscapes.txt
+/landscapes-mc.mk
+/landscapes-mc.txt
+/landscapes-mc-demo.mk
+/landscapes-unittests.mk
