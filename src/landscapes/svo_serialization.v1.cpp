@@ -24,16 +24,6 @@ std::string unserialize_string(std::istream& in);
 
 
 
-void svo_serialize_buffers(std::ostream& out, const svo_cpu_buffers_t& buffers, std::size_t expected_entries);
-void svo_serialize_buffers_schema_declaration(std::ostream& out, const svo_declaration_t& declaration);
-void svo_serialize_buffers_schema(std::ostream& out, const svo_schema_t& schema);
-void svo_serialize_slice(std::ostream& out, const svo_slice_t* slice);
-void svo_serialize_slice_child_info(std::ostream& out, const svo_slice_t* slice);
-
-void svo_unserialize_buffers(std::istream& in, svo_cpu_buffers_t& buffers, std::size_t data_size);
-svo_declaration_t svo_unserialize_buffers_schema_declaration(std::istream& in);
-svo_schema_t svo_unserialize_buffers_schema(std::istream& in);
-children_params_t svo_unserialize_slice_child_info(std::istream& in, svo_slice_t* slice);
 
 
 
@@ -232,13 +222,22 @@ void svo_unserialize_buffers(std::istream& in, svo_cpu_buffers_t& buffers, std::
     
     auto schema = svo_unserialize_buffers_schema(in);
     
+    assert(buffers.entries() == 0);
+    
     for (const auto& declaration : schema)
     {
-        auto& buffer = buffers.add_buffer(declaration);
-        buffer.resize(data_size);
+        auto& buffer = buffers.add_buffer(declaration, data_size);
+        assert(buffers.entries() == data_size);
+        assert(buffer.entries() == data_size);
+    
+    }
+        
+    for (auto& buffer : buffers.buffers())
+    {
         in.read(reinterpret_cast<char*>(buffer.rawdata()), buffer.bytes());
         assert(in.gcount() == buffer.bytes());
     }
+    
 }
 
 children_params_t svo_unserialize_slice_child_info(std::istream& in, svo_slice_t* slice)
