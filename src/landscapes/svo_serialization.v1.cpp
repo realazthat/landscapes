@@ -149,7 +149,7 @@ void serialize_declaration(std::ostream& out, const svo_declaration_t& declarati
 
 svo_declaration_t unserialize_declaration(std::istream& in)
 {
-    std::size_t elements_size =unserialize_uint<uint32_t>(in);
+    std::size_t elements_size = unserialize_uint<uint32_t>(in);
     
     svo_declaration_t declaration;
     
@@ -241,7 +241,7 @@ void serialize_buffers(std::ostream& out, const svo_cpu_buffers_t& buffers, std:
         assert(buffer.entries() == expected_entries);
         
         serialize_uint<uint32_t>(out, buffer.entries());
-        out.write(reinterpret_cast<const char*>(buffer.rawdata()), buffer.bytes());
+        serialize_buffer_data(out, buffer);
         
     }
     
@@ -268,8 +268,10 @@ void unserialize_buffers(std::istream& in, svo_cpu_buffers_t& buffers, std::size
         
     for (auto& buffer : buffers.buffers())
     {
-        in.read(reinterpret_cast<char*>(buffer.rawdata()), buffer.bytes());
-        assert(in.gcount() == buffer.bytes());
+        std::size_t buffer_entries = unserialize_uint<uint32_t>(in);
+        if (buffer_entries != expected_entries)
+            throw std::runtime_error("buffer's entries does not match expected");
+        unserialize_buffer_data(in, buffer, expected_entries);
     }
     
 }

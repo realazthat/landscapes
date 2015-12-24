@@ -159,7 +159,13 @@ std::unique_ptr<svo::svo_cpu_buffers_t> generate_buffers(rng_t& rng, const std::
     
     for (auto declaration : schema)
     {
-        buffers->add_buffer(declaration, entries);
+        auto& buffer = buffers->add_buffer(declaration, entries);
+        
+        for (std::size_t byte_index = 0; byte_index < buffer.bytes(); ++byte_index)
+        {
+            uint8_t* ptr = buffer.rawdata() + byte_index;
+            *ptr = rng(0,255);
+        }
     }
     
     return buffers;
@@ -233,7 +239,7 @@ TEST_F(SerializeTest,serialize_buffer)
     rng_t rng;
     
     
-    for (std::size_t i = 0; i < 50; ++i)
+    for (std::size_t i = 0; i < 3; ++i)
     {
         std::size_t entries = 10000;
         auto buffer0_ptr = generate_buffer(rng, "noname", entries);
@@ -247,13 +253,16 @@ TEST_F(SerializeTest,serialize_buffer)
         auto buffer1_ptr = svo::unserialize_buffer(in);
         auto& buffer1 = *buffer1_ptr;
         
-        EXPECT_EQ(buffer0.declaration(), buffer1.declaration());
-        EXPECT_EQ(buffer0.entries(), buffer1.entries());
-        EXPECT_EQ(buffer0.bytes(), buffer1.bytes());
+        ASSERT_EQ(buffer0.declaration(), buffer1.declaration());
+        ASSERT_EQ(buffer0.entries(), buffer1.entries());
+        ASSERT_EQ(buffer0.bytes(), buffer1.bytes());
         
+        std::vector<uint8_t> buffer0_data(buffer0.rawdata(), buffer0.rawdata() + buffer0.bytes());
+        std::vector<uint8_t> buffer1_data(buffer1.rawdata(), buffer1.rawdata() + buffer1.bytes());
         int buffer_cmp = std::memcmp(buffer0.rawdata(), buffer1.rawdata(), buffer0.bytes());
         
-        EXPECT_EQ(0, buffer_cmp);
+        ASSERT_EQ(buffer0_data, buffer1_data);
+        ASSERT_EQ(0, buffer_cmp);
     }
 }
 
@@ -264,7 +273,7 @@ TEST_F(SerializeTest,serialize_buffers)
     rng_t rng;
     
     
-    for (std::size_t i = 0; i < 50; ++i)
+    for (std::size_t i = 0; i < 3; ++i)
     {
         std::size_t entries = 10000;
         auto buffers0_ptr = generate_buffers(rng, "noname", entries);
@@ -279,9 +288,9 @@ TEST_F(SerializeTest,serialize_buffers)
         svo::svo_cpu_buffers_t buffers1;
         svo::unserialize_buffers(in, buffers1, entries);
         
-        EXPECT_EQ(buffers0.buffers().size(), buffers1.buffers().size());
-        EXPECT_EQ(buffers0.schema(), buffers1.schema());
-        EXPECT_EQ(buffers0.entries(), buffers1.entries());
+        ASSERT_EQ(buffers0.buffers().size(), buffers1.buffers().size());
+        ASSERT_EQ(buffers0.schema(), buffers1.schema());
+        ASSERT_EQ(buffers0.entries(), buffers1.entries());
         
         
         for (std::size_t buffer_index = 0; buffer_index < buffers1.buffers().size(); ++buffer_index)
@@ -292,9 +301,17 @@ TEST_F(SerializeTest,serialize_buffers)
             const auto& buffer0 = buffers0.buffers()[buffer_index];
             const auto& buffer1 = buffers1.buffers()[buffer_index];
             
+            ASSERT_EQ(buffer0.declaration(), buffer1.declaration());
+            ASSERT_EQ(buffers0.entries(), buffer0.entries());
+            ASSERT_EQ(buffer0.entries(), buffer1.entries());
+            ASSERT_EQ(buffer0.bytes(), buffer1.bytes());
+            
+            std::vector<uint8_t> buffer0_data(buffer0.rawdata(), buffer0.rawdata() + buffer0.bytes());
+            std::vector<uint8_t> buffer1_data(buffer1.rawdata(), buffer1.rawdata() + buffer1.bytes());
             int buffer_cmp = std::memcmp(buffer0.rawdata(), buffer1.rawdata(), buffer0.bytes());
             
-            EXPECT_EQ(0, buffer_cmp);
+            ASSERT_EQ(buffer0_data, buffer1_data);
+            ASSERT_EQ(0, buffer_cmp);
             
         }
     }
