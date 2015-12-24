@@ -83,7 +83,7 @@ static inline T unserialize_uint(std::istream& in)
     return v;
 }
 
-void svo_serialize_slice_child_info(std::ostream& out, const svo_slice_t* slice)
+void serialize_slice_child_info(std::ostream& out, const svo_slice_t* slice)
 {
     assert(slice);
     assert(slice->children);
@@ -106,7 +106,7 @@ void svo_serialize_slice_child_info(std::ostream& out, const svo_slice_t* slice)
 
 
 
-void svo_serialize_slice(std::ostream& out, const svo_slice_t* slice)
+void serialize_slice(std::ostream& out, const svo_slice_t* slice)
 {
     assert(slice);
     assert(slice->children);
@@ -115,7 +115,7 @@ void svo_serialize_slice(std::ostream& out, const svo_slice_t* slice)
 
     serialize_uint<uint32_t>(out, uint32_t(FORMAT_VERSION));
     
-    svo_serialize_slice_child_info(out, slice);
+    serialize_slice_child_info(out, slice);
 
     const auto& pos_data = *slice->pos_data;
     const auto& buffers = *slice->buffers;
@@ -130,11 +130,11 @@ void svo_serialize_slice(std::ostream& out, const svo_slice_t* slice)
     }
 
     
-    svo_serialize_buffers(out, buffers, pos_data.size());
+    serialize_buffers(out, buffers, pos_data.size());
     
 }
 
-void svo_serialize_buffers_schema_declaration(std::ostream& out, const svo_declaration_t& declaration)
+void serialize_declaration(std::ostream& out, const svo_declaration_t& declaration)
 {
     serialize_uint<uint32_t>(out, declaration.elements().size());
     
@@ -147,7 +147,7 @@ void svo_serialize_buffers_schema_declaration(std::ostream& out, const svo_decla
     }
 }
 
-svo_declaration_t svo_unserialize_buffers_schema_declaration(std::istream& in)
+svo_declaration_t unserialize_declaration(std::istream& in)
 {
     std::size_t elements_size =unserialize_uint<uint32_t>(in);
     
@@ -175,17 +175,17 @@ svo_declaration_t svo_unserialize_buffers_schema_declaration(std::istream& in)
     return declaration;
 }
 
-void svo_serialize_buffers_schema(std::ostream& out, const svo_schema_t& schema)
+void serialize_schema(std::ostream& out, const svo_schema_t& schema)
 {
     
     serialize_uint<uint32_t>(out, schema.size());
     for (const auto& declaration : schema)
     {
-        svo_serialize_buffers_schema_declaration(out, declaration);
+        serialize_declaration(out, declaration);
     }
 }
 
-svo_schema_t svo_unserialize_buffers_schema(std::istream& in)
+svo_schema_t unserialize_schema(std::istream& in)
 {
     svo_schema_t schema;
     
@@ -193,16 +193,48 @@ svo_schema_t svo_unserialize_buffers_schema(std::istream& in)
     
     for (std::size_t declaration_index = 0; declaration_index < schema_size; ++declaration_index)
     {
-        auto declaration = svo_unserialize_buffers_schema_declaration(in);
+        auto declaration = unserialize_declaration(in);
         schema.push_back(declaration);
     }
     return schema;
 }
 
-void svo_serialize_buffers(std::ostream& out, const svo_cpu_buffers_t& buffers, std::size_t expected_entries)
+void serialize_buffer(std::ostream& out, const svo_cpu_buffer_t& buffer)
+{
+    serialize_declaration(out, buffer.declaration());
+    serialize_uint<uint32_t>(out, buffer.entries());
+    serialize_buffer_data(out, buffer);
+}
+
+std::unique_ptr<svo_cpu_buffer_t> unserialize_buffer(std::istream& in)
+{
+    auto declaration = unserialize_declaration(in);
+    std::size_t entries = unserialize_uint<uint32_t>(in);
+    
+    std::unique_ptr<svo_cpu_buffer_t> buffer(new svo_cpu_buffer_t(declaration, entries));
+    
+    unserialize_buffer_data(in, *buffer, entries);
+    
+    return buffer;
+}
+
+void serialize_buffer_data(std::ostream& out, const svo_cpu_buffer_t& buffer)
+{
+    out.write(reinterpret_cast<const char*>(buffer.rawdata()), buffer.bytes());
+}
+
+void unserialize_buffer_data(std::istream& in, svo_cpu_buffer_t& buffer, std::size_t expected_entries)
+{
+    assert(buffer.entries() == expected_entries);
+    
+    in.read(reinterpret_cast<char*>(buffer.rawdata()), buffer.bytes());
+    assert(in.gcount() == buffer.bytes());
+}
+
+void serialize_buffers(std::ostream& out, const svo_cpu_buffers_t& buffers, std::size_t expected_entries)
 {
     
-    svo_serialize_buffers_schema(out, buffers.schema());
+    serialize_schema(out, buffers.schema());
     
     for (const auto& buffer : buffers.buffers())
     {
@@ -216,19 +248,21 @@ void svo_serialize_buffers(std::ostream& out, const svo_cpu_buffers_t& buffers, 
 }
 
 
-void svo_unserialize_buffers(std::istream& in, svo_cpu_buffers_t& buffers, std::size_t data_size)
+
+void unserialize_buffers(std::istream& in, svo_cpu_buffers_t& buffers, std::size_t expected_entries)
 {
     assert(buffers.buffers().size() == 0);
+    assert(buffers.schema().size() == 0);
     
-    auto schema = svo_unserialize_buffers_schema(in);
+    auto schema = unserialize_schema(in);
     
     assert(buffers.entries() == 0);
     
     for (const auto& declaration : schema)
     {
-        auto& buffer = buffers.add_buffer(declaration, data_size);
-        assert(buffers.entries() == data_size);
-        assert(buffer.entries() == data_size);
+        auto& buffer = buffers.add_buffer(declaration, expected_entries);
+        assert(buffers.entries() == expected_entries);
+        assert(buffer.entries() == expected_entries);
     
     }
         
@@ -240,7 +274,7 @@ void svo_unserialize_buffers(std::istream& in, svo_cpu_buffers_t& buffers, std::
     
 }
 
-children_params_t svo_unserialize_slice_child_info(std::istream& in, svo_slice_t* slice)
+children_params_t unserialize_slice_child_info(std::istream& in, svo_slice_t* slice)
 {
     assert(slice);
     assert(slice->children);
@@ -263,7 +297,7 @@ children_params_t svo_unserialize_slice_child_info(std::istream& in, svo_slice_t
 }
 
 
-void svo_unserialize_slice_load_empty_children(svo_slice_t* slice, const children_params_t& children_params)
+void slice_load_empty_children(svo_slice_t* slice, const children_params_t& children_params)
 {
     for (auto params : children_params)
     {
@@ -288,7 +322,7 @@ void svo_unserialize_slice_load_empty_children(svo_slice_t* slice, const childre
     }
 }
 
-children_params_t svo_unserialize_slice(std::istream& in, svo_slice_t* slice, bool load_empty_children)
+children_params_t unserialize_slice(std::istream& in, svo_slice_t* slice, bool load_empty_children)
 {
     assert(slice);
     assert(slice->children);
@@ -309,11 +343,11 @@ children_params_t svo_unserialize_slice(std::istream& in, svo_slice_t* slice, bo
     assert(format_version == FORMAT_VERSION);
 
 
-    auto children_params = svo_unserialize_slice_child_info(in, slice);
+    auto children_params = unserialize_slice_child_info(in, slice);
 
     if (load_empty_children)
     {
-        svo_unserialize_slice_load_empty_children(slice, children_params);
+        slice_load_empty_children(slice, children_params);
     }
 
     auto data_size = unserialize_uint<uint32_t>(in);
@@ -328,7 +362,7 @@ children_params_t svo_unserialize_slice(std::istream& in, svo_slice_t* slice, bo
 
 
     ///unserialize buffer data
-    svo_unserialize_buffers(in, buffers, data_size);
+    unserialize_buffers(in, buffers, data_size);
     
 
     ///todo: make this an exception or return error code.

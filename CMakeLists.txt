@@ -177,7 +177,6 @@ add_executable(unittests
     src/unittests/entree_slices.cpp
     src/unittests/load_mca_region.cpp
     src/unittests/serialization.cpp
-    src/unittests/serialize_slice.cpp
     src/unittests/main.cpp
 
     )

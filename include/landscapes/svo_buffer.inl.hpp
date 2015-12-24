@@ -53,18 +53,20 @@ static inline const char* tostr(svo_data_type_t data_type)
             return "INT";
         case(svo_data_type_t::UNSIGNED_INT):
             return "UNSIGNED_INT";
-        case(svo_data_type_t::FLOAT):
-            return "FLOAT";
         case(svo_data_type_t::LONG):
             return "LONG";
         case(svo_data_type_t::UNSIGNED_LONG):
             return "UNSIGNED_LONG";
+        case(svo_data_type_t::FLOAT):
+            return "FLOAT";
         case(svo_data_type_t::DOUBLE):
             return "DOUBLE";
-        default:{
-            return "UNKNOWN";
-        }
+        case(svo_data_type_t::COUNT):
+            assert(false);
+            return "COUNT";
     }
+    assert(false);
+    return "UNKNOWN";
 }
 
 
@@ -78,10 +80,12 @@ static inline const char* tostr(svo_semantic_t semantic)
             return "COLOR";
         case(svo_semantic_t::NORMAL):
             return "NORMAL";
-        default:{
-            return "UNKNOWN";
-        }
+        case(svo_semantic_t::COUNT):
+            assert(false);
+            return "COUNT";
     }
+    assert(false);
+    return "UNKNOWN";
 }
 
 static const std::map<std::string, svo_data_type_t> svo_data_type_mapping {
@@ -402,7 +406,7 @@ void
 svo_base_buffer_t<svo_buffer_t>::
 assert_invariants() const
 {
-    assert(m_rawdata || m_entries == 0);
+    assert(m_rawdata || (m_entries*m_declaration.stride()) == 0);
     m_declaration.assert_invariants();
 }
 

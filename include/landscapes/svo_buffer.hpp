@@ -18,6 +18,7 @@
 
 
 #include "svo_tree.fwd.hpp"
+#include "svo_buffer.fwd.hpp"
 
 
 
@@ -208,7 +209,6 @@ namespace detail{
     };
 }
 
-typedef std::vector<svo_declaration_t> svo_schema_t;
 
 template<typename svo_buffer_t, typename svo_buffers_t>
 struct svo_base_buffers_t{
