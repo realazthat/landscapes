@@ -27,6 +27,7 @@ install:
     - sudo CMAKE_GENERATOR="Unix Makefiles" bash ./scripts/download-and-build-googletest.sh
     - sudo CMAKE_GENERATOR="Unix Makefiles" bash ./scripts/download-and-build-glm.sh
     - sudo CMAKE_GENERATOR="Unix Makefiles" bash ./scripts/download-and-build-libs-with-no-pkg.sh
+    - sudo CMAKE_GENERATOR="Unix Makefiles" bash ./scripts/download-unittest-data.sh
 
 
 script:

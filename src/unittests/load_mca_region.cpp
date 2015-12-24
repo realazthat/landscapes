@@ -5,16 +5,16 @@
 #include <fstream>
 
 class LoadMCARegionTest : public ::testing::Test {
- protected:
-  virtual void SetUp() {
+protected:
+    virtual void SetUp() {
       
-  }
+    }
 
-  virtual void TearDown() {
+    virtual void TearDown() {
     // Code here will be called immediately after each test
     // (right before the destructor).
-  }
-};
+    }
+    };
 
 
 
