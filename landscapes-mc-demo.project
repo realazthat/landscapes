@@ -2,7 +2,9 @@
 <CodeLite_Project Name="landscapes-mc-demo" InternalType="Console">
   <Description/>
   <Dependencies/>
-  <VirtualDirectory Name="src"/>
+  <VirtualDirectory Name="src">
+    <File Name="src/mc-demo.cpp"/>
+  </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -132,4 +134,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug64"/>
 </CodeLite_Project>

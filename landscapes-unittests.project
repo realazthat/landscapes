@@ -50,7 +50,6 @@
   </VirtualDirectory>
   <VirtualDirectory Name="include"/>
   <Dependencies Name="Release64"/>
-  <Dependencies Name="Debug64"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -218,4 +217,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug64"/>
 </CodeLite_Project>

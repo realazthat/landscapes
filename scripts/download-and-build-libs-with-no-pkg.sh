@@ -15,6 +15,23 @@ set -exv
 
 PROJECT_PATH=$PWD
 
+
+
+#############################################################################
+## get/build cubelib
+#############################################################################
+
+cd "$PROJECT_PATH"
+bash ./scripts/download-and-build-cubelib.sh
+
+#############################################################################
+## get/build glm
+#############################################################################
+
+cd "$PROJECT_PATH"
+bash ./scripts/download-and-build-glm.sh
+
+
 #############################################################################
 ## get/build cNBT
 #############################################################################
@@ -30,6 +47,7 @@ git checkout "5850e3e"
 
 mkdir -p build && cd build
 cmake -G"$CMAKE_GENERATOR" ..
+cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
 cmake --build .
 
 
@@ -56,15 +74,9 @@ mkdir -p build
 cd build
 cmake -G"$CMAKE_GENERATOR" ..
 cmake . -DUSE_BOOST_KARMA=0
+cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
 cmake --build .
 
-
-#############################################################################
-## get/build cubelib
-#############################################################################
-
-cd "$PROJECT_PATH"
-bash ./scripts/download-and-build-cubelib.sh
 
 
 #############################################################################
@@ -96,5 +108,6 @@ git checkout "4797ca0"
 
 mkdir -p build && cd build
 cmake -G"$CMAKE_GENERATOR" ..
+cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
 cmake --build . --target cppformat
 

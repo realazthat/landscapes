@@ -77,7 +77,6 @@
     </VirtualDirectory>
     <File Name="include/pempek_assert.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug64"/>
   <Dependencies Name="Release64"/>
   <Settings Type="Static Library">
     <GlobalSettings>
@@ -219,4 +218,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug64"/>
 </CodeLite_Project>

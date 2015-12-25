@@ -81,3 +81,43 @@ Libraries:
 
 
 
+Building
+---
+
+
+
+
+
+```
+
+    git clone https://github.com/realazthat/landscapes.git
+    cd landscapes
+
+
+    #optionally download and build googletest (only matters if you are going to run the unittests)
+    #note, choose the appropriate generator
+    CMAKE_GENERATOR="MSYS Makefiles" bash ./scripts/download-and-build-googletest.sh
+
+    #optionally download and build dependencies
+    #note, choose the appropriate generator
+    CMAKE_GENERATOR="MSYS Makefiles" bash ./scripts/download-and-build-libs-with-no-pkg.sh
+
+
+
+    rm -rf ./build
+    mkdir -p build && cd build
+
+    cmake -G"MSYS Makefiles" ..
+    cmake --build . --target landscapes
+    cmake --build . --target landscapes-mc
+    # ... etc.
+
+
+
+
+    #optionally build and execut the unittests
+    cmake --build . --target unittests
+    ./unittests
+
+
+```

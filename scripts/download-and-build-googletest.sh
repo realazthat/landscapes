@@ -43,5 +43,6 @@ if [ $(echo "$MSYSTEM" | grep -io MINGW) = "MINGW" ]; then
 else
     cmake -G"$CMAKE_GENERATOR" ..
 fi
+cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
 cmake --build .
 

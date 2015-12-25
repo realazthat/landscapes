@@ -9,6 +9,7 @@
 #include <bitset>
 #include <iostream>
 #include <vector>
+#include <array>
 #include <tuple>
 #include <cstddef>
 #include <cstdint>
@@ -104,7 +105,7 @@ void svo_split_slice(const svo_slice_t* src_slice, std::vector<svo_slice_t*>& ds
  *
  * Note that the src slices are not freed; you must do this yourself after calling this function.
  */
-void svo_join_slices(svo_slice_t* dst_slice, const std::vector<svo_slice_t*>& src_slices);
+void svo_join_slices(svo_slice_t* dst_slice, const std::array<svo_slice_t*, 8>& src_slices);
 
 
 
