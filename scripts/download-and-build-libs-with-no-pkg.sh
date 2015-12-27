@@ -38,6 +38,13 @@ bash ./scripts/download-and-build-glm.sh
 cd "$PROJECT_PATH"
 bash ./scripts/download-and-build-tclap.sh
 
+#############################################################################
+## get/build sgfxapi
+#############################################################################
+
+cd "$PROJECT_PATH"
+bash ./scripts/download-and-build-sgfxapi.sh
+
 
 
 #############################################################################

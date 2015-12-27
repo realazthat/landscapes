@@ -17,28 +17,24 @@ PROJECT_PATH=$PWD
 
 
 #############################################################################
-## get/build googletest
+## get/build sgfxapi
 #############################################################################
 
 
 cd "$PROJECT_PATH"
 cd libs
 
-mkdir -p googletest && cd googletest
+mkdir -p sgfxapi && cd sgfxapi
 
-rm -rf ./googletest/
-git clone https://github.com/google/googletest.git
-cd googletest
+rm -rf ./sgfxapi/
+git clone https://github.com/realazthat/sgfxapi.git
+cd sgfxapi
 git checkout "ddb8012"
-cd googletest
 
 mkdir -p build
 cd build
 
-if [ $(echo "$MSYSTEM" | grep -io MINGW) = "MINGW" ]; then
-    cmake -G"$CMAKE_GENERATOR" .. -Dgtest_disable_pthreads=1
-else
-    cmake -G"$CMAKE_GENERATOR" ..
-fi
+cmake -G"$CMAKE_GENERATOR" ..
+cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
 cmake --build .
 
