@@ -98,8 +98,8 @@
         <IncludePath Value="./libs/cppformat/cppformat"/>
         <IncludePath Value="./libs/ThreadPool/ThreadPool"/>
         <IncludePath Value="./libs/cubelib/cubelib/include"/>
-        <IncludePath Value="./libs/glm/glm-master/glm-master"/>
-        <IncludePath Value="./libs/bprinter/bprinter-master/bprinter-master/include"/>
+        <IncludePath Value="./libs/glm/glm/"/>
+        <IncludePath Value="./libs/bprinter/bprinter/include"/>
         <IncludePath Value="./libs/googletest/googletest/googletest/include"/>
       </Compiler>
       <Linker Options="" Required="yes">
