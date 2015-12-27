@@ -6,12 +6,14 @@
 #include <iosfwd>
 #include <string>
 
-std::ostream& operator<<(std::ostream& out, const svo::svo_block_sanity_error_t& error);
-std::ostream& operator<<(std::ostream& out, const svo::svo_slice_sanity_error_t& error);
 
 namespace svo{
     
+// See https://github.com/google/googletest/blob/master/googletest/docs/AdvancedGuide.md#teaching-google-test-how-to-print-your-values
+::std::ostream& operator<<(::std::ostream& out, const svo::svo_block_sanity_error_t& error);
 
+// See https://github.com/google/googletest/blob/master/googletest/docs/AdvancedGuide.md#teaching-google-test-how-to-print-your-values
+::std::ostream& operator<<(::std::ostream& out, const svo::svo_slice_sanity_error_t& error);
 
 struct svo_slice_sanity_error_t
 {

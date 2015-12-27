@@ -7,32 +7,34 @@
 #include <iostream>
 #include <tuple>
 
-std::ostream& operator<<(std::ostream& out, const svo::svo_block_sanity_error_t& error)
-{
-    if (!error.has_error) {
-        out << "no error";
-        return out;
-    }
-
-    out << error.error;
-
-    return out;
-}
-
-std::ostream& operator<<(std::ostream& out, const svo::svo_slice_sanity_error_t& error)
-{
-    if (!error.has_error) {
-        out << "no error";
-        return out;
-    }
-
-    out << error.error;
-
-    return out;
-}
-
 
 namespace svo{
+    
+    
+::std::ostream& operator<<(::std::ostream& out, const svo::svo_block_sanity_error_t& error)
+{
+    if (!error.has_error) {
+        out << "no error";
+        return out;
+    }
+
+    out << error.error;
+
+    return out;
+}
+
+::std::ostream& operator<<(::std::ostream& out, const svo::svo_slice_sanity_error_t& error)
+{
+    if (!error.has_error) {
+        out << "no error";
+        return out;
+    }
+
+    out << error.error;
+
+    return out;
+}
+
 svo_slice_sanity_error_t svo_slice_sanity_minimal(const svo_slice_t* slice, svo_sanity_type_t sanity_type);
 svo_slice_sanity_error_t svo_slice_sanity_pos_data_to_parent(const svo_slice_t* slice);
 svo_slice_sanity_error_t svo_slice_sanity_channel_data_to_parent(const svo_slice_t* slice);
@@ -758,6 +760,7 @@ svo_slice_sanity_error_t svo_slice_sanity_minimal(const svo_slice_t* slice, svo_
     if(!slice)
         return svo_slice_sanity_error_t("slice is invalid pointer", slice);
 
+
     ///parent <=> slice sanity
     if (slice->parent_slice)
     {
@@ -782,7 +785,18 @@ svo_slice_sanity_error_t svo_slice_sanity_minimal(const svo_slice_t* slice, svo_
         if (it == siblings.end())
             return svo_slice_sanity_error_t("slice not in parent's children", slice);
 
-
+        
+    }
+    
+    
+    if (slice->parent_slice == nullptr)
+    {
+        if (slice->parent_vcurve_begin != 0)
+            return svo_slice_sanity_error_t(fmt::format("slice has no parent, and yet has a parent_vcurve_begin: {}"
+                                                        , slice->parent_vcurve_begin), slice);
+        
+        
+        
     }
 
     if (!slice->pos_data)
@@ -805,8 +819,19 @@ svo_slice_sanity_error_t svo_slice_sanity_minimal(const svo_slice_t* slice, svo_
                                             , slice);
 
         assert(slice->side != 0);
-
-        if (slice->parent_slice)
+        
+        if (slice->side == 1 && slice->parent_slice != nullptr)
+            return svo_slice_sanity_error_t(fmt::format("slice has a side of 1, and yet has a parent slice")
+                                            , slice->parent_slice, slice);
+        
+        
+        if (slice->side > SVO_MAX_VOLUME_SIDE)
+            return svo_slice_sanity_error_t(fmt::format("slice has a side of greater than SVO_MAX_VOLUME_SIDE"
+                                                        "side: {}, SVO_MAX_VOLUME_SIDE: {}"
+                                                        , slice->side, SVO_MAX_VOLUME_SIDE)
+                                            , slice);
+        
+        if (slice->side > 1)
         {
             auto size_in_parent = vcurvesize(slice->side / 2);
             assert(size_in_parent != 0);
