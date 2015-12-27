@@ -567,6 +567,9 @@ void extract_chunk(chunk_id_t chunk_id, const uint8_t* compressed_buffer_ptr, st
 void load_mca_region(volume_of_slices_t& slices, std::ifstream& region_file, std::size_t num_threads)
 {
     
+    assert(slices.volume_side == region_side_chunks);
+    assert(region_side_chunks*region_side_chunks*region_side_chunks == vcurvesize(region_side_chunks));
+    
     std::size_t vertical_slices = 32;
 
     //slices.clear();
@@ -597,15 +600,19 @@ void load_mca_region(volume_of_slices_t& slices, std::ifstream& region_file, std
         
         assert(slice_vcurve < vcurvesize(slices.volume_side));
         
-        while (all_slices.size() == 0 || all_slices.size() < slice_vcurve)
+        while (all_slices.size() < slice_vcurve)
             all_slices.push_back(nullptr);
+        
+        assert(all_slices.size() == slice_vcurve);
         
         all_slices.push_back(slice);
     }
     
     while (all_slices.size() < vcurvesize(region_side_chunks))
         all_slices.push_back(nullptr);
-
+    
+    
+    assert(all_slices.size() == region_side_chunks*region_side_chunks*region_side_chunks);
     
     ///(data pointer, length)
     typedef std::pair<const uint8_t*, std::size_t> data_section_t;
