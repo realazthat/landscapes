@@ -17,19 +17,19 @@ PROJECT_PATH=$PWD
 
 
 #############################################################################
-## get/build glm
+## get/build tclap
 #############################################################################
 
 
 cd "$PROJECT_PATH"
 cd libs
 
-mkdir -p glm && cd glm
+mkdir -p tclap && cd tclap
 
-rm -rf ./glm/
-git clone https://github.com/g-truc/glm.git
-cd glm
-git checkout "78f686b"
+rm -rf ./tclap/
+git clone git://git.code.sf.net/p/tclap/code tclap-code
+cd tclap-code
+git checkout "3627d9402e529770df9b0edf2aa8c0e0d6c6bb41"
 
 
 
