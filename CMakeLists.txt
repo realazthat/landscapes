@@ -23,9 +23,9 @@ set(CEGUI_LIB ""
 
 
 
-set(MGL_INCLUDE_DIR "./libs/mathgeolib/MathGeoLib-master/MathGeoLib-master/src"
+set(MGL_INCLUDE_DIR "./libs/sgfxapi/sgfxapi/libs/mathgeolib/MathGeoLib/src"
     CACHE STRING "Paths to MathGeoLib includes")
-set(MGL_LIB_DIR "./libs/mathgeolib/MathGeoLib-master/MathGeoLib-master/build"
+set(MGL_LIB_DIR "./libs/sgfxapi/sgfxapi/libs/mathgeolib/MathGeoLib/build"
     CACHE STRING "Paths to MathGeoLib libs")
 set(MGL_LIB "MathGeoLib"
     CACHE STRING "Libs for MathGeoLib")
@@ -66,10 +66,17 @@ set(BPRINTER_LIB "bprinter" CACHE STRING "Libs for bprinter")
 
 set(THREADPOOL_INCLUDE_DIR "./libs/ThreadPool/ThreadPool" CACHE STRING "Paths to ThreadPool includes")
 
+set(TCLAP_INCLUDE_DIR "./libs/tclap/tclap-code/include" CACHE STRING "Paths to TCLAP includes")
+
 
 set(GTEST_INCLUDE_DIR "./libs/googletest/googletest/googletest/include" CACHE STRING "Paths to googletest includes")
 set(GTEST_LIB_DIR "./libs/googletest/googletest/googletest/build" CACHE STRING "Paths to googletest libs")
 set(GTEST_LIB "gtest" CACHE STRING "Libs for googletest")
+
+
+set(SGFXAPI_INCLUDE_DIR "./libs/sgfxapi/sgfxapi/include" CACHE STRING "Paths to sgfxapi includes")
+set(SGFXAPI_LIB_DIR "./libs/sgfxapi/sgfxapi/build" CACHE STRING "Paths to sgfxapi libs")
+set(SGFXAPI_LIB "sgfxapi;sgfxapi-drawutils" CACHE STRING "Libs for sgfxapi")
 
 
 #include(OptimizeForArchitecture)
@@ -102,6 +109,9 @@ include_directories(
     ${BPRINTER_INCLUDE_DIR}
     ${CUBELIB_INCLUDE_DIR}
     ${THREADPOOL_INCLUDE_DIR}
+    ${TCLAP_INCLUDE_DIR}
+    
+    ${SGFXAPI_INCLUDE_DIR}
     
     ${GTEST_INCLUDE_DIR}
     #lib/cNBT
@@ -118,6 +128,7 @@ link_directories(
     ${CNBT_LIB_DIR}
     ${BPRINTER_LIB_DIR}
     ${CUBELIB_LIB_DIR}
+    ${SGFXAPI_LIB_DIR}
     ${GTEST_LIB_DIR}
     )
 
@@ -145,6 +156,28 @@ set_property(TARGET landscapes-mc PROPERTY CXX_STANDARD 11)
 
 ################################################################################
 
+
+
+add_executable(landscapes-mc-demo
+    src/landscapes/mc-demo.cpp
+    )
+set_property(TARGET landscapes-mc-demo PROPERTY CXX_STANDARD 11)
+
+target_link_libraries(landscapes-mc-demo
+    landscapes
+    landscapes-mc
+    
+    ${MGL_LIB}
+    ${CBNT_LIB}
+    z
+    ${CPP_FORMAT_LIB}
+    ${BPRINTER_LIB}
+    ${SGFXAPI_LIB}
+    #CEGUIBase-0 CEGUIOpenGLRenderer-0 CEGUIExpatParser CEGUICoreWindowRendererSet CEGUICommonDialogs-0
+
+    ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32)
+
+################################################################################
 
 #target_link_libraries(sandbox
 #   MathGeoLib nbt z

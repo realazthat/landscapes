@@ -43,7 +43,7 @@ bash ./scripts/download-and-build-tclap.sh
 #############################################################################
 
 cd "$PROJECT_PATH"
-bash ./scripts/download-and-build-sgfxapi.sh
+CMAKE_BUILD_TYPE="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE" bash ./scripts/download-and-build-sgfxapi.sh
 
 
 

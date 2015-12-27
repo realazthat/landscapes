@@ -26,7 +26,7 @@ cd libs
 
 mkdir -p tclap && cd tclap
 
-rm -rf ./tclap/
+rm -rf ./tclap-code/
 git clone git://git.code.sf.net/p/tclap/code tclap-code
 cd tclap-code
 git checkout "3627d9402e529770df9b0edf2aa8c0e0d6c6bb41"
