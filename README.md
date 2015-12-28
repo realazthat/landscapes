@@ -34,6 +34,8 @@ Dependencies
 Build system:
 
 * CMake >= 3.1 (if using CMake)
+* git (only if building dependencies from source)
+* mercurial (only if building dependencies from source)
 
 Libraries:
 
