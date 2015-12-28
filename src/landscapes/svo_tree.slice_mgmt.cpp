@@ -316,7 +316,7 @@ svo_slice_t* svo_entree_slices(const volume_of_slices_t& volume_of_slices, std::
             current_level.slices.push_back( std::make_tuple( slice_vcurve, slice ) );
         }
     }
-    assert( current_level.slices.size() != 0);
+    
 
     ///while we don't have a root ...
     ///we will build this bottom up.
@@ -464,6 +464,14 @@ svo_slice_t* svo_entree_slices(const volume_of_slices_t& volume_of_slices, std::
         next_level.volume_side = current_level.volume_side / 2;
     }
 
+    ///If this volume of slices ends up being entirely empty
+    if (current_level.slices.size() == 0)
+    {
+        ///return an empty root slice.
+        svo_slice_t* root_slice = svo_init_slice(root_level, 1);
+        return root_slice;
+    }
+
     assert( current_level.slices.size() == 1 );
     svo_slice_t* root_slice;
     std::tie(std::ignore, root_slice) = current_level.slices[0];
@@ -596,7 +604,9 @@ svo_slice_t* svo_entree_slices(const volume_of_slices_t& volume_of_slices, std::
         assert(current_slice);
         assert(current_slice->children);
 
-
+        auto& children = *current_slice->children;
+        if (children.size() == 0)
+            return 0;
 
         while (true)
         {
@@ -626,19 +636,17 @@ svo_slice_t* svo_entree_slices(const volume_of_slices_t& volume_of_slices, std::
                 {
                     svo_slice_t* new_replacement_slice = svo_init_slice(current_slice->level + 1, current_slice->side*2);
 
-                    std::vector<svo_slice_t*> group_children_vector(group.group_children.begin(), group.group_children.end());
 
-
-                    for (svo_slice_t* child : group_children_vector)
+                    for (svo_slice_t* child : group.group_children)
                     {
                         if (!child)
                             continue;
                         assert( child->side*2 < SVO_MAX_VOLUME_SIDE );
                     }
 
-                    svo_join_slices(new_replacement_slice, group_children_vector);
+                    svo_join_slices(new_replacement_slice, group.group_children);
 
-                    for (svo_slice_t* child : group_children_vector)
+                    for (svo_slice_t* child : group.group_children)
                     {
                         if (!child)
                             continue;

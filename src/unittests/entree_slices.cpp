@@ -4,6 +4,7 @@
 #include "landscapes/svo_tree.slice_mgmt.hpp"
 #include "landscapes/svo_tree.sanity.hpp"
 #include "gtest/gtest.h"
+#include "main.hpp"
 
 #include <vector>
 #include <fstream>
@@ -12,36 +13,9 @@
 struct EntreeSlicesTest : public ::testing::Test {
     const svo::volume_of_slices_t* volume_of_slices;
 protected:
-    svo::volume_of_slices_t* m_volume_of_slices;
  
     virtual void SetUp() {
-        
-        m_volume_of_slices = new svo::volume_of_slices_t(32,16);
-        
-        
-        ///lets put in 8 slices, and see if we get one
-        for (vcurve_t slice_vcurve = 0; slice_vcurve < 32*32*32; ++slice_vcurve)
-        {
-            auto* slice = svo::svo_init_slice(0, 16);
-            m_volume_of_slices->slices.push_back( std::make_tuple( slice_vcurve, slice ) );
-        }
-
-        std::ifstream infile("../libs/test-region/r.0.0.mca", std::ios::binary);
-
-        ASSERT_TRUE(infile);
-
-        svo::load_mca_region(*m_volume_of_slices, infile);
-        
-        volume_of_slices = m_volume_of_slices;
-
-        
-        for ( const auto& vcurve_slice_pair : volume_of_slices->slices)
-        {
-            const auto* slice = std::get<1>(vcurve_slice_pair);
-            
-            //std::cout << "slice->pos_data->size(): " << slice->pos_data->size() << std::endl;
-        }
-        
+        volume_of_slices = global_env->volume_of_slices;
         
     }
 
@@ -49,13 +23,6 @@ protected:
     // Code here will be called immediately after each test
     // (right before the destructor).
         
-        for (auto& vcurve_slice_pair : m_volume_of_slices->slices)
-        {
-            vcurve_t slice_vcurve; svo::svo_slice_t* slice;
-            std::tie(slice_vcurve, slice) = vcurve_slice_pair;
-            
-            svo::svo_uninit_slice(slice,true);
-        }
     }
 };
 
