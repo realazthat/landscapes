@@ -3,6 +3,7 @@
 
 
 #include <utility>
+#include <algorithm>
 
 ///http://stackoverflow.com/a/6175873/586784
 
@@ -26,5 +27,11 @@ inline auto ireversed(T& v) -> decltype( as_range(std::make_pair(v.rbegin(), v.r
     return as_range(std::make_pair(v.rbegin(), v.rend()));
 }
 
+
+template<typename T>
+inline bool overlap_open_close_range(T x1, T x2, T y1, T y2)
+{
+    return std::max(x1,y1) <= std::min(x2-1,y2-1);
+}
 
 #endif

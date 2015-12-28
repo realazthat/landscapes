@@ -2246,8 +2246,23 @@ svo_error_t svo_block_append_slice_data(byte_t* address_space, svo_block_t* bloc
  * 2. attach the destination slice to the parent. detatch the src slices from the parent.
  * 3. connect the children of the src slices to the destination slice. detatch children of src slices from src slice.
  */
-void svo_join_slices(svo_slice_t* dst_slice, const std::vector<svo_slice_t*>& src_slices)
+void svo_join_slices(svo_slice_t* dst_slice, const std::array<svo_slice_t*, 8>& src_slices)
 {
+    assert(src_slices.size() == 8);
+    assert(std::any_of(src_slices.begin(), src_slices.end(), [](svo_slice_t* slice){ return slice != nullptr; }));
+    
+    
+    std::set<svo_slice_t*> src_slice_set;
+    for (auto* src_slice : src_slices)
+    {
+        if (!src_slice)
+            continue;
+        assert(src_slice_set.count(src_slice) == 0);
+        src_slice_set.insert(src_slice);
+    }
+    
+    
+    
     DEBUG {
         
         if(auto error = svo_slice_sanity(dst_slice))
@@ -2267,43 +2282,80 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::vector<svo_slice_t*>& sr
         }
     }
 
-    assert(dst_slice->parent_slice == 0);
-
-    ///assign the properties of the first src slice to the dst slice. Use a loop to find the first valid slice.
+    const auto* src_slice0 = (svo_slice_t*)nullptr;
+    
+    for (const auto* src_slice : src_slices)
+    {
+        if (src_slice == nullptr)
+            continue;
+        
+        src_slice0 = src_slice;
+        break;
+    }
+    
+    std::size_t src_slice_count = 0;
+    for (const auto* src_slice : src_slices)
+        if (src_slice)
+            src_slice_count++;
+    assert(src_slice_count == src_slice_set.size());
+    assert(src_slice0 != nullptr);
+    
+    assert(src_slice0->side % 2 == 0);
+    
+    
+    
+    vcurve_t last_parent_vcurve_end = 0;
+    ///sanity check for the other src slices.
     for (const auto* src_slice : src_slices)
     {
         if (!src_slice)
             continue;
-        dst_slice->parent_slice = src_slice->parent_slice;
-        ///the destination will point to the same place as the first slice.
-        ///note however that this might be a little off, as the first octant slice might not be in @c src_slices
-        /// and this will be modded down to the lowest corner of the @c dst_slice node.
-        dst_slice->parent_vcurve_begin = src_slice->parent_vcurve_begin;
-        ///destination will have double the resolution, as it is combining 8 parts into 1.
-        dst_slice->side = src_slice->side * 2;
 
+        DEBUG {
+            if(auto error = svo_slice_sanity(src_slice))
+            {
+                std::cerr << error << std::endl;
+                assert(false && "sanity failed");
+            }
+        }
         
         
 
-        ///only want the first slice.
-        break;
+        assert(src_slice->parent_slice == src_slice0->parent_slice);
+        assert(src_slice->side == src_slice0->side);
+        assert(src_slice->level == src_slice0->level);
+        
+        
+        auto src_slice_parent_size = vcurvesize(src_slice->side / 2);
+        auto src_slice_parent_vcurve_end = src_slice->parent_vcurve_begin + src_slice_parent_size;
+        
+        assert(src_slice->parent_vcurve_begin >= last_parent_vcurve_end);
+        last_parent_vcurve_end = src_slice_parent_vcurve_end;
     }
+    
+    
+    ///destination will have double the resolution, as it is combining 8 parts into 1.
+    dst_slice->side = src_slice0->side * 2;
+    dst_slice->level = src_slice0->level;
+    
+    ///number of possible voxels in the destination slice.
+    //vcurvesize_t dst_size = vcurvesize(dst_slice->side);
+    vcurvesize_t dst_size_in_parent = vcurvesize(dst_slice->side / 2);
+    vcurvesize_t src_size_in_parent = vcurvesize(src_slice0->side / 2);
+    
+    dst_slice->parent_slice = src_slice0->parent_slice;
+    ///the destination will point to the same place as the first slice, but the first slice is sometimes
+    /// empty, so we need to move it down to the floor of the siblings passed in.
+    dst_slice->parent_vcurve_begin = ifloor(src_slice0->parent_vcurve_begin, dst_size_in_parent);
+    auto dst_slice_parent_vcurve_end = dst_slice->parent_vcurve_begin + dst_size_in_parent;
 
-    assert(dst_slice->parent_slice != 0);
 
+    assert(src_size_in_parent == dst_size_in_parent / 8);
     assert(dst_slice->side < SVO_MAX_VOLUME_SIDE);
     assert(dst_slice->pos_data);
     assert(dst_slice->buffers);
-
-    //vcurvesize_t dst_size = vcurvesize(dst_slice->side);
-    ///the virtual size of the full space of the parent.
-    /// that is to say, the number of possible voxels in the parent volume.
-    vcurvesize_t dst_size_in_parent = vcurvesize(dst_slice->side / 2);
-
-    ///Adjust dst_slice data start in parent to the nearest lower @c dst_size_in_parent (in case the first slice was missing
-    /// from src_slices).
-    dst_slice->parent_vcurve_begin = dst_slice->parent_vcurve_begin - (dst_slice->parent_vcurve_begin % dst_size_in_parent);
-
+    
+    
 
 
 
@@ -2323,12 +2375,65 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::vector<svo_slice_t*>& sr
                 assert(false && "sanity failed");
             }
         }
+        
+        assert(src_slice->side % 2 == 0);
+        assert(dst_slice->side % 2 == 0);
+        vcurvesize_t src_size_in_parent = vcurvesize(src_slice->side / 2);
+        vcurvesize_t src_parent_vcurve_end = src_slice->parent_vcurve_begin + src_size_in_parent;
+        
+        
+        vcurvesize_t dst_size_in_parent = vcurvesize(dst_slice->side / 2);
+        vcurvesize_t dst_parent_vcurve_end = dst_slice->parent_vcurve_begin + dst_size_in_parent;
+        
+        
 
         assert(dst_slice->parent_slice == src_slice->parent_slice);
-        assert(dst_slice->parent_vcurve_begin <= src_slice->parent_vcurve_begin && "first slice specified is not the first in the parent");
         assert(dst_slice->side == src_slice->side * 2);
+        assert(dst_slice->level == src_slice->level);
+        
+        assert(dst_slice->parent_vcurve_begin <= src_slice->parent_vcurve_begin && "slice is not contained within the (joined) destination slice");
+        assert(dst_parent_vcurve_end >= src_parent_vcurve_end && "slice is not contained within the (joined) destination slice");
 
     }
+    
+    ///some more sanity on the src corners
+    for (ccurve_t src_corner = 0; src_corner < 8; ++src_corner)
+    {
+        auto* src_slice = src_slices[src_corner];
+        if (!src_slice)
+            continue;
+        
+        
+        assert(src_slice->parent_vcurve_begin == dst_slice->parent_vcurve_begin + src_corner*src_size_in_parent);
+    }
+    
+    auto* parent_slice = src_slice0->parent_slice;
+    
+    ///parent sanity checking
+    if (parent_slice)
+    {
+        for (auto* sibling : *parent_slice->children)
+        {
+            assert(sibling);
+            
+            auto sibling_parent_vcurve_end = sibling->parent_vcurve_begin + vcurvesize(sibling->side / 2);
+            
+            
+            if (src_slice_set.count(sibling) > 0)
+            {
+                assert(sibling->parent_vcurve_begin >= dst_slice->parent_vcurve_begin);
+                assert(sibling_parent_vcurve_end <= dst_slice_parent_vcurve_end);
+            } else {
+                assert(!overlap_open_close_range(sibling->parent_vcurve_begin, sibling_parent_vcurve_end
+                                                , dst_slice->parent_vcurve_begin, dst_slice_parent_vcurve_end));
+            }
+        }
+    
+    
+    }
+    
+    
+    
 
     ///add the channels to the dst_slice
     for (const auto* src_slice : src_slices)
@@ -2343,14 +2448,14 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::vector<svo_slice_t*>& sr
     }
     
     ///the offset of each source slice in the the destination slice; we will compute this momentarily.
-    std::vector<vcurvesize_t> src_vcurve_adjustments(src_slices.size(), 0);
+    std::array<vcurvesize_t, 8> src_vcurve_adjustments;
 
     
     ///copy data over to the destination slice
     {
-        for (std::size_t src_slice_index = 0; src_slice_index < src_slices.size(); ++src_slice_index)
+        for (ccurve_t src_slice_corner = 0; src_slice_corner < 8; ++src_slice_corner)
         {
-            const auto* src_slice = src_slices[src_slice_index];
+            const auto* src_slice = src_slices[src_slice_corner];
 
             if (!src_slice)
                 continue;
@@ -2369,7 +2474,7 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::vector<svo_slice_t*>& sr
             vcurve_t src_vcurve_adjustment = (src_slice->parent_vcurve_begin - dst_slice->parent_vcurve_begin)*8;
 
             ///cache this for later
-            src_vcurve_adjustments[src_slice_index] = src_vcurve_adjustment;
+            src_vcurve_adjustments[src_slice_corner] = src_vcurve_adjustment;
 
 
             //std::cout << "----" << std::endl;
@@ -2423,12 +2528,19 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::vector<svo_slice_t*>& sr
     }
 
     ///attach the destination slice to the parent. detatch the src slices from the parent.
+    if (src_slice0->parent_slice)
     {
         assert(dst_slice->parent_slice);
+        assert(dst_slice->parent_slice == src_slice0->parent_slice);
         assert(dst_slice->parent_slice->children);
 
         std::size_t child_index = 0;
         auto& parent_children = *(dst_slice->parent_slice->children);
+        
+        
+        for (auto* sibling : parent_children){
+            assert(sibling);
+        }
 
         //std::cout << "dst_slice->parent_vcurve_begin: " << dst_slice->parent_vcurve_begin << std::endl;
         for (auto* src_slice : src_slices)
@@ -2436,7 +2548,7 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::vector<svo_slice_t*>& sr
             if (!src_slice)
                 continue;
 
-
+            ///remove all the src_slices from the parent
             for (; child_index < parent_children.size(); ++child_index)
             {
                 if (parent_children[child_index] == src_slice)
@@ -2465,15 +2577,19 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::vector<svo_slice_t*>& sr
                 dst_slice_appended = true;
             }
         }
+        
+        
+        for (auto* sibling : parent_children1){
+            assert(sibling);
+            assert(src_slice_set.count(sibling) == 0);
+            
+        }
+        assert(std::find(parent_children1.begin(), parent_children.end(), dst_slice) != parent_children1.end());
+        
+        assert(parent_children1.size() == parent_children.size() - src_slice_count + 1);
+        
         parent_children = parent_children1;
 
-        /*
-        for (auto* src_slice : src_slices)
-            if (src_slice)
-                std::cout << "src_slice->parent_vcurve_begin: " << src_slice->parent_vcurve_begin << std::endl;
-        for (auto* child : parent_children1)
-            std::cout << "sibling->parent_vcurve_begin: " << child->parent_vcurve_begin << std::endl;
-        */
     }
 
     ///detatch children of src slices from src slice; connect the children of the src slices to the destination slice. 
@@ -2484,9 +2600,9 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::vector<svo_slice_t*>& sr
         assert(dst_children.size() == 0);
 
         ///for each src slice
-        for (std::size_t src_child_index = 0; src_child_index < src_slices.size(); ++src_child_index)
+        for (ccurve_t src_slice_corner = 0; src_slice_corner < 8; ++src_slice_corner)
         {
-            svo_slice_t* src_slice = src_slices[src_child_index];
+            svo_slice_t* src_slice = src_slices[src_slice_corner];
 
             if (!src_slice)
                 continue;
@@ -2516,7 +2632,7 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::vector<svo_slice_t*>& sr
                 /// we already stored the adjustment for each octant within the grandparent slice in
                 /// @c src_vcurve_adjustments; therefore we can use that,
                 /// to calculate the adjustment in the grandchild slice from within the dst_slice.
-                gchild->parent_vcurve_begin += src_vcurve_adjustments[src_child_index];
+                gchild->parent_vcurve_begin += src_vcurve_adjustments[src_slice_corner];
             }
 
             ///clear the children of @c src_slice.
@@ -2534,8 +2650,8 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::vector<svo_slice_t*>& sr
     DEBUG {
         if(auto error = svo_slice_sanity(dst_slice))
         {
-            std::cerr << error << std::endl;
-            assert(false && "sanity failed");
+            //std::cerr << error << std::endl;
+            PPK_ASSERT(!error, "sanity failed: %s", error.error.c_str() );
         }
 
         assert(dst_slice->children);
@@ -2664,6 +2780,13 @@ void svo_split_slice(svo_slice_t* src_slice, std::vector<svo_slice_t*>& new_slic
 }
 
 
+/* finds groups of children that are candidates to be combined.
+ * 
+ * given a slice with many direct children, this function will find groups of siblings among these
+ * that are properly aligned and are of the same size and are therefore candidates for being combined
+ * as one child.
+ *
+ */
 std::list<svo_slice_child_group_t> svo_find_joinable_groups_of_children(svo_slice_t* slice)
 {
     ///pseudocode:
@@ -2686,11 +2809,13 @@ std::list<svo_slice_child_group_t> svo_find_joinable_groups_of_children(svo_slic
     assert(slice->children);
     auto& children = *slice->children;
 
-
+    // record the results of this function
     std::list<svo_slice_child_group_t> groups;
 
+    // this is the current group, starts off as empty.
     svo_slice_child_group_t candidate_group;
 
+    // this resets the "current" group to empty
     auto reset_candidate_group = [&candidate_group]()
     {
         for (ccurve_t ccurve = 0; ccurve < 8; ++ccurve)
@@ -2702,52 +2827,69 @@ std::list<svo_slice_child_group_t> svo_find_joinable_groups_of_children(svo_slic
         candidate_group.count = 0;
     };
 
+    // this adds a child to the current group
     auto add_to_candidate_group = [&candidate_group](svo_slice_t* child)
     {
         assert(child->parent_slice);
+    
+        // if combining this child with other children would result in a slice
+        // that has a space that is too large, don't consider this; this function
+        // should never called in this case.
+        assert(child->side * 2 <= SVO_MAX_VOLUME_SIDE);
+        
 
-        if (child->side * 2 > SVO_MAX_VOLUME_SIDE)
-            return;
-        ///check if this candidate already takes up the parent's full volume
-        if (child->side == child->parent_slice->side * 2)
-            ///nothing to combine here
-            return;
-
-        ///if the current candidate group is null
+        // if the current candidate group is null; this is the first child in the group
         if (candidate_group.group_side_in_parent == 0)
         {
+            // initialize the group to match the properties of this child.
+            // record various properties of the group.
+            
+            // record the child size for the entire group; they all must match the same size
             candidate_group.child_side = child->side;
-
-            vcurvesize_t child_side_in_parent = child->side / 2;
-            ///the child is double resolution, so the child's side in the parent resolution is halved,
-            /// but the group side is doubled the child's 
+            
+            // the size of the child's space inside the parent
+            // the child is double resolution, so the child's side in the parent resolution is halved.
+            vside_t child_side_in_parent = child->side / 2;
+            
+            
+            // but the group side is doubled the child's, because there are (up to) 8 children slices
+            // in a group.
             candidate_group.group_side_in_parent = child_side_in_parent * 2;
+            
+            // and now compute the vcurve space that the group takes up in the parent; it is just the
+            // cube of the side of the group.
             candidate_group.group_size_in_parent = vcurvesize(candidate_group.group_side_in_parent);
 
-            ///if we partition the parent's space by group's size, we will know where the beginning
-            /// of this group is. the child's position in the group is thus the modulus of the group size.
-            vcurvesize_t child_parent_vcurve_in_group = child->parent_vcurve_begin % candidate_group.group_size_in_parent;
-            ///and we can thus calculate the beginning of the group.
-            candidate_group.parent_vcurve_begin = child->parent_vcurve_begin - child_parent_vcurve_in_group;
+            // and we can thus calculate the beginning of the group.
+            // the beginning of any aligned space is the floor of the alignment
+            candidate_group.parent_vcurve_begin = ifloor(child->parent_vcurve_begin, candidate_group.group_size_in_parent);
         }
 
-        const auto& child_side = candidate_group.child_side;
         const auto& group_size_in_parent = candidate_group.group_size_in_parent;
         auto& group_children = candidate_group.group_children;
+        
+        
+        // an alias for the group's starting position
         vcurvesize_t group_parent_vcurve_begin = candidate_group.parent_vcurve_begin;
+        // calculate the group's ending position
         vcurvesize_t group_parent_vcurve_end = group_parent_vcurve_begin + group_size_in_parent;
+        // calculate the child's slice within the parent
         vcurvesize_t child_size_in_parent = vcurvesize(child->side / 2);
-
-        assert(child->side == child_side);
-
-        ///if we partition the parent's space by group's size, we will know where the beginning
-        /// of this group is. the child's position in the group is thus the modulus of the group size.
-        vcurvesize_t child_parent_vcurve_in_group = child->parent_vcurve_begin % group_size_in_parent;
-        //vcurvesize_t child_parent_vcurve_in_group_end = child_parent_vcurve_in_group + child_size_in_parent;
-
+        
+        // sanity test; this function should only be called if this condition is true
+        assert(child->side == candidate_group.child_side);
+        assert(candidate_group.parent_vcurve_begin <= child->parent_vcurve_begin);
+        assert(child->parent_vcurve_begin <= group_parent_vcurve_end);
+        assert(child->parent_vcurve_begin % child_size_in_parent == 0);
         ///make sure the child does not overflow the group.
         assert( child->parent_vcurve_begin + child_size_in_parent <= group_parent_vcurve_end);
         assert( child->parent_vcurve_begin >= group_parent_vcurve_begin);
+
+        ///if we partition the parent's space by group's size, we will know where the beginning
+        /// of this group is. the child's position in the group is thus the modulus of the group size.
+        vcurvesize_t child_parent_vcurve_in_group = child->parent_vcurve_begin - group_parent_vcurve_begin;
+        //vcurvesize_t child_parent_vcurve_in_group_end = child_parent_vcurve_in_group + child_size_in_parent;
+
 
         ///the child size should be 1 octant of the group.
         assert(child_size_in_parent == group_size_in_parent / 8);
@@ -2763,7 +2905,7 @@ std::list<svo_slice_child_group_t> svo_find_joinable_groups_of_children(svo_slic
         candidate_group.count += 1;
     };
 
-    auto is_child_in_candidate_group_bounds = [&candidate_group] (const svo_slice_t* child)->bool{
+    auto is_child_inside_candidate_group_bounds = [&candidate_group] (const svo_slice_t* child)->bool{
 
         const auto& group_size_in_parent = candidate_group.group_size_in_parent;
         vcurvesize_t group_parent_vcurve_begin = candidate_group.parent_vcurve_begin;
@@ -2777,6 +2919,22 @@ std::list<svo_slice_child_group_t> svo_find_joinable_groups_of_children(svo_slic
         return true;
     };
 
+    auto is_child_overlapping_candidate_group_bounds = [&candidate_group] (const svo_slice_t* child)->bool{
+        
+        // the data range of the group
+        auto group_parent_vcurve_end = candidate_group.parent_vcurve_begin + candidate_group.group_size_in_parent;
+        
+        
+        auto child_parent_vcurve_begin = child->parent_vcurve_begin;
+        auto child_size_in_parent = vcurvesize(child->side / 2);
+        auto child_parent_vcurve_end = child_parent_vcurve_begin + child_size_in_parent;
+        
+        // this child covers *part* of what this group would cover
+        if (overlap_open_close_range(child_parent_vcurve_begin, child_parent_vcurve_end
+                                    , candidate_group.parent_vcurve_begin, group_parent_vcurve_end))
+            return true;
+        return false;
+    };
 
     ///candidate_group = None
     reset_candidate_group();
@@ -2788,40 +2946,51 @@ std::list<svo_slice_child_group_t> svo_find_joinable_groups_of_children(svo_slic
         assert(child);
         DEBUG_PRINT { std::cerr << "child " << i << std::endl; }
 
-
+        // if combining this child with its siblings will result in a slice that is too large
         if (!(child->side*2 <= SVO_MAX_VOLUME_SIDE)) {
+            // reset the group, and on to the next child.
             reset_candidate_group();
             continue;
         }
-
-        ///if candidate group is not initialized
+        
+        
+        
+        // if candidate group is not initialized
         if (candidate_group.count == 0){
             DEBUG_PRINT { std::cerr << "  candidate group is empty; add this child to it" << std::endl; }
-            ///initialize candidate group with this child.
+            
+            
+            
+            // initialize candidate group with this child.
             add_to_candidate_group(child);
+            
+            
         }
-        ///else if this child is within the bounds of the candidate group
-        else if (is_child_in_candidate_group_bounds(child)){
-            ///if this child has the same @c side length as the candidate group
+        // else if this child is within the bounds of the candidate group
+        else if (is_child_inside_candidate_group_bounds(child)){
+            // if this child has the same @c side length as the candidate group
             DEBUG_PRINT { std::cerr << "  candidate group is NOT empty" << std::endl; }
             DEBUG_PRINT { std::cerr << "  AND this child is in the candidate group bounds" << std::endl; }
             if (child->side == candidate_group.child_side) {
-                ///then add this child to the candidate group
+                // then add this child to the candidate group
                 DEBUG_PRINT { std::cerr << "    this child has the same side length as the candidate group" << std::endl; }
                 DEBUG_PRINT { std::cerr << "      adding child to candidate group" << std::endl; }
                 add_to_candidate_group(child);
             }
-            ///else, the candidate group is not valid,
+            // else, the candidate group is not valid,
             else {
-                ///throw it out
+                // throw it out
                 DEBUG_PRINT { std::cerr << "    child is not the correct size for the candidate group" << std::endl; }
                 DEBUG_PRINT { std::cerr << "      flushing candidate group to the toilet" << std::endl; }
                 reset_candidate_group();
-                ///and put this child into the new candidate group
+                // and put this child into the new candidate group
                 DEBUG_PRINT { std::cerr << "      creating new candidate group for this child" << std::endl; }
                 add_to_candidate_group(child);
-                ///set the bounds of the candidate group to the beginning of this child's group's bounds.
-                ///noop
+                
+                if (is_child_overlapping_candidate_group_bounds(children[i-1]))
+                    // unfortunately the previous child overlaps with this candidate's group's bounds
+                    // and this invalidates the group
+                    reset_candidate_group();
             }
         }
         ///else if this child is not in the bounds of this candidate group
@@ -2835,19 +3004,100 @@ std::list<svo_slice_child_group_t> svo_find_joinable_groups_of_children(svo_slic
             ///and put this child into the new candidate group
             DEBUG_PRINT { std::cerr << "    reset the candidate group" << std::endl; }
             reset_candidate_group();
-
             DEBUG_PRINT { std::cerr << "    add this child to the new candidate group" << std::endl; }
             add_to_candidate_group(child);
-            ///set the bounds of the candidate group to the first of this child's group's bounds.
-            ///noop
         }
 
+        // we need to check the previous child; to see if we can start a group, as
+        // this must be the first child that would cover the bounds of this group.
+        if (candidate_group.count == 1 && i > 0 && is_child_overlapping_candidate_group_bounds(children[i-1]))
+            // unfortunately the previous child overlaps with this candidate's group's bounds
+            // and this invalidates the group
+            reset_candidate_group();
     }
 
-
+    // if the final current group has more than one child to combine
     if (candidate_group.count > 1 && candidate_group.group_side_in_parent <= slice->side) {
+        // record the group
         groups.push_back(candidate_group);
     }
+
+#ifndef NDEBUG
+    // for each group
+    for (const auto& group : groups)
+    {
+        // collect all the siblings in the group into a set
+        std::set<const svo_slice_t*> group_set;
+        
+        // for each sibling position
+        for (ccurve_t sibling_ccurve = 0; sibling_ccurve < 8; ++sibling_ccurve)
+        {
+            const auto* sibling = group.group_children[sibling_ccurve];
+            
+            // if there is no sibling at this position
+            if (!sibling)
+                // next sibling
+                continue;
+            
+            // this sibling should not be in the `group_set` yet, we have not yet added it
+            assert(group_set.count(sibling) == 0);
+            
+            // record the sibling into the `group_set`
+            group_set.insert(sibling);
+            
+            // calculate the position of the end of the group's data.
+            auto group_parent_end_in_parent = group.parent_vcurve_begin + group.group_size_in_parent;
+            // calculate the size of the range of the sibling's data in the parent.
+            auto sibling_size_in_parent = vcurvesize(sibling->side / 2);
+            // calculate the position of the end of the sibling's data range.
+            auto sibling_parent_end_in_parent = sibling->parent_vcurve_begin + sibling_size_in_parent;
+            
+            // the sibling side should match the one prescribed by the group
+            assert(sibling->side == group.child_side);
+            // the sibling's data position range should be inside the group's overall data position range
+            assert(sibling->parent_vcurve_begin >= group.parent_vcurve_begin);
+            // the sibling's data position range should be inside the group's overall data position range
+            assert(sibling_parent_end_in_parent <= group_parent_end_in_parent);
+            // the sibling's start position should match it's location within the group.
+            assert(sibling->parent_vcurve_begin == group.parent_vcurve_begin + sibling_ccurve*sibling_size_in_parent);
+            // the group's alignment is its size
+            assert(group.parent_vcurve_begin % group.group_size_in_parent == 0);
+            // the group's start position should be the floor of any position within it, modulo the alignment, and the
+            // alignment of a group should be its size. here we check the sibling's floored position to match the group's
+            // start position.
+            assert(group.parent_vcurve_begin == ifloor(sibling->parent_vcurve_begin, group.group_size_in_parent));
+        }
+        
+        // now check all the children of the parent
+        for (const auto* sibling : children)
+        {
+            // the children of the parent should not be null
+            assert(sibling);
+            
+            // if the sibling is NOT in our group
+            if (group_set.count(sibling) == 0)
+            {
+                // calculate the end of the sibling's data range
+                auto sibling_parent_vcurve_end = sibling->parent_vcurve_begin + vcurvesize(sibling->side / 2);
+                // calculate the end of the group's data range
+                auto group_parent_vcurve_end = group.parent_vcurve_begin + group.group_size_in_parent;
+                
+                // the sibling should not overlap with our group; it is not part of the group and therefore
+                // the data range should not overlap.
+                assert(!overlap_open_close_range(sibling->parent_vcurve_begin, sibling_parent_vcurve_end
+                                                , group.parent_vcurve_begin
+                                                , group_parent_vcurve_end));
+            }
+        }
+        
+        // just some sanity.
+        // the group's side within the parent is half the group's side, which is
+        // double the side of each sibling in the group.
+        assert(group.group_side_in_parent == group.child_side);
+        // the group's data range size within the parent is equal the the cube of its side
+        assert(group.group_size_in_parent == vcurvesize(group.group_side_in_parent));
+    }
+#endif
 
     return groups;
 }
