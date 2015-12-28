@@ -177,6 +177,7 @@ add_executable(unittests
     src/unittests/entree_slices.cpp
     src/unittests/load_mca_region.cpp
     src/unittests/serialization.cpp
+    src/unittests/overlap_open_close_range.cpp
     src/unittests/main.cpp
 
     )
