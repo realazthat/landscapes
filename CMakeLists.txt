@@ -14,9 +14,9 @@ set(GLM_LIB ""
     CACHE STRING "Libs for glm")
 
 
-set(CEGUI_INCLUDE_DIR "./libs/cegui/cegui-0.8.4/cegui-0.8.4/cegui/include;./libs/cegui/cegui-0.8.4/cegui-0.8.4/build/cegui/include"
+set(CEGUI_INCLUDE_DIR "./libs/cegui/cegui-source/cegui/include;./libs/cegui/cegui-source/build/cegui/include"
     CACHE STRING "Paths to CEGUI includes")
-set(CEGUI_LIB_DIR "./libs/cegui/cegui-0.8.4/cegui-0.8.4/build/lib"
+set(CEGUI_LIB_DIR "./libs/cegui/cegui-source/build/lib"
     CACHE STRING "Paths to CEGUI libs")
 set(CEGUI_LIB ""
     CACHE STRING "Libs for CEGUI")
@@ -162,6 +162,7 @@ add_executable(landscapes-mc-demo
     src/landscapes/mc-demo.cpp
     )
 set_property(TARGET landscapes-mc-demo PROPERTY CXX_STANDARD 11)
+target_compile_definitions(landscapes-mc-demo PUBLIC -DCEGUI_USE_GLEW=1)
 
 target_link_libraries(landscapes-mc-demo
     landscapes

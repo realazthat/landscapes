@@ -9,9 +9,10 @@
 
 #include "landscapes/svo_render.hpp"
 #include "landscapes/svo_formatters.hpp"
+#include "landscapes/svo_render.hpp"
 
 #include "sgfxapi/sgfxapi.glcommon.hpp"
-#include "sgfxapi/drawutils.hpp"
+#include "sgfxapi/sgfxapi-drawutils.hpp"
 #include "sgfxapi/sgfxapi.hpp"
 
 
@@ -45,15 +46,15 @@ struct motherclass_t{
     bool d_windowSized;
     int d_newWindowWidth, d_newWindowHeight;
 
-    std::shared_ptr<GfxApi::Graphics> graphics;
+    std::shared_ptr<SGFXAPI::Graphics> graphics;
 
-    std::vector<std::shared_ptr<GfxApi::RenderNode> > scene;
+    std::vector<std::shared_ptr<SGFXAPI::RenderNode> > scene;
 
     CEGUI::WindowManager* windowmgr;
     CEGUI::GUIContext* guictx;
 
 
-    std::shared_ptr<svo::MCSVOTest> svotest;
+    std::shared_ptr<svo::svo_render_t> svotest;
 
     Frustum camera;
     float walkSpeed = 1;
@@ -65,7 +66,7 @@ struct motherclass_t{
 
     std::shared_ptr<SGFXAPI::Mesh> svoquadmesh;
     ///{(pbo,fence,width, height, bytes)}
-    std::vector< std::tuple<std::shared_ptr<GfxApi::PixelBuffer>, std::shared_ptr<GfxApi::Fence>, int, int, std::size_t> > svo_pbos;
+    std::vector< std::tuple<std::shared_ptr<SGFXAPI::PixelBuffer>, std::shared_ptr<SGFXAPI::Fence>, int, int, std::size_t> > svo_pbos;
     std::size_t svo_pbo_upload_idx, svo_pbo_render_idx;
 
     motherclass_t()
@@ -117,7 +118,7 @@ struct motherclass_t{
 
 
         glfwSetWindowUserPointer(mwinder, this);
-        GfxApi::initializeGlew();
+        SGFXAPI::initializeGlew();
         glfwSwapInterval(1);
 
         glfwSetInputMode(mwinder, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -393,7 +394,7 @@ struct motherclass_t{
 
         assert(!(fence.Waiting()));
         
-        auto pbo_bind = GfxApi::make_bind_guard(pbo);
+        auto pbo_bind = SGFXAPI::make_bind_guard(pbo);
 
         if (pbo.LogicalBufferSizeBytes() < bytes)
         {
@@ -438,9 +439,9 @@ struct motherclass_t{
 
         return true;
     }
-    bool render_pbo_to_texture(std::shared_ptr<GfxApi::Texture>& textureptr)
+    bool render_pbo_to_texture(std::shared_ptr<SGFXAPI::Texture>& textureptr)
     {
-        using namespace GfxApi;
+        using namespace SGFXAPI;
 
         size_t next_svo_pbo_render_idx = find_next_render_pbo();
 
@@ -467,8 +468,8 @@ struct motherclass_t{
                                             , width, height, 1);
         }
 
-        auto svotxt_bind = GfxApi::make_bind_guard(*textureptr);
-        auto pbo_bind = GfxApi::make_bind_guard(pbo);
+        auto svotxt_bind = SGFXAPI::make_bind_guard(*textureptr);
+        auto pbo_bind = SGFXAPI::make_bind_guard(pbo);
 
         textureptr->UpdateToGpu(width, height, 1
                                 , TextureFormat(TextureElementType::FLOAT, TexturePixelFormat::RGBA)
@@ -552,7 +553,7 @@ struct motherclass_t{
             {
                 std::cout << "rendering svo tile" << std::endl;
 
-                using namespace GfxApi;
+                using namespace SGFXAPI;
 
                 if (width*height > 0)
                 {
@@ -666,7 +667,7 @@ struct motherclass_t{
 
 
 
-            std::map<int, std::tuple< std::shared_ptr<GfxApi::Texture> > > oldtexstates;
+            std::map<int, std::tuple< std::shared_ptr<SGFXAPI::Texture> > > oldtexstates;
 
             ///gfxapi section
             {
@@ -675,7 +676,7 @@ struct motherclass_t{
                 graphics->Clear();
 
                 
-                GfxApi::ClearBindings();
+                SGFXAPI::ClearBindings();
                 for (auto& node : scene)
                 {
 
@@ -724,23 +725,23 @@ struct motherclass_t{
                 /*
                 for (auto unit2texture : oldtexstates)
                 {
-                    GfxApi::TextureUnit unit(unit2texture.first);
+                    SGFXAPI::TextureUnit unit(unit2texture.first);
                     unit.Activate();
 
                     auto state = unit2texture.second;
 
-                    std::shared_ptr<GfxApi::Texture> texture;
+                    std::shared_ptr<SGFXAPI::Texture> texture;
                     std::tie(texture) = state;
                     texture->UnBind();
                 }*/
 
-                GfxApi::ClearBindings();
+                SGFXAPI::ClearBindings();
             }
 
             
             ///Unbind texture from texture unit 0, before running cegui
             {
-                GfxApi::TextureUnit unit(0);
+                SGFXAPI::TextureUnit unit(0);
                 unit.Activate();
                 glBindTexture(GL_TEXTURE_2D, 0);
             }
@@ -917,7 +918,7 @@ int main()
 
     motherclass.initGLFW(420, 420, "window title");
 
-    motherclass.graphics.reset(new GfxApi::Graphics());
+    motherclass.graphics.reset(new SGFXAPI::Graphics());
 
     motherclass.initCEGUI();
 
@@ -930,7 +931,7 @@ int main()
     
     motherclass.initialize_camera();
 
-    using GfxApi::RenderNode;
+    using SGFXAPI::RenderNode;
     {
         //auto node = std::make_shared<RenderNode>();
         //node->mesh = simpletri();
@@ -950,8 +951,8 @@ int main()
         {
             int bytes = 1024*1024*4*sizeof(float);
 
-            auto pbo = boost::make_shared<GfxApi::PixelBuffer>(GfxApi::Usage::STREAM_DRAW, bytes, false/* allocateCpu */);
-            auto fence = boost::make_shared<GfxApi::Fence>(false);
+            auto pbo = boost::make_shared<SGFXAPI::PixelBuffer>(SGFXAPI::Usage::STREAM_DRAW, bytes, false/* allocateCpu */);
+            auto fence = boost::make_shared<SGFXAPI::Fence>(false);
 
             auto pbo_bind = make_bind_guard(*pbo);
 
