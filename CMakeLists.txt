@@ -211,6 +211,7 @@ add_executable(unittests
     src/unittests/entree_slices.cpp
     src/unittests/load_mca_region.cpp
     src/unittests/serialization.cpp
+    src/unittests/camera_mapping.cpp
     src/unittests/main.cpp
 
     )
@@ -220,6 +221,7 @@ target_link_libraries(unittests
     landscapes
     landscapes-mc
     ${CNBT_LIB}
+    ${MGL_LIB}
     z
     ${CPPFORMAT_LIB}
     ${BPRINTER_LIB}
