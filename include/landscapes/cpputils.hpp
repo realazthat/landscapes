@@ -3,6 +3,7 @@
 
 
 #include <utility>
+#include <cstddef>
 
 
 namespace svo{
@@ -29,12 +30,12 @@ inline auto ireversed(T& v) -> decltype( as_range(std::make_pair(v.rbegin(), v.r
 }
 
 ///modular decrement.
-static inline size_t moddec(size_t x0, size_t modulus)
+static inline std::size_t moddec(size_t x0, size_t modulus)
 {
     return (x0 + modulus - 1) % modulus;
 }
 ///modular increment.
-static inline size_t modinc(size_t x0, size_t modulus)
+static inline std::size_t modinc(size_t x0, size_t modulus)
 {
     return (x0 + 1) % modulus;
 }
