@@ -146,33 +146,6 @@ set_property(TARGET landscapes-mc PROPERTY CXX_STANDARD 11)
 ################################################################################
 
 
-#target_link_libraries(sandbox
-#   MathGeoLib nbt z
-#   cppformat
-#   bprinter
-#   CEGUIBase-0 CEGUIOpenGLRenderer-0 CEGUIExpatParser CEGUICoreWindowRendererSet CEGUICommonDialogs-0
-#   glfw3 opengl32 glu32 glew32 glut)
-
-#set_property(TARGET sandbox PROPERTY CXX_STANDARD 11)
-
-#-------------------
-#add_executable(cubelib-clgen
-#    src/cubelib.cpp
-#    )
-
-
-#target_link_libraries(cubelib-clgen
-
-#)
-
-#-------------------
-#ADD_CUSTOM_COMMAND(
-#    OUTPUT cubelib.clgen.h
-#    COMMAND cubelib-clgen > cubelib.clgen.h
-#    DEPENDS cubelib-clgen
-#    )
-
-#-------------------
 add_executable(unittests
     src/unittests/entree_slices.cpp
     src/unittests/load_mca_region.cpp
@@ -198,5 +171,5 @@ target_link_libraries(unittests
 set_property(TARGET unittests PROPERTY CXX_STANDARD 11)
 
 
-#-------------------
+################################################################################
 
