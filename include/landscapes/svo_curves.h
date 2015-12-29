@@ -11,6 +11,8 @@
 extern "C"{
 #endif
 
+
+
 ///Volume curve type; this is a 3d integer coordinate encoded into a straightline,
 /// long-array-volume index using one of several encoding techniques.
 typedef uint32_t vcurve_t;
@@ -18,6 +20,12 @@ typedef uint32_t vcurve_t;
 typedef uint32_t vcurvesize_t;
 ///This is the type used to specify the length of a side of a 3d-long-array-volume.
 typedef uint32_t vside_t;
+
+// The largest allowed vside_t; considering that the type must allow coordinates to represent
+// 3D spaces, that means the largest allowed vside must take the size of types `vside_t` and
+// `vcurve_t` into account. Furthermore, the utility functions that use these types can be
+// optimized if they can assume limits to `vside_t` types.
+static const size_t SVO_MAX_VSIDE = 256;
 
 ///This is an index into the 8 children of a single cube; in other words, this corresponds
 /// to a corner_t, but using one of several encoding techniques.
@@ -200,6 +208,14 @@ static inline uint32_t uninterleave32_3(uint32_t curve)
     return result;
 }
 
+// converts a morton-order flat index into "volumes represented as large
+// flat arrays" into 3D coordinates.
+//
+//@vcurve the curve/index to convert
+//@side the side of the 3D volume
+//@x pointer to destination x coordinate
+//@y pointer to destination y coordinate
+//@z pointer to destination z coordinate
 static inline void vcurve2coords(vcurve_t vcurve, vside_t side, vside_t* x, vside_t* y, vside_t* z)
 {
     UNUSED(side);
@@ -209,13 +225,15 @@ static inline void vcurve2coords(vcurve_t vcurve, vside_t side, vside_t* x, vsid
     *z = uninterleave32_3(vcurve >> 2);
 }
 
+// converts 3 coordinates to a morton-order flat index into volumes represented as large
+// flat arrays.
 static inline vcurve_t coords2vcurve(vside_t x, vside_t y, vside_t z, vside_t side)
 {
     UNUSED(side);
     assert(x < side);
     assert(y < side);
     assert(z < side);
-    assert(side < 256);
+    assert(side < SVO_MAX_VSIDE);
 
     uint32_t index = morton256_x[x] | morton256_y[y] | morton256_z[z];
     return index;

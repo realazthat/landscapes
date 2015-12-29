@@ -3,9 +3,10 @@
 
 #include <cstddef>
 #include <cstdint>
+#include "landscapes/svo_curves.h"
 
 namespace svo{
-static const std::size_t SVO_MAX_VOLUME_SIDE = 256;
+static const std::size_t SVO_MAX_VOLUME_SIDE = SVO_MAX_VSIDE;
 enum class svo_error_t{
       OK
     , CHILDREN_TOO_FAR
