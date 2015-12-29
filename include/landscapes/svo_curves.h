@@ -7,6 +7,8 @@
 #include "unused.h"
 #include "opencl.shim.h"
 
+#include <stddef.h>
+
 #ifdef __cplusplus
 extern "C"{
 #endif
@@ -30,25 +32,45 @@ static const size_t SVO_MAX_VSIDE = 256;
 // see SVO_MAX_VSIDE
 static const size_t SVO_VSIDE_BITS = 8;
 
+static const size_t SVO_MAX_VCURVE = SVO_MAX_VSIDE*SVO_MAX_VSIDE*SVO_MAX_VSIDE;
+
 ///This is an index into the 8 children of a single cube; in other words, this corresponds
 /// to a corner_t, but using one of several encoding techniques.
 typedef fast_uint8_t ccurve_t;
 
-///takes a curve/index within a long-array-volume, such as a linear-order, or a morton-order,
-/// and converts it to 3d coordinates.
+/* Converts a [morton-order](https://en.wikipedia.org/wiki/Z-order_curve)
+ * flat index into "volumes represented as large flat arrays" into 3D coordinates.
+ *
+ * @vcurve the curve/index to convert
+ * @side the side of the 3D volume
+ * @x pointer to destination x coordinate
+ * @y pointer to destination y coordinate
+ * @z pointer to destination z coordinate
+ */
 static inline void vcurve2coords(vcurve_t vcurve, vside_t side, vside_t* x, vside_t* y, vside_t* z);
 
-///inverse of @c vcurve2coords().
+// converts 3 coordinates to a [morton-order](https://en.wikipedia.org/wiki/Z-order_curve)
+// flat index into "volumes represented as large flat arrays".
 static inline vcurve_t coords2vcurve(vside_t x, vside_t y, vside_t z, vside_t side);
 
-///takes a cube-corner, converts it to a linear curve/index withing the cube, such as a
-/// linear-order, or a morton order.
+// Same as coords2vcurve(), but done in the naive brute force way.
+static inline vcurve_t coords2vcurve_brute(vside_t x, vside_t y, vside_t z, vside_t side);
+
+// Takes a cube-corner, converts it to the corresponding
+// [morton-order](https://en.wikipedia.org/wiki/Z-order_curve)
+// curve for the cube-space as the volume. See vcurve2coords()
+//
+// @corner the cubelib corner
+//
+// @returns a ccurve_t, which is a uint-type with a value in the range [0,8)
+//          that is the [morton-order](https://en.wikipedia.org/wiki/Z-order_curve) index
+//          into the cube/volume
 static inline ccurve_t corner2ccurve(corner_t corner);
 
-///inverse of @c corner2ccurve().
+// inverse of @c corner2ccurve().
 static inline corner_t ccurve2corner(ccurve_t ccurve);
 
-///Returns the length of an entire long-volume-array.
+// Returns the length of an entire long-volume-array.
 static inline vcurvesize_t vcurvesize(vside_t side);
 
 
@@ -211,15 +233,6 @@ static inline uint32_t uninterleave32_3(uint32_t curve)
     return result;
 }
 
-/* converts a morton-order flat index into "volumes represented as large
- * flat arrays" into 3D coordinates.
- *
- * @vcurve the curve/index to convert
- * @side the side of the 3D volume
- * @x pointer to destination x coordinate
- * @y pointer to destination y coordinate
- * @z pointer to destination z coordinate
- */
 static inline void vcurve2coords(vcurve_t vcurve, vside_t side, vside_t* x, vside_t* y, vside_t* z)
 {
     UNUSED(side);
@@ -229,8 +242,6 @@ static inline void vcurve2coords(vcurve_t vcurve, vside_t side, vside_t* x, vsid
     *z = uninterleave32_3(vcurve >> 2);
 }
 
-// converts 3 coordinates to a morton-order flat index into volumes represented as large
-// flat arrays.
 static inline vcurve_t coords2vcurve(vside_t x, vside_t y, vside_t z, vside_t side)
 {
     UNUSED(side);
@@ -281,9 +292,6 @@ static inline vcurvesize_t vcurvesize(vside_t side)
 
 
 
-/* Same as coords2vcurve(), but done in the naive brute force way.
- *
- */
 static inline vcurve_t coords2vcurve_brute(vside_t x, vside_t y, vside_t z, vside_t side)
 {
     UNUSED(side);
