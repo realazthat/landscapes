@@ -21,11 +21,14 @@ typedef uint32_t vcurvesize_t;
 ///This is the type used to specify the length of a side of a 3d-long-array-volume.
 typedef uint32_t vside_t;
 
+
 // The largest allowed vside_t; considering that the type must allow coordinates to represent
 // 3D spaces, that means the largest allowed vside must take the size of types `vside_t` and
 // `vcurve_t` into account. Furthermore, the utility functions that use these types can be
 // optimized if they can assume limits to `vside_t` types.
 static const size_t SVO_MAX_VSIDE = 256;
+// see SVO_MAX_VSIDE
+static const size_t SVO_VSIDE_BITS = 8;
 
 ///This is an index into the 8 children of a single cube; in other words, this corresponds
 /// to a corner_t, but using one of several encoding techniques.
@@ -208,14 +211,15 @@ static inline uint32_t uninterleave32_3(uint32_t curve)
     return result;
 }
 
-// converts a morton-order flat index into "volumes represented as large
-// flat arrays" into 3D coordinates.
-//
-//@vcurve the curve/index to convert
-//@side the side of the 3D volume
-//@x pointer to destination x coordinate
-//@y pointer to destination y coordinate
-//@z pointer to destination z coordinate
+/* converts a morton-order flat index into "volumes represented as large
+ * flat arrays" into 3D coordinates.
+ *
+ * @vcurve the curve/index to convert
+ * @side the side of the 3D volume
+ * @x pointer to destination x coordinate
+ * @y pointer to destination y coordinate
+ * @z pointer to destination z coordinate
+ */
 static inline void vcurve2coords(vcurve_t vcurve, vside_t side, vside_t* x, vside_t* y, vside_t* z)
 {
     UNUSED(side);
@@ -267,6 +271,49 @@ static inline vcurvesize_t vcurvesize(vside_t side)
 
 
 
+
+
+
+
+
+
+
+
+
+
+/* Same as coords2vcurve(), but done in the naive brute force way.
+ *
+ */
+static inline vcurve_t coords2vcurve_brute(vside_t x, vside_t y, vside_t z, vside_t side)
+{
+    UNUSED(side);
+    assert(x < side);
+    assert(y < side);
+    assert(z < side);
+    assert(side < SVO_MAX_VSIDE);
+
+    vside_t xyz[3] = {x,y,z};
+
+    vcurve_t vcurve = 0;
+
+    // the number of significant bits in vside_t is at most 1/3 of the number of bits in vcurve_t
+    //static const size_t significant_bits = (8*sizeof(vcurve_t))/3;
+
+    static const size_t significant_bits = SVO_VSIDE_BITS;
+
+    // for each bit in the `x,y,z` coords
+    for (size_t i = 0; i < significant_bits; ++i)
+    {
+        for (size_t j = 0; j < 3; ++j)
+        {
+            vside_t bit = (xyz[j] >> i) & 1;
+            size_t shift = i*3 + j;
+            vcurve |= (bit << shift);
+        }
+    }
+
+    return vcurve;
+}
 
 
 
