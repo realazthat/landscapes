@@ -39,6 +39,7 @@ cd build
 
 cmake -G"$CMAKE_GENERATOR" ..
 cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
+cmake . -DCMAKE_VERBOSE_MAKEFILE=1
 cmake . -DGLUT_LIB="freeglut"
 cmake --build . --target sgfxapi
 cmake --build . --target sgfxapi-drawutils

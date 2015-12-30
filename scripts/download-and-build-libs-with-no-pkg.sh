@@ -62,6 +62,8 @@ git checkout "5850e3e"
 
 mkdir -p build && cd build
 cmake -G"$CMAKE_GENERATOR" ..
+cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
+cmake . -DCMAKE_VERBOSE_MAKEFILE=1
 cmake --build .
 
 
@@ -87,6 +89,8 @@ git checkout "29531dc"
 mkdir -p build
 cd build
 cmake -G"$CMAKE_GENERATOR" ..
+cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
+cmake . -DCMAKE_VERBOSE_MAKEFILE=1
 cmake . -DUSE_BOOST_KARMA=0
 cmake --build .
 
@@ -121,5 +125,7 @@ git checkout "4797ca0"
 
 mkdir -p build && cd build
 cmake -G"$CMAKE_GENERATOR" ..
+cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
+cmake . -DCMAKE_VERBOSE_MAKEFILE=1
 cmake --build . --target cppformat
 
