@@ -39,7 +39,6 @@ cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
 cmake . -DCMAKE_VERBOSE_MAKEFILE=1
 if [ $(echo "$MSYSTEM" | grep -io MINGW) = "MINGW" ]; then
     cmake . -Dgtest_disable_pthreads=1
-else
 fi
 cmake --build .
 
