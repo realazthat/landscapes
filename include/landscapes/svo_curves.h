@@ -248,7 +248,7 @@ static inline vcurve_t coords2vcurve(vside_t x, vside_t y, vside_t z, vside_t si
     assert(x < side);
     assert(y < side);
     assert(z < side);
-    assert(side < SVO_MAX_VSIDE);
+    assert(side <= SVO_MAX_VSIDE);
 
     uint32_t index = morton256_x[x] | morton256_y[y] | morton256_z[z];
     return index;
@@ -298,7 +298,7 @@ static inline vcurve_t coords2vcurve_brute(vside_t x, vside_t y, vside_t z, vsid
     assert(x < side);
     assert(y < side);
     assert(z < side);
-    assert(side < SVO_MAX_VSIDE);
+    assert(side <= SVO_MAX_VSIDE);
 
     vside_t xyz[3] = {x,y,z};
 
