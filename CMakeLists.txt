@@ -72,14 +72,9 @@ set(GTEST_LIB_DIR "./libs/googletest/googletest/googletest/build" CACHE STRING "
 set(GTEST_LIB "gtest" CACHE STRING "Libs for googletest")
 
 
-#include(OptimizeForArchitecture)
-#OptimizeForArchitecture()
-
 if (MSVC)
     add_definitions(-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS)
 endif()
-
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Vc_ARCHITECTURE_FLAGS}")
 
 if (CMAKE_COMPILER_IS_GNUCXX)
     set(CXX_WARNINGS "-Wall -Wextra -Wpointer-arith -Wcast-align -fstrict-aliasing -Wno-unused-local-typedefs")
@@ -151,6 +146,7 @@ add_executable(unittests
     src/unittests/load_mca_region.cpp
     src/unittests/serialization.cpp
     src/unittests/overlap_open_close_range.cpp
+    src/unittests/z-order.cpp
     src/unittests/main.cpp
 
     )
