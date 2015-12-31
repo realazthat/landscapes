@@ -147,6 +147,7 @@ add_executable(unittests
     src/unittests/serialization.cpp
     src/unittests/overlap_open_close_range.cpp
     src/unittests/z-order.cpp
+    src/unittests/constants.cpp
     src/unittests/main.cpp
 
     )
