@@ -63,7 +63,7 @@ int main(){
         {
             std::size_t vcurve_hex_digits = sizeof(vcurve_t)*2;
             
-            std::cout << "    "
+            std::cout << (u == 0 || ((u + 7) % 8 == 0) ? "    " : " ")
                       << "0x" << std::hex << std::setfill('0') << std::setw(vcurve_hex_digits) << table.at(u) << std::dec
                       << (u == SVO_VSIDE_LIMIT-1 ? "" : ",");
 
