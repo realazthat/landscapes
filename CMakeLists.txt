@@ -140,6 +140,13 @@ set_property(TARGET landscapes-mc PROPERTY CXX_STANDARD 11)
 
 ################################################################################
 
+add_executable(landscapes-zorder-genconsts
+    src/landscapes/svo_curves.genconsts.cpp
+    )
+set_property(TARGET landscapes-zorder-genconsts PROPERTY CXX_STANDARD 11)
+
+################################################################################
+
 
 add_executable(unittests
     src/unittests/entree_slices.cpp
