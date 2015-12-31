@@ -28,11 +28,11 @@ typedef uint32_t vside_t;
 // 3D spaces, that means the largest allowed vside must take the size of types `vside_t` and
 // `vcurve_t` into account. Furthermore, the utility functions that use these types can be
 // optimized if they can assume limits to `vside_t` types.
-static const size_t SVO_MAX_VSIDE = 256;
-// see SVO_MAX_VSIDE
+static const size_t SVO_VSIDE_LIMIT = 256;
+// see SVO_VSIDE_LIMIT
 static const size_t SVO_VSIDE_BITS = 8;
 
-static const size_t SVO_MAX_VCURVE = SVO_MAX_VSIDE*SVO_MAX_VSIDE*SVO_MAX_VSIDE;
+static const size_t SVO_VCURVE_LIMIT = SVO_VSIDE_LIMIT*SVO_VSIDE_LIMIT*SVO_VSIDE_LIMIT;
 
 ///This is an index into the 8 children of a single cube; in other words, this corresponds
 /// to a corner_t, but using one of several encoding techniques.
@@ -248,7 +248,7 @@ static inline vcurve_t coords2vcurve(vside_t x, vside_t y, vside_t z, vside_t si
     assert(x < side);
     assert(y < side);
     assert(z < side);
-    assert(side <= SVO_MAX_VSIDE);
+    assert(side <= SVO_VSIDE_LIMIT);
 
     uint32_t index = morton256_x[x] | morton256_y[y] | morton256_z[z];
     return index;
@@ -298,7 +298,7 @@ static inline vcurve_t coords2vcurve_brute(vside_t x, vside_t y, vside_t z, vsid
     assert(x < side);
     assert(y < side);
     assert(z < side);
-    assert(side <= SVO_MAX_VSIDE);
+    assert(side <= SVO_VSIDE_LIMIT);
 
     vside_t xyz[3] = {x,y,z};
 

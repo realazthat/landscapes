@@ -825,10 +825,10 @@ svo_slice_sanity_error_t svo_slice_sanity_minimal(const svo_slice_t* slice, svo_
                                             , slice->parent_slice, slice);
         
         
-        if (slice->side > SVO_MAX_VOLUME_SIDE)
+        if (slice->side > SVO_VOLUME_SIDE_LIMIT)
             return svo_slice_sanity_error_t(fmt::format("slice has a side of greater than SVO_MAX_VOLUME_SIDE"
                                                         "side: {}, SVO_MAX_VOLUME_SIDE: {}"
-                                                        , slice->side, SVO_MAX_VOLUME_SIDE)
+                                                        , slice->side, SVO_VOLUME_SIDE_LIMIT)
                                             , slice);
         
         if (slice->side > 1)

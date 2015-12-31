@@ -6,7 +6,7 @@
 #include "landscapes/svo_curves.h"
 
 namespace svo{
-static const std::size_t SVO_MAX_VOLUME_SIDE = SVO_MAX_VSIDE;
+static const std::size_t SVO_VOLUME_SIDE_LIMIT = SVO_VSIDE_LIMIT;
 enum class svo_error_t{
       OK
     , CHILDREN_TOO_FAR

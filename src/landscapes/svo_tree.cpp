@@ -2351,7 +2351,7 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::array<svo_slice_t*, 8>& 
 
 
     assert(src_size_in_parent == dst_size_in_parent / 8);
-    assert(dst_slice->side < SVO_MAX_VOLUME_SIDE);
+    assert(dst_slice->side < SVO_VOLUME_SIDE_LIMIT);
     assert(dst_slice->pos_data);
     assert(dst_slice->buffers);
     
@@ -2835,7 +2835,7 @@ std::list<svo_slice_child_group_t> svo_find_joinable_groups_of_children(svo_slic
         // if combining this child with other children would result in a slice
         // that has a space that is too large, don't consider this; this function
         // should never called in this case.
-        assert(child->side * 2 <= SVO_MAX_VOLUME_SIDE);
+        assert(child->side * 2 <= SVO_VOLUME_SIDE_LIMIT);
         
 
         // if the current candidate group is null; this is the first child in the group
@@ -2947,7 +2947,7 @@ std::list<svo_slice_child_group_t> svo_find_joinable_groups_of_children(svo_slic
         DEBUG_PRINT { std::cerr << "child " << i << std::endl; }
 
         // if combining this child with its siblings will result in a slice that is too large
-        if (!(child->side*2 <= SVO_MAX_VOLUME_SIDE)) {
+        if (!(child->side*2 <= SVO_VOLUME_SIDE_LIMIT)) {
             // reset the group, and on to the next child.
             reset_candidate_group();
             continue;

@@ -23,18 +23,18 @@ protected:
 
 TEST_F(ZOrderTest,coords2vcurve){
 
-    std::vector<bool> vcurves_seen(SVO_MAX_VCURVE, false);
+    std::vector<bool> vcurves_seen(SVO_VCURVE_LIMIT, false);
 
-    for (vside_t x = 0; x < SVO_MAX_VSIDE; ++x)
-    for (vside_t y = 0; y < SVO_MAX_VSIDE; ++y)
-    for (vside_t z = 0; z < SVO_MAX_VSIDE; ++z)
+    for (vside_t x = 0; x < SVO_VSIDE_LIMIT; ++x)
+    for (vside_t y = 0; y < SVO_VSIDE_LIMIT; ++y)
+    for (vside_t z = 0; z < SVO_VSIDE_LIMIT; ++z)
     {
-        auto vcurve0 = coords2vcurve_brute(x,y,z,SVO_MAX_VSIDE);
-        auto vcurve = coords2vcurve(x,y,z,SVO_MAX_VSIDE);
+        auto vcurve0 = coords2vcurve_brute(x,y,z,SVO_VSIDE_LIMIT);
+        auto vcurve = coords2vcurve(x,y,z,SVO_VSIDE_LIMIT);
     
         
         
-        ASSERT_LT(vcurve, SVO_MAX_VCURVE);
+        ASSERT_LT(vcurve, SVO_VCURVE_LIMIT);
         ASSERT_EQ(vcurve0, vcurve);
         ASSERT_LT(vcurve, vcurves_seen.size());
         ASSERT_FALSE(vcurves_seen[vcurve]);
@@ -43,7 +43,7 @@ TEST_F(ZOrderTest,coords2vcurve){
         ASSERT_TRUE(vcurves_seen[vcurve]);
 
         vside_t x1, y1, z1;
-        vcurve2coords(vcurve, SVO_MAX_VSIDE, &x1, &y1, &z1);
+        vcurve2coords(vcurve, SVO_VSIDE_LIMIT, &x1, &y1, &z1);
 
         ASSERT_EQ(x, x1);
         ASSERT_EQ(y, y1);

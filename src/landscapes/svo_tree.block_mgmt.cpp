@@ -2074,7 +2074,7 @@ void slice_inserter_t::pprint_out_data(
     bprinter::TablePrinter tp(&out);
     tp.AddColumn("idx", 6);
     tp.AddColumn("level", std::max(5, (int)std::ceil(std::log10(max_level))));
-    tp.AddColumn("vcurve", std::max(5, (int)std::ceil(std::log10(vcurvesize(SVO_MAX_VOLUME_SIDE)))));
+    tp.AddColumn("vcurve", std::max(5, (int)std::ceil(std::log10(vcurvesize(SVO_VOLUME_SIDE_LIMIT)))));
     tp.AddColumn("cd", 64+7);
     tp.AddColumn("child offset", std::max(12, (int)std::ceil(std::log10(offset_t(-1)))));
     

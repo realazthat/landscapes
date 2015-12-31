@@ -130,7 +130,7 @@ void pprint_block(
     tp.AddColumn("pcdidx", std::max(6, (int)std::ceil(std::log10(block->size())/8)));
     tp.AddColumn("level", std::max(5, (int)std::ceil(std::log10(max_level))));
     tp.AddColumn("ccurve", 6);
-    tp.AddColumn("vcurve", std::max(5, (int)std::ceil(std::log10(vcurvesize(SVO_MAX_VOLUME_SIDE)))));
+    tp.AddColumn("vcurve", std::max(5, (int)std::ceil(std::log10(vcurvesize(SVO_VOLUME_SIDE_LIMIT)))));
     tp.AddColumn("cd", 64+7);
     tp.AddColumn("cd goffset", 10);
     tp.AddColumn("far?", 4);

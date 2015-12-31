@@ -617,7 +617,7 @@ svo_slice_t* svo_entree_slices(const volume_of_slices_t& volume_of_slices, std::
             {
 
 
-                assert(group.group_side_in_parent < SVO_MAX_VOLUME_SIDE);
+                assert(group.group_side_in_parent < SVO_VOLUME_SIDE_LIMIT);
 
                 std::size_t total_child_size = 0;
 
@@ -641,7 +641,7 @@ svo_slice_t* svo_entree_slices(const volume_of_slices_t& volume_of_slices, std::
                     {
                         if (!child)
                             continue;
-                        assert( child->side*2 < SVO_MAX_VOLUME_SIDE );
+                        assert( child->side*2 < SVO_VOLUME_SIDE_LIMIT );
                     }
 
                     svo_join_slices(new_replacement_slice, group.group_children);
