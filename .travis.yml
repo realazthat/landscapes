@@ -24,10 +24,10 @@ install:
     #- sudo bash ./scripts/build-install-cmake3.sh
     #- sudo bash ./scripts/download-install-cmake3.sh
     #- sudo bash ./scripts/install-deps-via-apt.sh
-    - sudo CMAKE_GENERATOR="Unix Makefiles" bash ./scripts/download-and-build-googletest.sh
-    - sudo CMAKE_GENERATOR="Unix Makefiles" bash ./scripts/download-and-build-glm.sh
-    - sudo CMAKE_GENERATOR="Unix Makefiles" bash ./scripts/download-and-build-libs-with-no-pkg.sh
-    - sudo CMAKE_GENERATOR="Unix Makefiles" bash ./scripts/download-unittest-data.sh
+    - sudo CMAKE_GENERATOR="Unix Makefiles" CMAKE_BUILD_TYPE="Release" bash ./scripts/download-and-build-googletest.sh
+    - sudo CMAKE_GENERATOR="Unix Makefiles" CMAKE_BUILD_TYPE="Release" bash ./scripts/download-and-build-glm.sh
+    - sudo CMAKE_GENERATOR="Unix Makefiles" CMAKE_BUILD_TYPE="Release" bash ./scripts/download-and-build-libs-with-no-pkg.sh
+    - sudo CMAKE_GENERATOR="Unix Makefiles" CMAKE_BUILD_TYPE="Release" bash ./scripts/download-unittest-data.sh
 
 
 script:
