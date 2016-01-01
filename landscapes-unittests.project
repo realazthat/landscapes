@@ -46,6 +46,10 @@
       <File Name="src/unittests/entree_slices.cpp" ExcludeProjConfig=""/>
       <File Name="src/unittests/buffers.cpp" ExcludeProjConfig="Debug64"/>
       <File Name="src/unittests/block_from_slice_data.cpp" ExcludeProjConfig="Debug64"/>
+      <File Name="src/unittests/join_slices.cpp" ExcludeProjConfig="Debug64"/>
+      <File Name="src/unittests/overlap_open_close_range.cpp"/>
+      <File Name="src/unittests/z-order.cpp"/>
+      <File Name="src/unittests/constants.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="include"/>
