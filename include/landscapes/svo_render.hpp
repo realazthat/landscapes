@@ -3,6 +3,7 @@
 
 #include "landscapes/opencl.shim.h"
 #include "landscapes/svo_tree.hpp"
+#include "landscapes/svo_camera_mapping.cl.h"
 
 #include <memory>
 #include <set>
@@ -10,22 +11,6 @@
 
 
 namespace svo{
-    
-    struct camera_quad_t{
-        /* four points of a frustum quad
-         *
-         * @A represents screen upper-left world position
-         * @B represents screen upper-right world position
-         * @C represents screen lower-right world position
-         * @D represents screen lower-left world position
-         */
-        float3_t A, B, C, D;
-    };
-    
-    struct camera_mapping_t{
-        camera_quad_t source;
-        camera_quad_t target;
-    };
     
     
     /* A utility class that actually essentially does this:
