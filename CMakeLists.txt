@@ -213,7 +213,8 @@ add_executable(unittests
     src/unittests/serialization.cpp
     src/unittests/camera_mapping.cpp
     src/unittests/main.cpp
-
+    
+    src/landscapes/mgl2glm.cpp
     )
 
 
@@ -234,4 +235,3 @@ set_property(TARGET unittests PROPERTY CXX_STANDARD 11)
 
 
 #-------------------
-
