@@ -3,7 +3,7 @@
 
 #include "landscapes/opencl.shim.h"
 #include "landscapes/svo_tree.hpp"
-#include "landscapes/svo_camera_mapping.cl.h"
+#include "landscapes/svo_camera_mapping.cl.fwd.h"
 
 #include <memory>
 #include <set>
@@ -62,7 +62,7 @@ namespace svo{
          * @lod_source 
          */
         void render_tile( float* buffer
-                    , const camera_mapping_t& camera_mapping
+                    , const svo_camera_mapping_t& camera_mapping
                     , std::size_t screen_width, std::size_t screen_height
                     , glm::uvec2 xy0, glm::uvec2 xy1
                     , glm::vec3 lod_source );
