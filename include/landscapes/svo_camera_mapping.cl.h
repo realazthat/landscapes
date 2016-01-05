@@ -36,7 +36,7 @@ static inline float3_t quad_bilinear(float3_t top_left, float3_t top_right, floa
  * coordinates each in the range [-1,1], where (-1,-1) is the bottom-left corner and
  * (1,1) is the top-right corner.
  */
-static inline svo_ray_t uv_to_ray(const svo_camera_mapping_t* mapping, float u, float v);
+static inline svo_ray_t svo_uv_to_ray(const svo_camera_mapping_t* mapping, float u, float v);
 
 
 
@@ -47,7 +47,7 @@ static inline svo_ray_t uv_to_ray(const svo_camera_mapping_t* mapping, float u, 
 
 
 
-static inline float3_t quad_bilinear(float3_t top_left, float3_t top_right, float3_t bottom_right, float3_t bottom_left, float u, float v)
+static inline float3_t svo_quad_bilinear(float3_t top_left, float3_t top_right, float3_t bottom_right, float3_t bottom_left, float u, float v)
 {
     assert(u >= 0);
     assert(v >= 0);
@@ -68,7 +68,7 @@ static inline float3_t quad_bilinear(float3_t top_left, float3_t top_right, floa
     return X;
 }
 
-static inline svo_ray_t uv_to_ray(const svo_camera_mapping_t* mapping, float u, float v)
+static inline svo_ray_t svo_uv_to_ray(const svo_camera_mapping_t* mapping, float u, float v)
 {
     assert(u >= -1);
     assert(v >= -1);
@@ -81,10 +81,10 @@ static inline svo_ray_t uv_to_ray(const svo_camera_mapping_t* mapping, float u, 
     
     svo_ray_t ray;
     
-    ray.source = quad_bilinear( mapping->source.top_left, mapping->source.top_right
+    ray.source = svo_quad_bilinear( mapping->source.top_left, mapping->source.top_right
                               , mapping->source.bottom_right, mapping->source.bottom_left
                               , u, v);
-    ray.target = quad_bilinear( mapping->target.top_left, mapping->target.top_right
+    ray.target = svo_quad_bilinear( mapping->target.top_left, mapping->target.top_right
                               , mapping->target.bottom_right, mapping->target.bottom_left
                               , u, v);
     
