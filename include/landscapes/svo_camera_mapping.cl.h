@@ -28,7 +28,7 @@ typedef struct svo_ray_t{
  * this will do bilinear interpolation and find the location on the quad
  * represented by (u,v). A,B,C,D are equivalent to the variables in svo_camera_quad_t.
  */
-static inline float3_t quad_bilinear(float3_t top_left, float3_t top_right, float3_t bottom_right, float3_t bottom_left, float u, float v);
+static inline float3_t svo_quad_bilinear(float3_t top_left, float3_t top_right, float3_t bottom_right, float3_t bottom_left, float u, float v);
 
 /*
  * convert u,v coordinates and a camera-mapping to a ray.
