@@ -21,20 +21,17 @@ addons:
 install:
     - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
     #takes too long, we'll download the binaries instead.
-    #- sudo bash ./scripts/build-install-cmake3.sh
-    #- sudo bash ./scripts/download-install-cmake3.sh
-    #- sudo bash ./scripts/install-deps-via-apt.sh
-    - sudo CMAKE_GENERATOR="Unix Makefiles" bash ./scripts/download-and-build-googletest.sh
-    - sudo CMAKE_GENERATOR="Unix Makefiles" bash ./scripts/download-and-build-glm.sh
-    - sudo CMAKE_GENERATOR="Unix Makefiles" bash ./scripts/download-and-build-libs-with-no-pkg.sh
-    - sudo CMAKE_GENERATOR="Unix Makefiles" bash ./scripts/download-unittest-data.sh
+    - sudo CMAKE_GENERATOR="Unix Makefiles" CMAKE_BUILD_TYPE="Release" bash ./scripts/download-and-build-googletest.sh
+    - sudo CMAKE_GENERATOR="Unix Makefiles" CMAKE_BUILD_TYPE="Release" bash ./scripts/download-and-build-glm.sh
+    - sudo CMAKE_GENERATOR="Unix Makefiles" CMAKE_BUILD_TYPE="Release" bash ./scripts/download-and-build-libs-with-no-pkg.sh
+    - sudo CMAKE_GENERATOR="Unix Makefiles" CMAKE_BUILD_TYPE="Release" bash ./scripts/download-unittest-data.sh
 
 
 script:
     - mkdir build
     - cd build
     - cmake ..
-    - cmake "-DGTEST_LIB=gtest;pthread" .
+    - cmake "-DGTEST_LIB=gtest;pthread" -DCMAKE_VERBOSE_MAKEFILE=1 .
     - cmake --build .
     - ./unittests
 
