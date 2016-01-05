@@ -15,7 +15,7 @@ protected:
     // Code here will be called immediately after each test
     // (right before the destructor).
     }
-    };
+};
 
 
 
