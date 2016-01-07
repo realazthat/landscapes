@@ -14,15 +14,15 @@ PROJECT_PATH=$PWD
 
 
 #############################################################################
-## get/build cubelib
+## get/build corner-cases/cubelib
 #############################################################################
 
 cd "$PROJECT_PATH"
 cd libs
 
-mkdir -p cubelib && cd cubelib
-rm -rf ./cubelib/
-git clone https://github.com/realazthat/cubelib.git
+mkdir -p corner-cases && cd corner-cases
+rm -rf ./corner-cases/
+git clone https://github.com/realazthat/corner-cases.git
 
 
 
