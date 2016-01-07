@@ -15,7 +15,6 @@ PROJECT_PATH=$PWD
 
 
 
-
 #############################################################################
 ## get/build sgfxapi
 #############################################################################
@@ -30,17 +29,19 @@ rm -rf ./sgfxapi/
 git clone https://github.com/realazthat/sgfxapi.git
 cd sgfxapi
 
-#build dependencies of sgfxapi
-CMAKE_BUILD_TYPE="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE" bash scripts/download-and-build-libs-with-no-pkg.sh
 
 
 mkdir -p build
 cd build
 
 cmake -G"$CMAKE_GENERATOR" ..
-cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
-cmake . -DCMAKE_VERBOSE_MAKEFILE=1
-cmake . -DGLUT_LIB="freeglut"
+cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE" \
+        -DCMAKE_VERBOSE_MAKEFILE=1 \
+        -DGLUT_INCLUDE_DIR="$PROJECT_PATH/libs/freeglut" -DGLUT_LIB_DIR="$PROJECT_PATH/libs/freeglut/" -DGLUT_LIB="freeglut" \
+        -DGLFW3_INCLUDE_DIR="$PROJECT_PATH/libs/glfw3/glfw/include" -DGLFW3_LIB_DIR="$PROJECT_PATH/libs/glfw3/glfw/build/src/" \
+        -DMGL_INCLUDE_DIR="$PROJECT_PATH/libs/mathgeolib/MathGeoLib/src/" -DGLFW3_LIB_DIR="$PROJECT_PATH/libs/mathgeolib/MathGeoLib/build/" \
+        -DCUBELIB_INCLUDE_DIR="$PROJECT_PATH/libs/corner-cases/corner-cases/include"
+        
 cmake --build . --target sgfxapi
 cmake --build . --target sgfxapi-drawutils
 

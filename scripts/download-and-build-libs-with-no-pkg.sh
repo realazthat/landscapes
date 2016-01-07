@@ -16,20 +16,6 @@ set -exv
 PROJECT_PATH=$PWD
 
 
-#############################################################################
-## get/build cubelib
-#############################################################################
-
-cd "$PROJECT_PATH"
-bash ./scripts/download-and-build-cubelib.sh
-
-#############################################################################
-## get/build glm
-#############################################################################
-
-cd "$PROJECT_PATH"
-bash ./scripts/download-and-build-glm.sh
-
 
 #############################################################################
 ## get/build tclap
@@ -37,34 +23,6 @@ bash ./scripts/download-and-build-glm.sh
 
 cd "$PROJECT_PATH"
 bash ./scripts/download-and-build-tclap.sh
-
-#############################################################################
-## get/build sgfxapi
-#############################################################################
-
-cd "$PROJECT_PATH"
-CMAKE_BUILD_TYPE="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE" bash ./scripts/download-and-build-sgfxapi.sh
-
-
-
-#############################################################################
-## get/build cNBT
-#############################################################################
-cd "$PROJECT_PATH"
-cd libs
-mkdir -p cNBT && cd cNBT
-
-rm -rf ./cNBT/
-#retreive the library
-git clone https://github.com/FliPPeh/cNBT.git
-cd cNBT
-git checkout "5850e3e"
-
-mkdir -p build && cd build
-cmake -G"$CMAKE_GENERATOR" ..
-cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
-cmake . -DCMAKE_VERBOSE_MAKEFILE=1
-cmake --build .
 
 
 
