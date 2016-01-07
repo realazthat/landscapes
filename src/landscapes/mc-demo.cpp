@@ -10,6 +10,9 @@
 #include "landscapes/svo_render.hpp"
 #include "landscapes/svo_formatters.hpp"
 #include "landscapes/svo_render.hpp"
+#include "landscapes/cpputils.hpp"
+#include "landscapes/mgl2glm.hpp"
+#include "landscapes/cegui.glfw3.hpp"
 
 #include "sgfxapi/sgfxapi.glcommon.hpp"
 #include "sgfxapi/sgfxapi-drawutils.hpp"
@@ -22,8 +25,10 @@
 #include "CEGUI/WindowManager.h"
 
 
-#include "cegui.glfw3.hpp"
-#include "SMA.hpp"
+#include "xdsopl-sma/sma.hpp"
+
+#include "ThreadPool.h"
+
 
 static void glfwErrorCallback(int error, const char* description)
 {
@@ -58,7 +63,8 @@ struct motherclass_t{
 
     Frustum camera;
     float walkSpeed = 1;
-    SMA fpssma;
+    SMA4<float, 10> fpssma;
+    float lastfpssma;
 
 
     bool cegui_has_mouse;
@@ -72,7 +78,8 @@ struct motherclass_t{
     motherclass_t()
         : mwinder(nullptr), d_windowSized(false), d_newWindowWidth(0), d_newWindowHeight(0)
         , windowmgr(nullptr), guictx(nullptr)
-        , fpssma(10), cegui_has_mouse(false), dragging(false), xpos0(0), ypos0(0)
+        , fpssma(), lastfpssma(0)
+        , cegui_has_mouse(false), dragging(false), xpos0(0), ypos0(0)
     {}
 
     ~motherclass_t(){
@@ -294,7 +301,7 @@ struct motherclass_t{
 
     void initialize_svo()
     {
-        svotest.reset(new svo::MCSVOTest(float3_t(3,3,-2), "k:/realz/dump/code/mordred.svo/sparse-voxel-octrees/build/tree/"));
+        svotest.reset(new svo::svo_render_t(float3_t(3,3,-2), "k:/realz/dump/code/mordred.svo/sparse-voxel-octrees/build/tree/"));
         svotest->load_slices();
         svotest->load_blocks();
     }
@@ -365,7 +372,7 @@ struct motherclass_t{
 
     bool check_upload_pbo()
     {
-        size_t next_svo_pbo_upload_idx = modinc(svo_pbo_upload_idx, svo_pbos.size());
+        size_t next_svo_pbo_upload_idx = svo::modinc(svo_pbo_upload_idx, svo_pbos.size());
 
         auto& pbo_tuple = svo_pbos[next_svo_pbo_upload_idx];
 
@@ -382,7 +389,7 @@ struct motherclass_t{
 
     bool upload_data_to_pbo(uint8_t* data, int width, int height, int bytes)
     {
-        size_t next_svo_pbo_upload_idx = modinc(svo_pbo_upload_idx, svo_pbos.size());
+        size_t next_svo_pbo_upload_idx = svo::modinc(svo_pbo_upload_idx, svo_pbos.size());
         svo_pbo_upload_idx = next_svo_pbo_upload_idx;
 
         auto& pbo_tuple = svo_pbos[svo_pbo_upload_idx];
@@ -416,10 +423,10 @@ struct motherclass_t{
     size_t find_next_render_pbo()
     {
         size_t n = svo_pbos.size();
-        size_t next_idx = modinc(svo_pbo_render_idx, svo_pbos.size());
+        size_t next_idx = svo::modinc(svo_pbo_render_idx, svo_pbos.size());
 
         size_t best_next_idx = (size_t)-1;
-        for (; next_idx != svo_pbo_upload_idx; next_idx = modinc(next_idx, n))
+        for (; next_idx != svo_pbo_upload_idx; next_idx = svo::modinc(next_idx, n))
         {
             auto& pbo_tuple = svo_pbos[next_idx];
             auto& fence = *std::get<1>(pbo_tuple);
@@ -501,7 +508,7 @@ struct motherclass_t{
             last_time_pulse = current_time_pulse;
             ++frame;
 
-            fpssma.add(delta);
+            lastfpssma = fpssma(delta);
 
 
             if (glfwWindowShouldClose(mwinder))
@@ -514,9 +521,9 @@ struct motherclass_t{
             glfwPollEvents();
 
             float ratio;
-            int width, height;
-            glfwGetFramebufferSize(mwinder, &width, &height);
-            ratio = width / (float) height;
+            int screen_width, screen_height;
+            glfwGetFramebufferSize(mwinder, &screen_width, &screen_height);
+            ratio = screen_width / (float) screen_height;
 
             ComputeMouseOrientation(delta);
 
@@ -555,13 +562,13 @@ struct motherclass_t{
 
                 using namespace SGFXAPI;
 
-                if (width*height > 0)
+                if (screen_width*screen_height > 0)
                 {
                     ///svo section
-                    if (width != width0 || height != height0)
+                    if (screen_width != width0 || screen_height != height0)
                     {
-                        width0 = width;
-                        height0 = height;
+                        width0 = screen_width;
+                        height0 = screen_height;
                         buffer0.resize((width0*height0)*4);
                     }
 
@@ -570,53 +577,74 @@ struct motherclass_t{
 
                     int pixel_bytes = 4*sizeof(float);
                     int pixel_stride = pixel_bytes;
-                    int buffer_rowalign_adjust = (4 - (width*pixel_bytes) % 4) % 4;
+                    int buffer_rowalign_adjust = (4 - (screen_width*pixel_bytes) % 4) % 4;
                     int depth_rowalign_adjust = buffer_rowalign_adjust;
 
                     
                     std::cout << "svotest->render_tile()" << std::endl;
                     
-                    struct render_tile_t{
-                        void operator()(svo::MCSVOTest* svotest, float* data, int width, int height, glm::vec2 uv0, glm::vec2 uv1, Frustum& camera){
-                            svotest->render_tile( data, width, height
-                                        , uv0, uv1, camera);
-                        }
+                    auto render_tile = [this, screen_width, screen_height](float* buffer, glm::uvec2 uv0, glm::uvec2 uv1)
+                    {
+                        
+                        float3 points[8];
+                        
+                        camera.GetCornerPoints(&points[0]);
+                        
+                        
+                        svo_camera_mapping_t camera_mapping = svo::extract_mapping(camera);
+                        
+                        auto lod_source = svo::toglm(camera.Pos());
+                        
+                        svotest->render_tile( buffer
+                                            , camera_mapping, screen_width, screen_height
+                                            , uv0, uv1
+                                            , lod_source );
+                    
                     };
 
-                    int job_count = 6;
 
-                    std::vector<std::thread> jobs;
+                    
+                    
+                    std::size_t tilesize = 256;
+                    
+                    std::size_t xtiles = svo::iceil<std::size_t>(screen_width, tilesize);
+                    std::size_t ytiles = svo::iceil<std::size_t>(screen_height, tilesize);
 
-                    int job_height0 = height / job_count;
-                    int job_height1 = job_height0 + (height % job_height0);
-
-                    float* data_ptr = buffer0.data();
-
-                    render_tile_t render_tile_functor;
-
-                    for (int i = 0; i < job_count - 1; ++i)
+                    
+                    int num_threads = 6;
+                    
+                    // scope for thread pool
                     {
-                        jobs.push_back( std::thread(std::bind(render_tile_functor
-                                          , svotest.get()
-                                          , data_ptr, width, job_height0
-                                          , glm::vec2(0, float(i) / job_count)
-                                          , glm::vec2(1, float(i+1) / job_count)
-                                          , camera))
-                                          );
-                        data_ptr += width*job_height0*4;
+                        ThreadPool pool(num_threads);
+
+                        float* data_ptr = buffer0.data();
+
+
+                        
+                        for (int xtile = 0; xtile < xtiles; ++xtile)
+                        for (int ytile = 0; ytile < ytiles; ++ytile)
+                        {
+                            std::size_t u0 = xtile * tilesize;
+                            std::size_t v0 = ytile * tilesize;
+                            
+                            std::size_t u1 = std::min<std::size_t>(u0 + tilesize, screen_width);
+                            std::size_t v1 = std::min<std::size_t>(v0 + tilesize, screen_height);
+                            
+                            std::size_t tile_pixel_count = (u1-u0) * (v1-v0);
+                            
+                            if (tile_pixel_count == 0)
+                                continue;
+                            
+                            std::function< void() > f(std::bind(render_tile
+                                                     , data_ptr
+                                                     , glm::uvec2(u0,v0)
+                                                     , glm::uvec2(u1,v1)));
+                            pool.enqueue(f);
+                            data_ptr += (u1-u0) * (v1-v0) * 4;
+                        }
+
+                        assert(buffer0.data() + buffer0.size() == data_ptr);
                     }
-                    jobs.push_back( std::thread(std::bind(render_tile_functor
-                                          , svotest.get()
-                                          , data_ptr, width, job_height1
-                                          , glm::vec2(0, float(job_count-1) / job_count)
-                                          , glm::vec2(1, float(job_count) / job_count)
-                                          , camera)));
-
-                    data_ptr += width*job_height1*4;
-                    assert(buffer0.data() + buffer0.size() == data_ptr);
-
-                    for (auto& job : jobs)
-                        job.join();
 
                     std::cout << "  ... done" << std::endl;
                     
@@ -643,7 +671,7 @@ struct motherclass_t{
                             uint8_t* data = reinterpret_cast<uint8_t*>(buffer0.data());
                             int bytes = buffer0.size()*sizeof(float);
 
-                            bool success = upload_data_to_pbo(data, width, height, bytes);
+                            bool success = upload_data_to_pbo(data, screen_width, screen_height, bytes);
 
                             std::cout << "upload_data_to_pbo: " << (success ? "true" : "false")
                                 << ", svo_pbo_upload_idx: " << svo_pbo_upload_idx << std::endl;
@@ -695,8 +723,9 @@ struct motherclass_t{
                     if (worldViewProjLocation != -1)
                         node->mesh->sp->SetFloat4x4(worldViewProjLocation, camera.ViewProjMatrix() * node->xform);
 
-                    for (auto mesh_texture : node->mesh->textures | indirected)
+                    for (auto& mesh_texture_ptr : node->mesh->textures)
                     {
+                        auto& mesh_texture = *mesh_texture_ptr;
                         auto& texture_unit = *mesh_texture.texture_unit;
 
 
@@ -755,7 +784,7 @@ struct motherclass_t{
                     auto fpsedit = guictx->getRootWindow()->getChildRecursive("fps.edit");
 
                     if (fpsedit){
-                        std::string fpstext = svo::tostr((1.0/fpssma.avg()));
+                        std::string fpstext = svo::tostr((1.0/lastfpssma));
                         fpsedit->setText( fpstext );
                     }
                 }
@@ -951,8 +980,8 @@ int main()
         {
             int bytes = 1024*1024*4*sizeof(float);
 
-            auto pbo = boost::make_shared<SGFXAPI::PixelBuffer>(SGFXAPI::Usage::STREAM_DRAW, bytes, false/* allocateCpu */);
-            auto fence = boost::make_shared<SGFXAPI::Fence>(false);
+            auto pbo = std::make_shared<SGFXAPI::PixelBuffer>(SGFXAPI::Usage::STREAM_DRAW, bytes, false/* allocateCpu */);
+            auto fence = std::make_shared<SGFXAPI::Fence>(false);
 
             auto pbo_bind = make_bind_guard(*pbo);
 
