@@ -18,27 +18,26 @@ set(CEGUI_INCLUDE_DIR "./libs/cegui/cegui-source/cegui/include;./libs/cegui/cegu
     CACHE STRING "Paths to CEGUI includes")
 set(CEGUI_LIB_DIR "./libs/cegui/cegui-source/build/lib"
     CACHE STRING "Paths to CEGUI libs")
-set(CEGUI_LIB ""
+set(CEGUI_LIB "CEGUIBase-0;CEGUIOpenGLRenderer-0;CEGUIExpatParser;CEGUICoreWindowRendererSet;CEGUICommonDialogs-0"
     CACHE STRING "Libs for CEGUI")
 
 
 
-set(MGL_INCLUDE_DIR "./libs/sgfxapi/sgfxapi/libs/mathgeolib/MathGeoLib/src"
+set(MGL_INCLUDE_DIR "./libs/mathgeolib/MathGeoLib/src"
     CACHE STRING "Paths to MathGeoLib includes")
-set(MGL_LIB_DIR "./libs/sgfxapi/sgfxapi/libs/mathgeolib/MathGeoLib/build"
+set(MGL_LIB_DIR "./libs/mathgeolib/MathGeoLib/build"
     CACHE STRING "Paths to MathGeoLib libs")
 set(MGL_LIB "MathGeoLib"
     CACHE STRING "Libs for MathGeoLib")
 
 
 
-set(GLFW3_INCLUDE_DIR "./libs/glfw3/glfw-3.1.1.bin.WIN64/glfw-3.1.1.bin.WIN64/include"
+set(GLFW3_INCLUDE_DIR "./libs/glfw3/glfw/include"
     CACHE STRING "Paths to glfw3 includes")
-set(GLFW3_LIB_DIR "./libs/glfw3/glfw-3.1.1.bin.WIN64/glfw-3.1.1.bin.WIN64/build64"
+set(GLFW3_LIB_DIR "./libs/glfw3/glfw/build"
     CACHE STRING "Paths to glfw3 libs")
 set(GLFW3_LIB "glfw3"
     CACHE STRING "Libs for glfw3")
-
 
 set(CPPFORMAT_INCLUDE_DIR "./libs/cppformat/cppformat"
     CACHE STRING "Paths to cppformat includes")
@@ -54,9 +53,9 @@ set(CNBT_LIB_DIR "./libs/cNBT/cNBT/build"
 set(CNBT_LIB "nbt"
     CACHE STRING "Libs for cNBT")
 
-set(CUBELIB_INCLUDE_DIR "./libs/cubelib/cubelib/include" CACHE STRING "Paths to cubelib includes")
-set(CUBELIB_LIB_DIR "" CACHE STRING "Paths to cubelib libs")
-set(CUBELIB_LIB "" CACHE STRING "Libs for cubelib")
+set(CUBELIB_INCLUDE_DIR "./libs/corner-cases/corner-cases/include" CACHE STRING "Paths to corner-cases/cubelib includes")
+set(CUBELIB_LIB_DIR "" CACHE STRING "Paths to corner-cases/cubelib libs")
+set(CUBELIB_LIB "" CACHE STRING "Libs for corner-cases/cubelib")
 
 
 set(BPRINTER_INCLUDE_DIR "./libs/bprinter/bprinter/include" CACHE STRING "Paths to bprinter includes")
@@ -77,6 +76,14 @@ set(GTEST_LIB "gtest" CACHE STRING "Libs for googletest")
 set(SGFXAPI_INCLUDE_DIR "./libs/sgfxapi/sgfxapi/include" CACHE STRING "Paths to sgfxapi includes")
 set(SGFXAPI_LIB_DIR "./libs/sgfxapi/sgfxapi/build" CACHE STRING "Paths to sgfxapi libs")
 set(SGFXAPI_LIB "sgfxapi;sgfxapi-drawutils" CACHE STRING "Libs for sgfxapi")
+
+set(GLEW_INCLUDE_DIR "" CACHE STRING "Paths to glew includes")
+set(GLEW_LIB_DIR "" CACHE STRING "Paths to glew libs")
+set(GLEW_LIB "glew32" CACHE STRING "Lib for glew")
+
+set(GLU_INCLUDE_DIR "" CACHE STRING "Paths to glut includes")
+set(GLU_LIB_DIR "" CACHE STRING "Paths to glut libs")
+set(GLU_LIB "glu32" CACHE STRING "Paths to glut libs")
 
 
 #include(OptimizeForArchitecture)
@@ -174,6 +181,7 @@ target_link_libraries(landscapes-mc-demo
     ${CPP_FORMAT_LIB}
     ${BPRINTER_LIB}
     ${SGFXAPI_LIB}
+    ${CEGUI_LIB}
     #CEGUIBase-0 CEGUIOpenGLRenderer-0 CEGUIExpatParser CEGUICoreWindowRendererSet CEGUICommonDialogs-0
 
     ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32)
