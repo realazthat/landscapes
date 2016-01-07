@@ -92,6 +92,14 @@ static inline svo_ray_t svo_uv_to_ray(const svo_camera_mapping_t* mapping, float
 }
 
 
+static inline int32_t svo_camera_quad_max_width(const svo_camera_quad_t* quad)
+{
+    int32_t bottom_width = glm_length(quad->bottom_right - quad->bottom_left);
+    int32_t top_width = glm_length(quad->top_right - quad->top_left);
+    
+    return glm_max(bottom_width, top_width);
+}
+
 
 
 
