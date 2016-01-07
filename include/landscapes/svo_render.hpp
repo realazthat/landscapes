@@ -2,7 +2,7 @@
 #define SVO_RENDER_HPP 1
 
 #include "landscapes/opencl.shim.h"
-#include "landscapes/svo_tree.hpp"
+#include "landscapes/svo_tree.fwd.hpp"
 #include "landscapes/svo_camera_mapping.cl.fwd.h"
 
 #include <memory>
@@ -12,6 +12,7 @@
 
 namespace svo{
     
+    struct svo_render_pimpl_t;
     
     /* A utility class that actually essentially does this:
      * `svo tree + empty texture ... + raymarching = rendered texture`
@@ -19,12 +20,13 @@ namespace svo{
      */
     struct svo_render_t{
         
+        // the root slice of the tree, which will be loaded from the serialized slices
+        svo_slice_t* root_slice;
+        
         // this will be the light position, change this to alter the lighting
         float3_t light;
     
         
-        // the root slice of the tree, which will be loaded from the serialized slices
-        svo_slice_t* root_slice;
         
         // this will be the generated block-tree, and this will be what is raymarched
         std::unique_ptr<svo_tree_t> tree;
@@ -36,6 +38,10 @@ namespace svo{
          * @root_node_name the name of the root slice, without the `.slice` extension; defaults to `"r"`
          */
         svo_render_t(float3_t light, const std::string& slice_path, const std::string& root_node_name="r");
+        
+        // note: it is important to put the destructor in the implementation file
+        // so that unique_ptr members of this class don't need the full type info
+        ~svo_render_t();
         
         // Loads the slices from the serialized directory all at once.
         void load_slices();
@@ -61,10 +67,10 @@ namespace svo{
          * @xy1 a 2D vector representing the upper bound of the section of the screen to render; see @xy0
          * @lod_source 
          */
-        void render_tile( float* buffer
+        uint32_t render_tile( float* buffer
                     , const svo_camera_mapping_t& camera_mapping
                     , std::size_t screen_width, std::size_t screen_height
-                    , glm::uvec2 xy0, glm::uvec2 xy1
+                    , glm::uvec2 nuv0, glm::uvec2 nuv1
                     , glm::vec3 lod_source );
     protected:
         // this stores the path to the directory containing the serialized slices
@@ -77,6 +83,7 @@ namespace svo{
         // this is useful as the blocks are being loaded to know which blocks need to be appended to.
         std::set<svo_block_t*> leaf_blocks;
         
+        std::unique_ptr<svo_render_pimpl_t> pimpl;
     };
     
     
