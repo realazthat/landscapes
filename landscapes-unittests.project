@@ -38,7 +38,9 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
-    <VirtualDirectory Name="landscapes"/>
+    <VirtualDirectory Name="landscapes">
+      <File Name="src/landscapes/mgl2glm.cpp"/>
+    </VirtualDirectory>
     <VirtualDirectory Name="unittests">
       <File Name="src/unittests/load_mca_region.cpp"/>
       <File Name="src/unittests/main.cpp"/>
@@ -46,6 +48,7 @@
       <File Name="src/unittests/entree_slices.cpp" ExcludeProjConfig=""/>
       <File Name="src/unittests/buffers.cpp" ExcludeProjConfig="Debug64"/>
       <File Name="src/unittests/block_from_slice_data.cpp" ExcludeProjConfig="Debug64"/>
+      <File Name="src/unittests/camera_mapping.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="include"/>
@@ -68,10 +71,16 @@
         <IncludePath Value="./include"/>
         <IncludePath Value="./libs/cNBT/cNBT"/>
         <IncludePath Value="./libs/cppformat/cppformat"/>
-        <IncludePath Value="./libs/cubelib/cubelib/include"/>
-        <IncludePath Value="./libs/glm/glm-master/glm-master"/>
-        <IncludePath Value="./libs/bprinter/bprinter-master/bprinter-master/include"/>
+        <IncludePath Value="./libs/ThreadPool/ThreadPool"/>
+        <IncludePath Value="./libs/corner-cases/corner-cases/include"/>
+        <IncludePath Value="./libs/glm/glm/"/>
+        <IncludePath Value="./libs/bprinter/bprinter/include"/>
         <IncludePath Value="./libs/googletest/googletest/googletest/include"/>
+        <IncludePath Value="./libs/tclap/tclap-code/include"/>
+        <IncludePath Value="./libs/sgfxapi/sgfxapi/include"/>
+        <IncludePath Value="./libs/mathgeolib/MathGeoLib/src"/>
+        <IncludePath Value="./libs/cegui/cegui-source/cegui/include"/>
+        <IncludePath Value="./libs/cegui/cegui-source/build/cegui/include"/>
       </Compiler>
       <Linker Options="" Required="yes">
         <LibraryPath Value="$(IntermediateDirectory)"/>
@@ -79,6 +88,9 @@
         <LibraryPath Value="./libs/cppformat/cppformat/build"/>
         <LibraryPath Value="./libs/bprinter/bprinter/build"/>
         <LibraryPath Value="./libs/googletest/googletest/googletest/build"/>
+        <LibraryPath Value="./libs/mathgeolib/MathGeoLib/build"/>
+        <LibraryPath Value="./libs/sgfxapi/sgfxapi/build"/>
+        <LibraryPath Value="./libs/cegui/cegui-source/build/lib"/>
         <Library Value="landscapes"/>
         <Library Value="landscapes-mc"/>
         <Library Value="nbt"/>
@@ -86,6 +98,7 @@
         <Library Value="cppformat"/>
         <Library Value="bprinter"/>
         <Library Value="gtest"/>
+        <Library Value="MathGeoLib"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug64" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>

@@ -46,6 +46,7 @@
       <File Name="src/landscapes/svo_tree.cpp"/>
       <File Name="src/landscapes/svo_tree.sanity.cpp"/>
       <File Name="src/landscapes/svo_tree.slice_mgmt.cpp"/>
+      <File Name="src/landscapes/svo_render.cpp"/>
     </VirtualDirectory>
     <File Name="src/pempek_assert.cpp"/>
   </VirtualDirectory>
@@ -74,6 +75,9 @@
       <File Name="include/landscapes/svo_serialization.v1.hpp"/>
       <File Name="include/landscapes/svo_tree.block_mgmt.hpp"/>
       <File Name="include/landscapes/svo_tree.slice_mgmt.hpp"/>
+      <File Name="include/landscapes/svo_render.hpp"/>
+      <File Name="include/landscapes/svo_camera_mapping.cl.h"/>
+      <File Name="include/landscapes/svo_camera_mapping.cl.fwd.h"/>
     </VirtualDirectory>
     <File Name="include/pempek_assert.h"/>
   </VirtualDirectory>
@@ -97,16 +101,17 @@
         <IncludePath Value="./libs/cNBT/cNBT"/>
         <IncludePath Value="./libs/cppformat/cppformat"/>
         <IncludePath Value="./libs/ThreadPool/ThreadPool"/>
-        <IncludePath Value="./libs/cubelib/cubelib/include"/>
+        <IncludePath Value="./libs/corner-cases/corner-cases/include"/>
         <IncludePath Value="./libs/glm/glm/"/>
         <IncludePath Value="./libs/bprinter/bprinter/include"/>
         <IncludePath Value="./libs/googletest/googletest/googletest/include"/>
+        <IncludePath Value="./libs/tclap/tclap-code/include"/>
+        <IncludePath Value="./libs/sgfxapi/sgfxapi/include"/>
+        <IncludePath Value="./libs/sgfxapi/sgfxapi/libs/mathgeolib/MathGeoLib/src"/>
+        <IncludePath Value="./libs/cegui/cegui-source/cegui/include"/>
+        <IncludePath Value="./libs/cegui/cegui-source/build/cegui/include"/>
       </Compiler>
-      <Linker Options="" Required="yes">
-        <LibraryPath Value="./libs/cNBT/cNBT/build64"/>
-        <LibraryPath Value="./libs/cppformat/cppformat/build64"/>
-        <LibraryPath Value="./libs/bprinter/bprinter-master/bprinter-master/build64"/>
-      </Linker>
+      <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Debug64" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
