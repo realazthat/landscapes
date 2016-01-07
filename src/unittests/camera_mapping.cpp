@@ -283,7 +283,7 @@ TEST_F(CameraMappingTest,mgl_to_camera_mapping)
 }
 
 
-TEST_F(CameraMappingTest,uv_to_ray)
+TEST_F(CameraMappingTest,svo_uv_to_ray)
 {
 
     for (std::size_t test_index = 0; test_index < tests.size(); ++test_index){
@@ -317,7 +317,7 @@ TEST_F(CameraMappingTest,uv_to_ray)
             auto nearPlanePos = svo::toglm(camera.NearPlanePos(u,v));
             
             
-            auto ray1 = uv_to_ray(&camera_mapping, u, v);
+            auto ray1 = svo_uv_to_ray(&camera_mapping, u, v);
             
             auto pos0 = svo::toglm(ray0.pos);
             auto dir0 = glm::normalize(svo::toglm(ray0.dir));
