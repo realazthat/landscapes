@@ -149,6 +149,7 @@ add_library(landscapes
     src/landscapes/svo_tree.sanity.cpp
     src/landscapes/svo_serialization.v1.cpp
     src/landscapes/svo_formatters.cpp
+    src/landscapes/svo_render.cpp
     src/pempek_assert.cpp
     #cubelib.clgen.h
     )
@@ -178,7 +179,7 @@ target_link_libraries(landscapes-mc-demo
     ${MGL_LIB}
     ${CBNT_LIB}
     z
-    ${CPP_FORMAT_LIB}
+    ${CPPFORMAT_LIB}
     ${BPRINTER_LIB}
     ${SGFXAPI_LIB}
     ${CEGUI_LIB}
