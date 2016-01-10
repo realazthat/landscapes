@@ -23,33 +23,6 @@ PROJECT_PATH=$PWD
 #############################################################################
 bash ./scripts/download-and-build-tclap.sh
 
-#############################################################################
-## get/build cubelib
-#############################################################################
-
-cd "$PROJECT_PATH"
-bash ./scripts/download-and-build-cubelib.sh
-
-#############################################################################
-## get/build glm
-#############################################################################
-
-cd "$PROJECT_PATH"
-bash ./scripts/download-and-build-glm.sh
-
-
-#############################################################################
-## get/build cNBT
-#############################################################################
-
-cd "$PROJECT_PATH"
-mkdir -p cNBT && cd cNBT
-
-
-mkdir -p build && cd build
-cmake -G"$CMAKE_GENERATOR" ..
-cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
-cmake --build .
 
 
 
