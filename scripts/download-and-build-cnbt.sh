@@ -25,9 +25,9 @@ mkdir -p cNBT && cd cNBT
 
 rm -rf ./cNBT/
 #retreive the library
-git clone https://github.com/FliPPeh/cNBT.git
+git clone https://github.com/realazthat/cNBT.git
 cd cNBT
-git checkout "5850e3e"
+git checkout "rename-strdup"
 
 mkdir -p build && cd build
 cmake -G"$CMAKE_GENERATOR" ..
