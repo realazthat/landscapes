@@ -170,7 +170,7 @@ add_executable(landscapes-mc-demo
     src/landscapes/mc-demo.cpp
     )
 set_property(TARGET landscapes-mc-demo PROPERTY CXX_STANDARD 11)
-target_compile_definitions(landscapes-mc-demo PUBLIC -DCEGUI_USE_GLEW=1)
+target_compile_definitions(landscapes-mc-demo PUBLIC)
 
 target_link_libraries(landscapes-mc-demo
     landscapes
