@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="landscapes-zorder-genconsts" InternalType="Console">
   <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0005Debug000000000000]]>
+    </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
   "name": "Debug",
@@ -12,9 +15,6 @@
   "arguments": [],
   "parentProject": ""
  }]]]>
-    </Plugin>
-    <Plugin Name="qmake">
-      <![CDATA[00010001N0005Debug000000000000]]>
     </Plugin>
   </Plugins>
   <Description/>
@@ -43,8 +43,21 @@
         <IncludePath Value="./libs/cppformat/cppformat"/>
         <IncludePath Value="./libs/cubelib/cubelib/include"/>
         <IncludePath Value="./libs/glm/glm-master/glm-master"/>
-        <IncludePath Value="./libs/bprinter/bprinter-master/bprinter-master/include"/>
+        <IncludePath Value="./libs/bprinter/bprinter-master/bprinter-."/>
+        <IncludePath Value="./src"/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="./libs/cNBT/cNBT"/>
+        <IncludePath Value="./libs/cppformat/cppformat"/>
+        <IncludePath Value="./libs/ThreadPool/ThreadPool"/>
+        <IncludePath Value="./libs/corner-cases/corner-cases/include"/>
+        <IncludePath Value="./libs/glm/glm/"/>
+        <IncludePath Value="./libs/bprinter/bprinter/include"/>
         <IncludePath Value="./libs/googletest/googletest/googletest/include"/>
+        <IncludePath Value="./libs/tclap/tclap-code/include"/>
+        <IncludePath Value="./libs/sgfxapi/sgfxapi/include"/>
+        <IncludePath Value="./libs/mathgeolib/MathGeoLib/src"/>
+        <IncludePath Value="./libs/cegui/cegui-source/cegui/include"/>
+        <IncludePath Value="./libs/cegui/cegui-source/build/cegui/include"/>
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
