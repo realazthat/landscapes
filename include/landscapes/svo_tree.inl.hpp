@@ -8,47 +8,6 @@
 
 namespace svo{
 
-template<typename T>
-static inline bool overlap(T x1, T x2, T y1, T y2)
-{
-    ///from http://stackoverflow.com/a/3269471/586784
-    assert(x1 <= x2);
-    assert(y1 <= y2);
-
-    return x1 <= y2 && y1 <= x2;
-}
-
-
-
-template<typename T>
-static inline T ifloor(T value, T modulo)
-{
-    return (value / modulo) * modulo;
-}
-
-template<typename T>
-static inline T iceil(T value, T modulo)
-{
-    T value1 = ifloor(value, modulo);
-    if (value1 != value)
-        value1 += modulo;
-    
-    return value1;
-}
-
-template<typename T>
-static inline T ilog2(T value)
-{
-    std::size_t result = 0;
-
-    while (value)
-    {
-        value >>= 1;
-        result += 1;
-    }
-
-    return result;
-}
 
 
 /**

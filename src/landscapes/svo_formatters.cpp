@@ -3,6 +3,7 @@
 #include "landscapes/svo_formatters.hpp"
 #include "landscapes/svo_tree.hpp"
 #include "landscapes/svo_tree.capi.h"
+#include "landscapes/svo_camera_mapping.cl.h"
 
 #include "bprinter/table_printer.h"
 
@@ -92,6 +93,25 @@ std::ostream& operator<<(std::ostream& out, const svo::svo_semantic_t& semantic)
 }
 
 
+std::ostream& operator<<(std::ostream& out, const svo_camera_quad_t& camera_quad)
+{
+    out << "[svo_camera_quad_t"
+        << " top_left=" << camera_quad.top_left
+        << ", top_right=" << camera_quad.top_right
+        << ", bottom_right=" << camera_quad.bottom_right
+        << ", bottom_left" << camera_quad.bottom_left
+        << "]";
+    return out;
+}
+
+std::ostream& operator<<(std::ostream& out, const svo_camera_mapping_t& camera_mapping)
+{
+    out << "[svo_camera_mapping_t"
+        << " source=" << camera_mapping.source
+        << " target=" << camera_mapping.target
+        << "]";
+    return out;
+}
 
 
 

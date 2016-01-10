@@ -17,29 +17,20 @@ PROJECT_PATH=$PWD
 
 
 #############################################################################
-## get/build googletest
+## get/build tclap
 #############################################################################
 
 
 cd "$PROJECT_PATH"
 cd libs
 
-mkdir -p googletest && cd googletest
+mkdir -p tclap && cd tclap
 
-rm -rf ./googletest/
-git clone https://github.com/google/googletest.git
-cd googletest
-git checkout "ddb8012"
-cd googletest
+rm -rf ./tclap-code/
+git clone git://git.code.sf.net/p/tclap/code tclap-code
+cd tclap-code
+git checkout "3627d9402e529770df9b0edf2aa8c0e0d6c6bb41"
 
-mkdir -p build
-cd build
-cmake -G"$CMAKE_GENERATOR" ..
-cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
-cmake . -DCMAKE_VERBOSE_MAKEFILE=1
-if [ $(echo "$MSYSTEM" | grep -io MINGW) = "MINGW" ]; then
-    cmake . -Dgtest_disable_pthreads=1
-fi
-cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
-cmake --build .
+
+
 

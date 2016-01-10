@@ -17,29 +17,29 @@ PROJECT_PATH=$PWD
 
 
 #############################################################################
-## get/build googletest
+## get/build freeglut
 #############################################################################
 
 
 cd "$PROJECT_PATH"
 cd libs
 
-mkdir -p googletest && cd googletest
+mkdir -p freeglut && cd freeglut
 
-rm -rf ./googletest/
-git clone https://github.com/google/googletest.git
-cd googletest
-git checkout "ddb8012"
-cd googletest
+rm -rf ./freeglut/
+git clone https://github.com/dcnieho/FreeGLUT.git
+cd FreeGLUT
+git checkout "575feb5"
 
 mkdir -p build
 cd build
-cmake -G"$CMAKE_GENERATOR" ..
+
+cmake -G"$CMAKE_GENERATOR" ../freeglut/freeglut
 cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
 cmake . -DCMAKE_VERBOSE_MAKEFILE=1
-if [ $(echo "$MSYSTEM" | grep -io MINGW) = "MINGW" ]; then
-    cmake . -Dgtest_disable_pthreads=1
-fi
-cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
-cmake --build .
+cmake --build . --target freeglut
+#cmake --build . --target freeglut_static
+
+
+cp -f "./bin/"/* "$PROJECT_PATH/build/."
 

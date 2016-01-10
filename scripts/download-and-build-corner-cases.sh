@@ -2,7 +2,8 @@
 
 #####################################################################
 ####Run this from the project root directory
-####This script will delete the library if it is already in the libs directory.
+####This script will delete/overwrite any libraries in the ./libs directory
+#### that it will download and build.
 #####################################################################
 
 
@@ -12,24 +13,16 @@ set -exv
 PROJECT_PATH=$PWD
 
 
-
-
-
-
 #############################################################################
-## get/build glm
+## get/build corner-cases/cubelib
 #############################################################################
-
 
 cd "$PROJECT_PATH"
 cd libs
 
-mkdir -p glm && cd glm
-
-rm -rf ./glm/
-git clone https://github.com/g-truc/glm.git
-cd glm
-git checkout "78f686b"
+mkdir -p corner-cases && cd corner-cases
+rm -rf ./corner-cases/
+git clone https://github.com/realazthat/corner-cases.git
 
 
 

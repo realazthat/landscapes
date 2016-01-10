@@ -3,7 +3,7 @@
 
 #include "opencl.shim.h"
 
-#include "cubelib.h"
+#include "cubelib/cubelib.h"
 
 GLOBAL_STATIC_CONST float fposinf = 1.0f/0.0f;
 GLOBAL_STATIC_CONST float fneginf = -1.0f/0.0f;
@@ -33,6 +33,19 @@ bool contains_strict_f3(float3_t bounds_lower, float3_t bounds_upper, float3_t p
     return result;
 }
 
+static inline bool fequalsf1(float v0, float v1, float epsilon=.0001)
+{
+    return glm_abs(v0-v1) < epsilon;
+}
+static inline bool fequalsf3(float3_t v0, float3_t v1, float epsilon=.0001)
+{
+    return glm_length(v0 - v1) < epsilon;
+}
+
+static inline bool fiszerof1(float v, float epsilon=.0001)
+{
+    return fequalsf1(v,0, epsilon);
+}
 
 static inline float3_t coalescenanf3(float3_t v, float3_t default_value)
 {
@@ -58,6 +71,14 @@ static inline float getcomponentf3(float3_t v, size_t i)
 
     return elements.s[i];
     */
+
+    return ((float*)&v)[i];
+}
+
+
+static inline float getcomponentf4(float4_t v, size_t i)
+{
+    assert(i < 4);
 
     return ((float*)&v)[i];
 }

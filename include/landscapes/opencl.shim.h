@@ -22,10 +22,12 @@
     #define LOCAL_STATIC_CONST const
     
     
+    typedef float4 float4_t;
     typedef float3 float3_t;
     typedef uint3 uint3_t;
 
 
+    #define make_float4 (float4_t)
     #define make_float3 (float3_t)
     #define make_uint3 (uint3_t)
     
@@ -41,9 +43,11 @@
     #define GLOBAL_STATIC_CONST static const
     #define LOCAL_STATIC_CONST static const
     
+    typedef glm::vec4 float4_t;
     typedef glm::vec3 float3_t;
     typedef glm::uvec3 uint3_t;
 
+    #define make_float4 float4_t
     #define make_float3 float3_t
     #define make_uint3 uint3_t
 #endif
@@ -66,6 +70,12 @@
 #define glm_gt isgreater
 #define glm_select select
 #define glm_dot dot
+#define glm_distance distance
+#define glm_length length
+#define glm_tan tan
+#define glm_atan atan
+#define glm_sqrt sqrt
+#define glm_abs abs
 #else
 
 template<typename svec_type>
@@ -94,6 +104,12 @@ static inline float3_t select(const float3_t& a, const float3_t& b, const svec_t
 #define glm_gt glm::greaterThan
 #define glm_select select
 #define glm_dot glm::dot
+#define glm_distance glm::distance
+#define glm_length glm::length
+#define glm_tan glm::tan
+#define glm_atan glm::atan
+#define glm_sqrt glm::sqrt
+#define glm_abs glm::abs
 #endif
 
 

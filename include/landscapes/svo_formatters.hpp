@@ -5,8 +5,9 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include "svo_tree.fwd.hpp"
-#include "svo_buffer.fwd.hpp"
+#include "landscapes/svo_tree.fwd.hpp"
+#include "landscapes/svo_buffer.fwd.hpp"
+#include "landscapes/svo_camera_mapping.cl.fwd.h"
 
 #include "cubelib/formatters.hpp"
 
@@ -28,7 +29,9 @@ std::ostream& operator<<(std::ostream& out, const svo::svo_element_t& element);
 std::ostream& operator<<(std::ostream& out, const svo::svo_declaration_t& declaration);
 std::ostream& operator<<(std::ostream& out, const std::vector<svo::svo_declaration_t>& declarations);
 
+std::ostream& operator<<(std::ostream& out, const svo_camera_mapping_t& camera_mapping);
 
+std::ostream& operator<<(std::ostream& out, const svo_camera_quad_t& camera_quad);
 
 
 

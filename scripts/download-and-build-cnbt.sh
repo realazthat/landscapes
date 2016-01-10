@@ -17,29 +17,22 @@ PROJECT_PATH=$PWD
 
 
 #############################################################################
-## get/build googletest
+## get/build cNBT
 #############################################################################
-
-
 cd "$PROJECT_PATH"
 cd libs
+mkdir -p cNBT && cd cNBT
 
-mkdir -p googletest && cd googletest
+rm -rf ./cNBT/
+#retreive the library
+git clone https://github.com/FliPPeh/cNBT.git
+cd cNBT
+git checkout "5850e3e"
 
-rm -rf ./googletest/
-git clone https://github.com/google/googletest.git
-cd googletest
-git checkout "ddb8012"
-cd googletest
-
-mkdir -p build
-cd build
+mkdir -p build && cd build
 cmake -G"$CMAKE_GENERATOR" ..
 cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
 cmake . -DCMAKE_VERBOSE_MAKEFILE=1
-if [ $(echo "$MSYSTEM" | grep -io MINGW) = "MINGW" ]; then
-    cmake . -Dgtest_disable_pthreads=1
-fi
-cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
 cmake --build .
+
 

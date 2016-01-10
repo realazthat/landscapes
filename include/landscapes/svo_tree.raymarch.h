@@ -1,7 +1,7 @@
 #ifndef SVO_TREE_RAYMARCH_H
 #define SVO_TREE_RAYMARCH_H 1
 
-#include "cubelib.h"
+#include "cubelib/cubelib.h"
 #include "svo_inttypes.h"
 #include "opencl.shim.h"
 #include "common.math.cl.h"
@@ -13,14 +13,13 @@
 
 
 #else
-#include "pempek_assert/pempek_assert.h"
+#include "pempek_assert.h"
 #include <cassert>
 
 
 #include <vector>
 #include <tuple>
-#include "Util.hpp"
-#include "svo_formatters.hpp"
+#include "landscapes/svo_formatters.hpp"
 #include <bitset>
 #endif
 
@@ -390,7 +389,7 @@ cube_hit_t calculate_t1_f3( float3_t raypos
 
     float3_t t1 = raypos + raydir*Q;
 
-    PPK_ASSERT( (fequals(t1.x, dir_upper.x) || fequals(t1.y, dir_upper.y) || fequals(t1.z, dir_upper.z))
+    PPK_ASSERT( fequalsf3(t1, dir_upper)
                 , "t1 not on dir_upper surface" " raypos: %s, raydir: %s, dir_upper: %s" "%s"
                 , tostr(raypos).c_str(), tostr(raydir).c_str(), tostr(dir_upper).c_str()
                 , ( ", Qx: " + tostr(Qv.x) + ", Qy: " + tostr(Qv.y) + ", Qz: " + tostr(Qv.z)
@@ -442,7 +441,7 @@ cube_hit_t calculate_t1_f3( float3_t raypos
     
     assert( !is_null_face(outface) );
 
-    PPK_ASSERT( fiszero<float>(glm_normalize(t1 - raypos) - glm_normalize(raydir) )
+    PPK_ASSERT( fiszerof1(glm_length(glm_normalize(t1 - raypos) - glm_normalize(raydir) ))
         , "t1 not in the right direction" " raypos: %s, raydir: %s, dir_upper: %s"
         //, ", t1: %s, glm::normalize(t1 - raypos) - glm::normalize(raydir): %s"
         , tostr(raypos).c_str(), tostr(raydir).c_str(), tostr(dir_upper).c_str()
@@ -548,7 +547,7 @@ cube_hit_t calculate_t0_f3( float3_t raypos
 
     float3_t t0 = raypos + raydir*Q;
 
-    PPK_ASSERT( (fequals(t0.x, dir_lower.x) || fequals(t0.y, dir_lower.y) || fequals(t0.z, dir_lower.z))
+    PPK_ASSERT( (fequalsf3(t0, dir_lower))
                 , "t0 not on dir_lower surface" " raypos: %s, raydir: %s, dir_lower: %s" "%s"
                 , tostr(raypos).c_str(), tostr(raydir).c_str(), tostr(dir_lower).c_str()
                 , ( ", Qx: " + tostr(Qv.x) + ", Qy: " + tostr(Qv.y) + ", Qz: " + tostr(Qv.z)
@@ -957,10 +956,10 @@ bool svo_tree_raymarch(const uint8_t* address_space, goffset_t root_cd_goffset
     , float3_t* out_normal
     , float* out_t
 #ifdef RAYMARCH_COMPUTE_ITERATIONS
-    , int* out_iterations
+    , uint32_t* out_iterations
 #endif
 #ifdef RAYMARCH_COMPUTE_LEVELS
-    , int* out_levels
+    , uint32_t* out_levels
 #endif
     )
 {
@@ -968,7 +967,7 @@ bool svo_tree_raymarch(const uint8_t* address_space, goffset_t root_cd_goffset
     using namespace svo;
 #endif
 #ifdef RAYMARCH_COMPUTE_ITERATIONS
-        int iterations = 0;
+        uint32_t iterations = 0;
 #endif
 
 

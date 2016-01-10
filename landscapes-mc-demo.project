@@ -1,9 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="landscapes-mc-demo" InternalType="Console">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0007Debug64000000000000]]>
+    </Plugin>
+    <Plugin Name="CMakePlugin">
+      <![CDATA[[{
+  "name": "Debug64",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }, {
+  "name": "Release64",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }]]]>
+    </Plugin>
+  </Plugins>
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
-    <File Name="src/mc-demo.cpp"/>
+    <VirtualDirectory Name="landscapes">
+      <File Name="src/landscapes/mc-demo.cpp"/>
+      <File Name="src/landscapes/mgl2glm.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <VirtualDirectory Name="include">
+    <VirtualDirectory Name="landscapes">
+      <File Name="include/landscapes/mgl2glm.hpp"/>
+      <File Name="include/landscapes/cegui.glfw3.hpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -16,12 +51,55 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug64" CompilerType="mingw64-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-O0;-std=c++11;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
+        <IncludePath Value="./src"/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="./libs/cNBT/cNBT"/>
+        <IncludePath Value="./libs/cppformat/cppformat"/>
+        <IncludePath Value="./libs/ThreadPool/ThreadPool"/>
+        <IncludePath Value="./libs/corner-cases/corner-cases/include"/>
+        <IncludePath Value="./libs/glm/glm/"/>
+        <IncludePath Value="./libs/bprinter/bprinter/include"/>
+        <IncludePath Value="./libs/googletest/googletest/googletest/include"/>
+        <IncludePath Value="./libs/tclap/tclap-code/include"/>
+        <IncludePath Value="./libs/sgfxapi/sgfxapi/include"/>
+        <IncludePath Value="./libs/mathgeolib/MathGeoLib/src"/>
+        <IncludePath Value="./libs/cegui/cegui-source/cegui/include"/>
+        <IncludePath Value="./libs/cegui/cegui-source/build/cegui/include"/>
       </Compiler>
-      <Linker Options="" Required="yes"/>
+      <Linker Options="" Required="yes">
+        <LibraryPath Value="$(IntermediateDirectory)"/>
+        <LibraryPath Value="./libs/cNBT/cNBT/build"/>
+        <LibraryPath Value="./libs/cppformat/cppformat/build"/>
+        <LibraryPath Value="./libs/bprinter/bprinter/build"/>
+        <LibraryPath Value="./libs/googletest/googletest/googletest/build"/>
+        <LibraryPath Value="./libs/mathgeolib/MathGeoLib/build"/>
+        <LibraryPath Value="./libs/sgfxapi/sgfxapi/build"/>
+        <LibraryPath Value="./libs/cegui/cegui-source/build/lib"/>
+        <Library Value="landscapes"/>
+        <Library Value="landscapes-mc"/>
+        <Library Value="nbt"/>
+        <Library Value="z"/>
+        <Library Value="cppformat"/>
+        <Library Value="bprinter"/>
+        <Library Value="sgfxapi"/>
+        <Library Value="sgfxapi-drawutils"/>
+        <Library Value="MathGeoLib"/>
+        <Library Value="glfw3"/>
+        <Library Value="glu32"/>
+        <Library Value="glew32"/>
+        <Library Value="freeglut"/>
+        <Library Value="opengl32"/>
+        <Library Value="gdi32"/>
+        <Library Value="CEGUIBase-0"/>
+        <Library Value="CEGUIOpenGLRenderer-0"/>
+        <Library Value="CEGUIExpatParser"/>
+        <Library Value="CEGUICoreWindowRendererSet"/>
+        <Library Value="CEGUICommonDialogs-0"/>
+      </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug64" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -134,5 +212,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug64"/>
 </CodeLite_Project>

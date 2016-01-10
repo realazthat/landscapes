@@ -34,6 +34,8 @@ Dependencies
 Build system:
 
 * CMake >= 3.1 (if using CMake)
+* git (only if building dependencies from source)
+* mercurial (only if building dependencies from source)
 
 Libraries:
 
@@ -78,6 +80,9 @@ Libraries:
         * glu
         * glfw
         * cubelib
+    * [xdsopl/sma](https://github.com/xdsopl/sma/tree/master) (modified/included in project at `<project-root>/include/xdsopl-sma`)
+        * Simple Moving Average
+        * License: [CC0 Public Domain Dedication ](http://creativecommons.org/publicdomain/zero/1.0/)
 
 
 
