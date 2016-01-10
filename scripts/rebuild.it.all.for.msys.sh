@@ -49,5 +49,7 @@ cmake -G"$CMAKE_GENERATOR" ..
 cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
 cmake . -DCMAKE_VERBOSE_MAKEFILE=1
 cmake --build . --target unittests
+cmake --build . --target landscapes-zorder-genconsts
 
+./landscapes-zorder-genconsts > zorder-genconsts.h
 ./unittests
