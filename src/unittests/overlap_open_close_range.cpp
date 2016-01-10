@@ -3,6 +3,9 @@
 #include "gtest/gtest.h"
 #include <fstream>
 
+
+using svo::overlap_open_close_range;
+
 class OverlapAlgoTest : public ::testing::Test {
 protected:
     virtual void SetUp() {
