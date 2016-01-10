@@ -40,3 +40,6 @@ cmake . -DCMAKE_VERBOSE_MAKEFILE=1
 cmake --build . --target freeglut
 #cmake --build . --target freeglut_static
 
+
+cp -f "./bin/"/* "$PROJECT_PATH/build/."
+

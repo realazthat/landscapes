@@ -28,15 +28,19 @@ mkdir -p cegui && cd cegui
 rm -rf ./cegui-source/
 hg clone https://bitbucket.org/cegui/cegui cegui-source
 cd cegui-source
-hg update -C "7109578e2fa792bae3e306d74fcbce0660f583fd"
+hg update v0-8
+#hg update -C "7109578e2fa792bae3e306d74fcbce0660f583fd"
 
 mkdir -p build
 cd build
 
 cmake -G"$CMAKE_GENERATOR" .. \
-        -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE" -DCMAKE_VERBOSE_MAKEFILE=1 -DCEGUI_SAMPLES_ENABLED=0 -DCEGUI_BUILD_RENDERER_DIRECT3D11=0 \
+        -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE" -DCMAKE_VERBOSE_MAKEFILE=1  -DCEGUI_BUILD_SUFFIX='' -DCMAKE_DEBUG_POSTFIX='' \
+        -DCEGUI_SAMPLES_ENABLED=0 -DCEGUI_BUILD_RENDERER_DIRECT3D11=0 \
         -DCEGUI_BUILD_RENDERER_DIRECT3D10=0 -DCEGUI_BUILD_RENDERER_DIRECT3D9=0 -DCEGUI_BUILD_RENDERER_OPENGL=1 \
         -DCEGUI_BUILD_RENDERER_OPENGL3=1 -DCEGUI_BUILD_APPLICATION_TEMPLATES=0 \
         -DGLM_H_PATH="$PROJECT_PATH/libs/glm/glm/" \
         -DCMAKE_PREFIX_PATH:PATH="$PROJECT_PATH/libs/cegui/cegui-dependencies/build/dependencies"
 cmake --build .
+
+cp -f "./bin/"/* "$PROJECT_PATH/build/."
