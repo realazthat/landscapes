@@ -38,6 +38,9 @@ std::ostream& operator<<(std::ostream& out, const svo_camera_quad_t& camera_quad
 
 namespace svo{
 
+    
+::std::ostream& operator<<(::std::ostream& out, const svo_error_t& error);
+    
 template<typename T>
 std::string tostr(T v);
 

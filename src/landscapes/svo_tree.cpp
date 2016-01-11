@@ -14,37 +14,7 @@
 #include <algorithm>
 #include <cstring>
 
-#ifndef DEBUG_PRINT
 
-//#define DEBUG_PRINT if(1)
-#define DEBUG_PRINT if(0)
-
-#endif
-
-#ifndef NOOP
-#define NOOP if (0)
-#endif
-
-
-
-
-std::ostream& operator<<(std::ostream& out, const svo::svo_error_t& error)
-{
-    using namespace svo;
-    switch(error)
-    {
-        case(svo_error_t::OK):
-            return out << "OK";
-        case(svo_error_t::CHILDREN_TOO_FAR):
-            return out << "CHILDREN_TOO_FAR";
-        case(svo_error_t::BLOCK_IS_FULL):
-            return out << "BLOCK_IS_FULL";
-        default:
-            return out << "UNKNOWN ERROR";
-    }
-
-    return out;
-}
 
 
 namespace svo{
@@ -2651,7 +2621,8 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::array<svo_slice_t*, 8>& 
         if(auto error = svo_slice_sanity(dst_slice))
         {
             //std::cerr << error << std::endl;
-            PPK_ASSERT(!error, "sanity failed: %s", error.error.c_str() );
+            if(error)
+                throw std::runtime_error(fmt::format("sanity failed: {}", error.error));
         }
 
         assert(dst_slice->children);

@@ -125,6 +125,22 @@ std::ostream& operator<<(std::ostream& out, const svo_camera_mapping_t& camera_m
 namespace svo{
 
 
+::std::ostream& operator<<(::std::ostream& out, const svo_error_t& error)
+{
+    switch(error)
+    {
+        case(svo_error_t::OK):
+            return out << "OK";
+        case(svo_error_t::CHILDREN_TOO_FAR):
+            return out << "CHILDREN_TOO_FAR";
+        case(svo_error_t::BLOCK_IS_FULL):
+            return out << "BLOCK_IS_FULL";
+    }
+
+    return out << "UNKNOWN ERROR";
+}
+
+
 void pprint_announce_msg(
     std::ostream& out, const std::string& announce_msg, std::size_t width)
 {
