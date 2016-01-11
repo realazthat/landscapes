@@ -28,17 +28,17 @@ CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bas
 
 
 CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-glm.sh
-#CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-cegui-dependencies.sh
-#CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-cegui.sh
+CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-cegui-dependencies.sh
+CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-cegui.sh
 
 
 #CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-tclap.sh
 CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-cnbt.sh
 CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-corner-cases.sh
-#CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-glfw3.sh
-#CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-freeglut.sh
+CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-glfw3.sh
+CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-freeglut.sh
 CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-mathgeolib.sh
-#CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE" bash ./scripts/download-and-build-sgfxapi.sh
+CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE" bash ./scripts/download-and-build-sgfxapi.sh
 
 CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-libs-with-no-pkg.sh
 CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-unittest-data.sh
