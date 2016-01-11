@@ -8,7 +8,6 @@
 
 #include "bprinter/table_printer.h"
 
-#include "pempek_assert.h"
 #include <iostream>
 #include <deque>
 #include <algorithm>
@@ -55,9 +54,10 @@ slice_inserter_t::slice_inserter_t(svo_tree_t* tree, svo_block_t* block)
 
     assert(slice->pos_data);
     assert(slice->buffers);
-    PPK_ASSERT (block->side * 2 == slice->side || (block->side == 0 && slice->side == 1)
-                , "block->side * 2: %u, slice->side: %u", block->side*2, slice->side);
-    
+    DEBUG {
+        if (!(block->side * 2 == slice->side || (block->side == 0 && slice->side == 1)))
+            throw std::runtime_error(fmt::format( "block->side * 2: {}, slice->side: {}", block->side*2, slice->side));
+    }
     assert(slice->children);
     auto& children = *slice->children;
     

@@ -46,11 +46,6 @@ Libraries:
             opencl-compatible shim/layer
         * Tested with commit [78f686b](https://github.com/g-truc/glm/tree/78f686b4be6c623df829db58b974bf8d79461987)
         * "[the Happy Bunny License (Modified MIT) or the MIT License](http://glm.g-truc.net/copying.txt)"
-    * [pempek-assert](https://github.com/gpakosz/Assert) (included in the project)
-        * Asserts with formatted error messages
-        * Tested with commit [b813764](https://github.com/gpakosz/Assert/commit/b8137646cdd6f48b2508555360d80ac2dd420726)
-            (included in the project at `src/pempek_assert.cpp` and `include/pempek_assert.h`)
-        * `released under the WTFPL v2 license, by Gregory Pakosz (@gpakosz)`
     * [bprinter](https://github.com/dattanchu/bprinter/wiki)
         * Pretty-printed tables, useful for debugging
         * Tested with commit [29531dc](https://github.com/dattanchu/bprinter/tree/29531dcecceb99d759a196f5e44b4729abe18bed)

@@ -5,7 +5,6 @@
 #include "landscapes/svo_tree.sanity.hpp"
 
 #include "landscapes/debug_macro.h"
-#include "pempek_assert.h"
 
 #include "format.h"
 

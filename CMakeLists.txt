@@ -145,24 +145,22 @@ add_library(landscapes
     src/landscapes/svo_serialization.v1.cpp
     src/landscapes/svo_formatters.cpp
     src/landscapes/svo_render.cpp
-    src/pempek_assert.cpp
-    #cubelib.clgen.h
     )
-set_property(TARGET landscapes PROPERTY CXX_STANDARD 11)
+set_property(TARGET landscapes PROPERTY CXX_STANDARD 14)
 
 ################################################################################
 
 add_library(landscapes-mc
     src/landscapes/mcloader.cpp
     )
-set_property(TARGET landscapes-mc PROPERTY CXX_STANDARD 11)
+set_property(TARGET landscapes-mc PROPERTY CXX_STANDARD 14)
 
 ################################################################################
 
 add_executable(landscapes-zorder-genconsts
     src/landscapes/svo_curves.genconsts.cpp
     )
-set_property(TARGET landscapes-zorder-genconsts PROPERTY CXX_STANDARD 11)
+set_property(TARGET landscapes-zorder-genconsts PROPERTY CXX_STANDARD 14)
 
 
 ################################################################################
@@ -187,6 +185,7 @@ target_link_libraries(landscapes-mc-demo
 
     ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32)
 
+set_property(TARGET landscapes-mc-demo PROPERTY CXX_STANDARD 14)
 ################################################################################
 
 
@@ -217,7 +216,7 @@ target_link_libraries(unittests
     )
 
 
-set_property(TARGET unittests PROPERTY CXX_STANDARD 11)
+set_property(TARGET unittests PROPERTY CXX_STANDARD 14)
 
 
 ################################################################################

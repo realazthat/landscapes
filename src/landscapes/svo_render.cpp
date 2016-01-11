@@ -9,7 +9,7 @@
 #include "landscapes/svo_camera_mapping.cl.h"
 #include "landscapes/svo_serialization.v1.hpp"
 #include "landscapes/common.math.cl.h"
-#include "pempek_assert.h"
+#include "landscapes/svo_formatters.hpp"
 
 #include <set>
 #include <deque>
@@ -103,7 +103,8 @@ namespace svo{
 
             leaf_blocks.insert(new_leaf_blocks.begin(), new_leaf_blocks.end());
 
-            PPK_ASSERT(success == svo_error_t::OK, fmt::format(":(: {}", success).c_str());
+            if (success != svo_error_t::OK)
+                throw std::runtime_error(fmt::format(":(: {}", success));
         }
 
         assert(leaf_blocks.size() > 0);
