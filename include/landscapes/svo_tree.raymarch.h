@@ -13,7 +13,6 @@
 
 
 #else
-#include "pempek_assert.h"
 #include <cassert>
 
 
@@ -21,6 +20,11 @@
 #include <tuple>
 #include "landscapes/svo_formatters.hpp"
 #include <bitset>
+
+#ifndef NDEBUG
+#define RAYMARCHASSERTS
+#endif
+
 #endif
 
 
@@ -389,12 +393,16 @@ cube_hit_t calculate_t1_f3( float3_t raypos
 
     float3_t t1 = raypos + raydir*Q;
 
-    PPK_ASSERT( fequalsf3(t1, dir_upper)
-                , "t1 not on dir_upper surface" " raypos: %s, raydir: %s, dir_upper: %s" "%s"
-                , tostr(raypos).c_str(), tostr(raydir).c_str(), tostr(dir_upper).c_str()
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
+    if(!fequalsf3(t1, dir_upper))
+    {
+        throw std::runtime_error(fmt::format(  "t1 not on dir_upper surface" " raypos: {}, raydir: {}, dir_upper: {}" "{}"
+                , tostr(raypos), tostr(raydir), tostr(dir_upper)
                 , ( ", Qx: " + tostr(Qv.x) + ", Qy: " + tostr(Qv.y) + ", Qz: " + tostr(Qv.z)
-                         + ", t1: " + tostr(t1) + ", Q: " + tostr(Q)).c_str());
-
+                         + ", t1: " + tostr(t1) + ", Q: " + tostr(Q))));
+    }
+    
+#endif
     ///clamp the result to the inside of the box
     //for (int i = 0; i < 3; ++i)
         //t1[i] = raydir[i] < 0 ? std::max(t1[i], dir_upper[i]) : std::min(t1[i], dir_upper[i]);
@@ -441,12 +449,16 @@ cube_hit_t calculate_t1_f3( float3_t raypos
     
     assert( !is_null_face(outface) );
 
-    PPK_ASSERT( fiszerof1(glm_length(glm_normalize(t1 - raypos) - glm_normalize(raydir) ))
-        , "t1 not in the right direction" " raypos: %s, raydir: %s, dir_upper: %s"
-        //, ", t1: %s, glm::normalize(t1 - raypos) - glm::normalize(raydir): %s"
-        , tostr(raypos).c_str(), tostr(raydir).c_str(), tostr(dir_upper).c_str()
-        //, tostr(t1).c_str(), tostr(glm::normalize(t1 - raypos) - glm::normalize(raydir)).c_str()
-         );
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
+    if (!fiszerof1(glm_length(glm_normalize(t1 - raypos) - glm_normalize(raydir) )))
+    {
+        throw std::runtime_error( fmt::format("t1 not in the right direction" " raypos: {}, raydir: {}, dir_upper: {}"
+                                            //, ", t1: %s, glm::normalize(t1 - raypos) - glm::normalize(raydir): %s"
+                                            , tostr(raypos).c_str(), tostr(raydir).c_str(), tostr(dir_upper).c_str()
+                                            //, tostr(t1).c_str(), tostr(glm::normalize(t1 - raypos) - glm::normalize(raydir)).c_str()
+        ));
+    }
+#endif
 
     return make_cube_hit(t1, outface);
 }
@@ -547,12 +559,15 @@ cube_hit_t calculate_t0_f3( float3_t raypos
 
     float3_t t0 = raypos + raydir*Q;
 
-    PPK_ASSERT( (fequalsf3(t0, dir_lower))
-                , "t0 not on dir_lower surface" " raypos: %s, raydir: %s, dir_lower: %s" "%s"
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
+    if( !(fequalsf3(t0, dir_lower)) )
+    {
+        throw std::runtime_error( fmt::format("t0 not on dir_lower surface" " raypos: {}, raydir: {}, dir_lower: {}" "{}"
                 , tostr(raypos).c_str(), tostr(raydir).c_str(), tostr(dir_lower).c_str()
                 , ( ", Qx: " + tostr(Qv.x) + ", Qy: " + tostr(Qv.y) + ", Qz: " + tostr(Qv.z)
-                         + ", t0: " + tostr(t0) + ", Q: " + tostr(Q)).c_str());
-
+                         + ", t0: " + tostr(t0) + ", Q: " + tostr(Q)).c_str()));
+    }
+#endif
     ///clamp the result to the inside of the box
     //for (int i = 0; i < 3; ++i)
         //t0[i] = raydir[i] < 0 ? std::min(t0[i], dir_lower[i]) : std::max(t0[i], dir_lower[i]);
@@ -757,12 +772,14 @@ svo_locate_node(svo_stack_t* stack
     //corner_t corner = root_corner;
     int depth = 0;
 
-    PPK_ASSERT(lower == calculate_abs_position_f3(stack,current_node.corner)
-                , "lower: %s, upper: %s, calculate_abs_position_f3(stack,current.corner): %s" ", raypos: %s"
-                , tostr(lower).c_str(), tostr(upper).c_str()
-                , tostr(calculate_abs_position_f3(stack,current_node.corner)).c_str()
-                , tostr(pos).c_str() );
-
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
+    if(lower != calculate_abs_position_f3(stack,current_node.corner))
+        throw std::runtime_error(fmt::format( "lower: {}, upper: {}, calculate_abs_position_f3(stack,current.corner): {}"
+                                                ", raypos: {}"
+                                                , tostr(lower).c_str(), tostr(upper).c_str()
+                                                , tostr(calculate_abs_position_f3(stack,current_node.corner)).c_str()
+                                                , tostr(pos).c_str() ));
+#endif
     while (max_depth == 0 || depth < max_depth)
     {
 
@@ -779,12 +796,14 @@ svo_locate_node(svo_stack_t* stack
 #endif
 
 
-        PPK_ASSERT(lower == calculate_abs_position_f3(stack,current_node.corner)
-                    , "lower: %s, upper: %s, calculate_abs_position_f3(stack,current.corner): %s" ", raypos: %s"
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
+        if (lower != calculate_abs_position_f3(stack,current_node.corner))
+            throw std::runtime_error(fmt::format("lower: {}, upper: {}, calculate_abs_position_f3(stack,current.corner): {}"
+                                                 ", raypos: {}"
                     , tostr(lower).c_str(), tostr(upper).c_str()
                     , tostr(calculate_abs_position_f3(stack,current_node.corner)).c_str()
-                    , tostr(pos).c_str() );
-
+                    , tostr(pos).c_str() ));
+#endif
 
         int xcorneridx = (pos.x < center.x) ? 0 : 1;
         int ycorneridx = (pos.y < center.y) ? 0 : 1;
@@ -822,11 +841,15 @@ svo_locate_node(svo_stack_t* stack
         center = (lower + upper) / make_float3(2);
 
     }
-    PPK_ASSERT(lower == calculate_abs_position_f3(stack,current_node.corner)
-                , "lower: %s, upper: %s, calculate_abs_position_f3(stack,current.corner): %s" ", raypos: %s"
+    
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
+    if (lower != calculate_abs_position_f3(stack,current_node.corner))
+        throw std::runtime_error(fmt::format("lower: {}, upper: {}, calculate_abs_position_f3(stack,current.corner): {}"
+                                             ", raypos: {}"
                 , tostr(lower).c_str(), tostr(upper).c_str()
                 , tostr(calculate_abs_position_f3(stack,current_node.corner)).c_str()
-                , tostr(pos).c_str() );
+                , tostr(pos).c_str() ));
+#endif
     return make_located_node(current_node,lower);
 }
 
@@ -1063,11 +1086,13 @@ bool svo_tree_raymarch(const uint8_t* address_space, goffset_t root_cd_goffset
         t1 = t1_result.position;
         outface = t1_result.face;
 
-        PPK_ASSERT( containsf3(lower,lower+scale, t1)
-                    , "lower: %s, upper: %s, t1: %s" ", raypos: %s, raydir: %s, dir_upper: %s"
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
+        if( !containsf3(lower,lower+scale, t1) )
+            throw std::runtime_error(fmt::format("lower: {}, upper: {}, t1: {}" ", raypos: {}, raydir: {}, dir_upper: {}"
                     , tostr(lower).c_str(), tostr(lower+scale).c_str(), tostr(t1).c_str()
 
-                    , tostr(raypos).c_str(), tostr(raydir).c_str(), tostr(dir_upper).c_str() );
+                    , tostr(raypos).c_str(), tostr(raydir).c_str(), tostr(dir_upper).c_str() ));
+#endif
 
 #ifdef RAYMARCHDEBUGRAYMARCHLOWER
         current.lower = lower;
@@ -1077,10 +1102,13 @@ bool svo_tree_raymarch(const uint8_t* address_space, goffset_t root_cd_goffset
         std::cout << "starting in root decendant " << node_stack_ostr(stack)
             << ", exiting at face " << outface << " at position " << t1 << std::endl;
 #endif
-        PPK_ASSERT(lower == calculate_abs_position_f3(&stack,current.corner)
-                    , "lower: %s, calculate_abs_position_f3(stack,current.corner): %s" ", raypos: %s, raydir: %s"
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
+        if (lower != calculate_abs_position_f3(&stack,current.corner))
+            throw std::runtime_error(fmt::format("lower: {}, calculate_abs_position_f3(stack,current.corner): {}"
+                                                 ", raypos: {}, raydir: {}"
                     , tostr(lower).c_str(), tostr(calculate_abs_position_f3(&stack,current.corner)).c_str()
-                    , tostr(raypos).c_str(), tostr(raydir).c_str() );
+                    , tostr(raypos).c_str(), tostr(raydir).c_str() ));
+#endif
     } else {
 #ifdef RAYMARCHDEBUGRAYMARCH
         std::cout << "origin is *outside* of the root cube" << std::endl;
@@ -1133,12 +1161,13 @@ bool svo_tree_raymarch(const uint8_t* address_space, goffset_t root_cd_goffset
         inface = t0_hit.face;
 
 
-        PPK_ASSERT( svo_fast_forward_intersects_f3(lower, upper, raypos, raydirinv)
-                    , "lower: %s, upper: %s" ", raypos: %s, raydir: %s, dir_upper: %s"
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
+        if( !svo_fast_forward_intersects_f3(lower, upper, raypos, raydirinv))
+            throw std::runtime_error(fmt::format("lower: {}, upper: {}" ", raypos: {}, raydir: {}, dir_upper: {}"
                     , tostr(lower).c_str(), tostr(upper).c_str()
 
-                    , tostr(raypos).c_str(), tostr(raydir).c_str(), tostr(dir_upper).c_str() );
-
+                    , tostr(raypos).c_str(), tostr(raydir).c_str(), tostr(dir_upper).c_str() ));
+#endif
 
 #ifdef RAYMARCHDEBUGRAYMARCHLOWER
         current.lower = lower;
@@ -1163,17 +1192,20 @@ bool svo_tree_raymarch(const uint8_t* address_space, goffset_t root_cd_goffset
             << ", on face " << inface << std::endl;
 #endif
 
-        PPK_ASSERT( containsf3(lower,upper, t1)
-                    , fmt::format("lower: {}={}, upper: {}={}, t1: {}={}"
-                                  ", raypos: {}={}, raydir: {}={}, dir_upper: {}={}"
-                    , tostr(lower), tohex(lower)
-                    , tostr(upper), tohex(upper)
-                    , tostr(t1), tohex(t1).c_str()
-                    , tostr(raypos), tohex(raypos)
-                    , tostr(raydir), tohex(raydir)
-                    , tostr(dir_upper), tohex(dir_upper) ).c_str() );
+#ifdef RAYMARCHASSERTS
+        if (!containsf3(lower,upper, t1))
+        {
+            throw std::runtime_error( fmt::format("lower: {}={}, upper: {}={}, t1: {}={}"
+                                            ", raypos: {}={}, raydir: {}={}, dir_upper: {}={}"
+                                            , tostr(lower), tohex(lower)
+                                            , tostr(upper), tohex(upper)
+                                            , tostr(t1), tohex(t1)
+                                            , tostr(raypos), tohex(raypos)
+                                            , tostr(raydir), tohex(raydir)
+                                            , tostr(dir_upper), tohex(dir_upper) ));
+        }
         assert(!is_null_face(inface));
-
+#endif
         outface = opposite_face(inface);
 
     }
@@ -1256,10 +1288,12 @@ bool svo_tree_raymarch(const uint8_t* address_space, goffset_t root_cd_goffset
                 << std::endl;
 #endif
 #ifdef RAYMARCHDEBUGRAYMARCHLOWER
-            PPK_ASSERT(current.lower == lower, "current.lower: %s, lower: %s" ", raypos: %s, raydir: %s"
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
+            if(current.lower != lower)
+                throw std::runtime_error(fmt::format( "current.lower: {}, lower: {}" ", raypos: {}, raydir: {}"
                         , tostr(current.lower).c_str(), tostr(lower).c_str()
-                        , tostr(raypos).c_str(), tostr(raydir).c_str()  );
-
+                        , tostr(raypos).c_str(), tostr(raydir).c_str()  ));
+#endif
 
             /*
             PPK_ASSERT(glm::length(lastt1 - t1) == 0 || fiszero<float>(glm::normalize(raydir) - glm::normalize(t1-lastt1), .001)
@@ -1274,11 +1308,14 @@ bool svo_tree_raymarch(const uint8_t* address_space, goffset_t root_cd_goffset
             lastt1 = t1;
 
 #endif
-            PPK_ASSERT(lower == calculate_abs_position_f3(&stack,current.corner)
-                        , "lower: %s, calculate_abs_position_f3(stack,current.corner): %s" ", raypos: %s, raydir: %s"
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
+            if (lower != calculate_abs_position_f3(&stack,current.corner))
+                throw std::runtime_error(fmt::format("lower: {}, calculate_abs_position_f3(stack,current.corner): {}"
+                                                     ", raypos: {}, raydir: {}"
                         , tostr(lower).c_str(), tostr(calculate_abs_position_f3(&stack,current.corner)).c_str()
-                        , tostr(raypos).c_str(), tostr(raydir).c_str() );
+                        , tostr(raypos).c_str(), tostr(raydir).c_str() ));
             assert(current.parent);
+#endif
         }
         //assert(!is_null_corner(current.corner));
 
@@ -1315,7 +1352,9 @@ bool svo_tree_raymarch(const uint8_t* address_space, goffset_t root_cd_goffset
             }
 
 #ifdef RAYMARCHDEBUGRAYMARCHLOWER
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
             PPK_ASSERT(next.lower == lower, "next.lower: %s, lower: %s", tostr(next.lower).c_str(), tostr(lower).c_str() );
+#endif
 #endif
 
             corner_t next_corner0 = next.corner;
@@ -1371,13 +1410,19 @@ bool svo_tree_raymarch(const uint8_t* address_space, goffset_t root_cd_goffset
 
 
 #ifdef RAYMARCHDEBUGRAYMARCHLOWER
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
             PPK_ASSERT(current.lower == lower, "current.lower: %s, lower: %s", tostr(current.lower).c_str(), tostr(lower).c_str() );
 #endif
+#endif
 
-            PPK_ASSERT(lower == calculate_abs_position_f3(&stack,current.corner)
-                        , "current.lower: %s, calculate_abs_position_f3(stack,current.corner): %s" ", raypos: %s, raydir: %s"
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
+            if (lower != calculate_abs_position_f3(&stack,current.corner))
+                throw std::runtime_error(fmt::format("current.lower: {}, calculate_abs_position_f3(stack,current.corner): {}"
+                                                     ", raypos: {}, raydir: {}"
                         , tostr(lower).c_str(), tostr(calculate_abs_position_f3(&stack,current.corner)).c_str()
-                        , tostr(raypos).c_str(), tostr(raydir).c_str() );
+                        , tostr(raypos).c_str(), tostr(raydir).c_str() ));
+#endif
+
             continue;
         }
 
@@ -1563,7 +1608,11 @@ bool svo_tree_raymarch(const uint8_t* address_space, goffset_t root_cd_goffset
             current.corner = next_corner;
 #ifdef RAYMARCHDEBUGRAYMARCHLOWER
             current.lower = lower;
-            PPK_ASSERT(current.lower == lower, "current.lower: %s, lower: %s", tostr(current.lower).c_str(), tostr(lower).c_str() );
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
+            if (current.lower != lower)
+                throw std::runtime_error(fmt::format("current.lower: {}, lower: {}"
+                                                    , tostr(current.lower).c_str(), tostr(lower).c_str() ));
+#endif
 #endif
             continue;
         } else {
@@ -1578,7 +1627,9 @@ bool svo_tree_raymarch(const uint8_t* address_space, goffset_t root_cd_goffset
 
             rayisoutside = true;
 #ifdef RAYMARCHDEBUGRAYMARCHLOWER
+#if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
             PPK_ASSERT(current.lower == lower, "current.lower: %s, lower: %s", tostr(current.lower).c_str(), tostr(lower).c_str() );
+#endif
 #endif
             continue;
         }
