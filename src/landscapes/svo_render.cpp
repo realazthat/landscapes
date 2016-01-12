@@ -67,11 +67,11 @@ namespace svo{
                 assert(slice->children);
 
 
-                std::string inpath = fmt::format("{}{}.slice", slice_path, node_path);
+                std::string inpath = fmt::format("{}/{}.slice", slice_path, node_path);
                 std::ifstream in(inpath, std::ios::binary);
 
                 if(!in)
-                    throw std::runtime_error(fmt::format("Could not open serialized in file {}", inpath));
+                    throw std::runtime_error(fmt::format("Could not open serialized tree in file {}", inpath));
                 
                 unserialize_slice(in, slice, true/*load_empty_children*/);
 
