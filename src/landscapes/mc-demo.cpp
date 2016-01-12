@@ -44,8 +44,7 @@ static void glfwCharCallback(GLFWwindow* window, unsigned int codepoint);
 
 struct motherclass_t{
 
-    const std::string CEGUIInstallBasePath =
-        "K:/realz/dump/code/cegui/cegui-0.8.4/cegui-0.8.4/" ;
+    const std::string CEGUIInstallBasePath;
 
     GLFWwindow* mwinder;
     bool d_windowSized;
@@ -75,8 +74,9 @@ struct motherclass_t{
     std::vector< std::tuple<std::shared_ptr<SGFXAPI::PixelBuffer>, std::shared_ptr<SGFXAPI::Fence>, int, int, std::size_t> > svo_pbos;
     std::size_t svo_pbo_upload_idx, svo_pbo_render_idx;
 
-    motherclass_t()
-        : mwinder(nullptr), d_windowSized(false), d_newWindowWidth(0), d_newWindowHeight(0)
+    motherclass_t(const std::string& CEGUIInstallBasePath)
+        : CEGUIInstallBasePath(CEGUIInstallBasePath)
+        , mwinder(nullptr), d_windowSized(false), d_newWindowWidth(0), d_newWindowHeight(0)
         , windowmgr(nullptr), guictx(nullptr)
         , fpssma(), lastfpssma(0)
         , cegui_has_mouse(false), dragging(false), xpos0(0), ypos0(0)
@@ -299,9 +299,9 @@ struct motherclass_t{
     }
 
 
-    void initialize_svo()
+    void initialize_svo(const std::string& path_to_tree)
     {
-        svotest.reset(new svo::svo_render_t(float3_t(3,3,-2), "k:/realz/dump/code/mordred.svo/sparse-voxel-octrees/build/tree/"));
+        svotest.reset(new svo::svo_render_t(float3_t(3,3,-2), path_to_tree));
         svotest->load_slices();
         svotest->load_blocks();
     }
@@ -936,73 +936,90 @@ static void glfwMouseWheelCallback(GLFWwindow* window, double xoffset, double yo
 }
 
 
-int main()
+int main(int argc, const char** argv)
 {
 
+    try {
+        
+        
+        std::string version_str = "NONE";//fmt::format("version: {}, build: {}");
+        TCLAP::CmdLine cmd("Runs the landscape-mc-demo", ' ', version_str);
+        
+        TCLAP::ValueArg<std::string> treePathArg("","tree","path to tree",true,"","string", cmd);
+        TCLAP::ValueArg<std::string> ceguiBasePathArg("","cegui-base-path","path to cegui installation",true,"","string", cmd);
+        
+        cmd.parse( argc, argv );
+        
+        glewExperimental = GL_TRUE;
+
+        motherclass_t motherclass(ceguiBasePathArg.getValue());
+
+        motherclass.initGLFW(420, 420, "window title");
+
+        motherclass.graphics.reset(new SGFXAPI::Graphics());
+
+        motherclass.initCEGUI();
 
 
-    glewExperimental = GL_TRUE;
-
-    motherclass_t motherclass;
-
-    motherclass.initGLFW(420, 420, "window title");
-
-    motherclass.graphics.reset(new SGFXAPI::Graphics());
-
-    motherclass.initCEGUI();
+        motherclass.create_gui();
 
 
-    motherclass.create_gui();
+        motherclass.initialize_svo(treePathArg.getValue());
 
+        
+        motherclass.initialize_camera();
 
-    motherclass.initialize_svo();
-
-    
-    motherclass.initialize_camera();
-
-    using SGFXAPI::RenderNode;
-    {
-        //auto node = std::make_shared<RenderNode>();
-        //node->mesh = simpletri();
-        //node->xform = float4x4::FromTRS(float3(0,0,0), Quat::identity, float3(1,1,1));
-        //motherclass.scene.push_back( node );
-    }
-    {
-        auto node = std::make_shared<RenderNode>();
-        node->mesh = axes();
-        node->xform = float4x4::FromTRS(float3(0,0,0), Quat::identity, float3(1,1,1));
-        motherclass.scene.push_back( node );
-    }
-    
-    
-    {
-        for (int i = 0; i < 3; ++i)
+        using SGFXAPI::RenderNode;
         {
-            int bytes = 1024*1024*4*sizeof(float);
-
-            auto pbo = std::make_shared<SGFXAPI::PixelBuffer>(SGFXAPI::Usage::STREAM_DRAW, bytes, false/* allocateCpu */);
-            auto fence = std::make_shared<SGFXAPI::Fence>(false);
-
-            auto pbo_bind = make_bind_guard(*pbo);
-
-            pbo->AllocateGpuMemory();
-            motherclass.svo_pbos.push_back( std::make_tuple(pbo, fence, 0, 0, 0) );
+            //auto node = std::make_shared<RenderNode>();
+            //node->mesh = simpletri();
+            //node->xform = float4x4::FromTRS(float3(0,0,0), Quat::identity, float3(1,1,1));
+            //motherclass.scene.push_back( node );
         }
+        {
+            auto node = std::make_shared<RenderNode>();
+            node->mesh = axes();
+            node->xform = float4x4::FromTRS(float3(0,0,0), Quat::identity, float3(1,1,1));
+            motherclass.scene.push_back( node );
+        }
+        
+        
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                int bytes = 1024*1024*4*sizeof(float);
 
-        motherclass.svo_pbo_upload_idx = 0;
-        motherclass.svo_pbo_render_idx = 1;
+                auto pbo = std::make_shared<SGFXAPI::PixelBuffer>(SGFXAPI::Usage::STREAM_DRAW, bytes, false/* allocateCpu */);
+                auto fence = std::make_shared<SGFXAPI::Fence>(false);
 
-        auto node = std::make_shared<RenderNode>();
-        node->mesh = motherclass.svoquadmesh = SSTQRGBD(true);
-        node->xform = float4x4::FromTRS(float3(0,0,0), Quat::identity, float3(1,1,1));
-        motherclass.scene.push_back( node );
+                auto pbo_bind = make_bind_guard(*pbo);
+
+                pbo->AllocateGpuMemory();
+                motherclass.svo_pbos.push_back( std::make_tuple(pbo, fence, 0, 0, 0) );
+            }
+
+            motherclass.svo_pbo_upload_idx = 0;
+            motherclass.svo_pbo_render_idx = 1;
+
+            auto node = std::make_shared<RenderNode>();
+            node->mesh = motherclass.svoquadmesh = SSTQRGBD(true);
+            node->xform = float4x4::FromTRS(float3(0,0,0), Quat::identity, float3(1,1,1));
+            motherclass.scene.push_back( node );
+        }
+        
+
+        glEnable (GL_DEPTH_TEST);
+        glDepthFunc (GL_LESS); 
+        motherclass.loop();
+
+
+    } catch (TCLAP::ArgException &e) {
+        std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
     }
-    
 
-    glEnable (GL_DEPTH_TEST);
-    glDepthFunc (GL_LESS); 
-    motherclass.loop();
 
     return 0;
+        
+
 }
 
