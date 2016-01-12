@@ -1,5 +1,5 @@
-#ifndef MCLOADER_HPP
-#define MCLOADER_HPP 1
+#ifndef LANDSCAPES_SVO_MCLOADER_HPP
+#define LANDSCAPES_SVO_MCLOADER_HPP 1
 
 #include <iosfwd>
 #include "svo_tree.fwd.hpp"
