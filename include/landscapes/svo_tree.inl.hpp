@@ -344,27 +344,27 @@ inline void preorder_traverse_blocks(svo_block_type* block0, metadata_t metadata
 
 
 
-template<typename MetaDataT, typename VisitorF>
-inline void preorder_traverse_slices(svo_slice_t* root_slice, MetaDataT metadata0, VisitorF visitor)
+template<typename svo_slice_type, typename metadata_t, typename visitor_f>
+inline void preorder_traverse_slices(svo_slice_type* root_slice, metadata_t metadata0, visitor_f visitor)
 {
 
     {
-        std::vector< std::tuple<svo_slice_t*, MetaDataT> > stack{ std::make_tuple(root_slice, metadata0) };
+        std::vector< std::tuple<svo_slice_type*, metadata_t> > stack{ std::make_tuple(root_slice, metadata0) };
         while (stack.size() > 0)
         {
-            svo_slice_t* current_slice; MetaDataT current_metadata;
+            svo_slice_type* current_slice; metadata_t current_metadata;
             std::tie(current_slice, current_metadata) = stack.back();stack.pop_back();
             assert(current_slice);
 
-            MetaDataT next_metadata = visitor(current_slice, current_metadata);
+            metadata_t next_metadata = visitor(current_slice, current_metadata);
 
             assert(current_slice->children);
 
             auto wend = current_slice->children->crend();
-            //for ( svo_slice_t* child : *current_slice->children )
+            //for ( svo_slice_type* child : *current_slice->children )
             for (auto w = current_slice->children->rbegin(); w != wend; ++w)
             {
-                svo_slice_t* child = *w;
+                svo_slice_type* child = *w;
 
                 assert(child);
                 assert(child->parent_slice == current_slice);
@@ -378,10 +378,10 @@ inline void preorder_traverse_slices(svo_slice_t* root_slice, MetaDataT metadata
 }
 
 
-template<typename VisitorF>
-inline void preorder_traverse_slices(svo_slice_t* root_slice, VisitorF visitor)
+template<typename svo_slice_type, typename visitor_f>
+inline void preorder_traverse_slices(svo_slice_type* root_slice, visitor_f visitor)
 {
-    auto visitor_internal = [visitor](svo_slice_t* slice, const int& noop)
+    auto visitor_internal = [visitor](svo_slice_type* slice, const int& noop)
     {
         visitor(slice);
         return noop;
@@ -471,9 +471,9 @@ inline void postorder_traverse_slices_experimental0(svo_slice_t* root_slice, Pos
     }
 }
 
-template<typename svo_block_type, typename visitor_f, typename metadata_t>
+template<typename svo_slice_type, typename visitor_f, typename metadata_t>
 inline metadata_t
-postorder_traverse_slices_recursive(svo_block_type* node, metadata_t metadata0, visitor_f visitor)
+postorder_traverse_slices_recursive(svo_slice_type* node, metadata_t metadata0, visitor_f visitor)
 {
     if (!node)
         return std::vector<metadata_t>();
@@ -485,7 +485,7 @@ postorder_traverse_slices_recursive(svo_block_type* node, metadata_t metadata0, 
 
 
     std::vector<metadata_t> metadatas;
-    for (svo_block_type* child : children)
+    for (svo_slice_type* child : children)
     {
         auto metadata = postorder_traverse_slices_recursive(child, metadata0, visitor);
         metadatas.push_back(metadata);

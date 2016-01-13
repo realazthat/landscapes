@@ -148,14 +148,14 @@ inline void z_preorder_traverse_block_cds(const byte_t* address_space, const svo
 
 
 
-template<typename MetaDataT, typename VisitorF>
-inline void preorder_traverse_slices(svo_slice_t* root, MetaDataT metadata0, VisitorF visitor);
-template<typename VisitorF>
-inline void preorder_traverse_slices(svo_slice_t* root, VisitorF visitor);
+template<typename svo_slice_type, typename metadata_t, typename visitor_f>
+inline void preorder_traverse_slices(svo_slice_type* root, metadata_t metadata0, visitor_f visitor);
+template<typename svo_slice_type, typename visitor_f>
+inline void preorder_traverse_slices(svo_slice_type* root, visitor_f visitor);
 
-template<typename metadata_t, typename svo_block_type, typename visitor_f>
+template<typename metadata_t, typename svo_slice_type, typename visitor_f>
 inline metadata_t
-postorder_traverse_slices(svo_block_type* node0, visitor_f visitor);
+postorder_traverse_slices(svo_slice_type* node0, visitor_f visitor);
 
 
 /**
