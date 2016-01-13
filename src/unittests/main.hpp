@@ -12,6 +12,7 @@ struct TestEnvironment : ::testing::Environment{
     TestEnvironment()
         : volume_of_slices(nullptr)
         , all_const_slices(nullptr)
+        , root_slice(nullptr), m_root_slice(nullptr)
         , m_volume_of_slices(nullptr)
         , m_all_const_slices(nullptr)
         , m_all_slices(nullptr)
@@ -22,7 +23,10 @@ struct TestEnvironment : ::testing::Environment{
     const std::vector<const svo::svo_slice_t*>* all_const_slices;
 
     std::array<const svo::svo_slice_t*, 8> get_sibling_slices(std::size_t minimum_voxels);
+    
+    const svo::svo_slice_t* root_slice;
 protected:
+    svo::svo_slice_t* m_root_slice;
     svo::volume_of_slices_t* m_volume_of_slices;
     std::vector<const svo::svo_slice_t*>* m_all_const_slices;
     std::vector<svo::svo_slice_t*>* m_all_slices;

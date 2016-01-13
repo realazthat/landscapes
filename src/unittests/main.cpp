@@ -4,6 +4,7 @@
 #include "main.hpp"
 
 #include "landscapes/svo_tree.hpp"
+#include "landscapes/svo_tree.slice_mgmt.hpp"
 #include "landscapes/mcloader.hpp"
 
 #include <fstream>
@@ -32,6 +33,10 @@ void TestEnvironment::SetUp()
 
     svo::load_mca_region(*m_volume_of_slices, infile, 2/*num_threads*/);
     
+    
+
+    std::size_t max_voxels_per_slice = 16*16*16*8;
+    root_slice = m_root_slice = svo::svo_entree_slices(*volume_of_slices, max_voxels_per_slice/*max_voxels_per_slice*/);
 }
 
 void TestEnvironment::TearDown()
@@ -41,6 +46,7 @@ void TestEnvironment::TearDown()
     {
         svo::svo_uninit_slice(slice,true);
     }
+    svo::svo_uninit_slice(m_root_slice,true);
 }
 
 TestEnvironment* global_env = nullptr;
