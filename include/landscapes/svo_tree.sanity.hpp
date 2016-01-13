@@ -42,10 +42,11 @@ struct svo_block_sanity_error_t
 {
     svo_block_sanity_error_t()
         : has_error(false)
-        , block0(0), block1(0), block2(0)
+        , block0(nullptr), block1(nullptr), block2(nullptr)
     {}
 
-    svo_block_sanity_error_t(const std::string& error, const svo_block_t* block0=0, const svo_block_t* block1=0, const svo_block_t* block2=0)
+    svo_block_sanity_error_t(const std::string& error
+                    , const svo_block_t* block0=nullptr, const svo_block_t* block1=nullptr, const svo_block_t* block2=nullptr)
         : has_error(true)
         , error(error)
         , block0(block0)
@@ -63,25 +64,25 @@ struct svo_block_sanity_error_t
 };
 
 
-
-enum svo_sanity_type_t{
-      none =            0
-    , minimal =         1 << 1
-    , levels =          1 << 2
-    , pos_data =        1 << 3
-    , channel_data =    1 << 4
-    , children =        1 << 5
-    , parent =          1 << 6
-    , all_data =        pos_data | channel_data
-    , all =             minimal | levels | pos_data | channel_data | children | parent
-    , default_sanity = all
-};
-
+namespace svo_sanity_t{
+    enum enum_t{
+          none =            0
+        , minimal =         1 << 1
+        , levels =          1 << 2
+        , pos_data =        1 << 3
+        , channel_data =    1 << 4
+        , children =        1 << 5
+        , parent =          1 << 6
+        , all_data =        pos_data | channel_data
+        , all =             minimal | levels | pos_data | channel_data | children | parent
+        , default_sanity = all
+    };
+} // namespace svo_sanity_t
 
 
 svo_slice_sanity_error_t svo_slice_sanity(
       const svo_slice_t* slice
-    , svo_sanity_type_t sanity_type = svo_sanity_type_t::default_sanity
+    , svo_sanity_t::enum_t sanity_type = svo_sanity_t::default_sanity
     , int recurse = 1
     , bool parent_recurse = true);
 

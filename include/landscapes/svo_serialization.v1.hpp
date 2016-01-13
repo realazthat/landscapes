@@ -17,7 +17,7 @@ typedef std::vector< std::tuple<vside_t, vcurve_t> > children_params_t;
 
 
 
-void serialize_slice(std::ostream& out, const svo_slice_t* slice);
+void serialize_slice(std::ostream& out, const svo_slice_t* slice, bool debug=false);
 children_params_t unserialize_slice(std::istream& in, svo_slice_t* slice, bool load_empty_children);
 
 

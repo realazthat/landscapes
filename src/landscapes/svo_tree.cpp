@@ -194,12 +194,12 @@ svo_slice_t* svo_clone_slice(const svo_slice_t* slice0, bool recursive)
 void svo_slice_attach_child(svo_slice_t* parent, svo_slice_t* child, vcurve_t parent_vcurve_begin)
 {
     DEBUG {
-        if (auto err = svo_slice_sanity(parent, svo_sanity_type_t(svo_sanity_type_t::all & ~svo_sanity_type_t::all_data)))
+        if (auto err = svo_slice_sanity(parent, svo_sanity_t::enum_t(svo_sanity_t::all & ~svo_sanity_t::all_data)))
         {
             std::cerr << err << std::endl;
             assert(false && "sanity fail");
         }
-        if (auto err = svo_slice_sanity(child, svo_sanity_type_t(svo_sanity_type_t::all & ~svo_sanity_type_t::all_data & ~svo_sanity_type_t::levels)))
+        if (auto err = svo_slice_sanity(child, svo_sanity_t::enum_t(svo_sanity_t::all & ~svo_sanity_t::all_data & ~svo_sanity_t::levels)))
         {
             std::cerr << err << std::endl;
             assert(false && "sanity fail");
@@ -266,12 +266,12 @@ void svo_slice_attach_child(svo_slice_t* parent, svo_slice_t* child, vcurve_t pa
     parent->children->insert(parent->children->begin() + insertion_position, child);
 
     DEBUG {
-        if (auto err = svo_slice_sanity(parent, svo_sanity_type_t(svo_sanity_type_t::all & ~svo_sanity_type_t::all_data & ~svo_sanity_type_t::levels)))
+        if (auto err = svo_slice_sanity(parent, svo_sanity_t::enum_t(svo_sanity_t::all & ~svo_sanity_t::all_data & ~svo_sanity_t::levels)))
         {
             std::cerr << err << std::endl;
             assert(false && "sanity fail");
         }
-        if (auto err = svo_slice_sanity(child, svo_sanity_type_t(svo_sanity_type_t::all & ~svo_sanity_type_t::all_data & ~svo_sanity_type_t::levels)))
+        if (auto err = svo_slice_sanity(child, svo_sanity_t::enum_t(svo_sanity_t::all & ~svo_sanity_t::all_data & ~svo_sanity_t::levels)))
         {
             std::cerr << err << std::endl;
             assert(false && "sanity fail");

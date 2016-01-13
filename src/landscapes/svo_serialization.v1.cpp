@@ -2,6 +2,7 @@
 #include "landscapes/svo_serialization.v1.hpp"
 #include "landscapes/svo_tree.hpp"
 #include "landscapes/svo_tree.sanity.hpp"
+#include "landscapes/svo_slice.comparison.hpp"
 
 #include <iostream>
 
@@ -106,7 +107,7 @@ void serialize_slice_child_info(std::ostream& out, const svo_slice_t* slice)
 
 
 
-void serialize_slice(std::ostream& out, const svo_slice_t* slice)
+void serialize_slice(std::ostream& out, const svo_slice_t* slice, bool debug)
 {
     assert(slice);
     assert(slice->children);
@@ -132,6 +133,22 @@ void serialize_slice(std::ostream& out, const svo_slice_t* slice)
     
     serialize_buffers(out, buffers, pos_data.size());
     
+    
+    if (debug)
+    {
+        std::ostringstream debugout;
+        serialize_slice(debugout, slice, false);
+        
+        auto* debug_slice = svo_init_slice(0, 16);
+        
+        std::istringstream debugin(debugout.str());
+        unserialize_slice(debugin, debug_slice, true);
+        
+        
+        if (auto inequality = svo_slice_inequality(slice,debug_slice))
+            throw std::runtime_error(fmt::format("{}", inequality));
+        svo_uninit_slice(debug_slice,true);
+    }
 }
 
 void serialize_declaration(std::ostream& out, const svo_declaration_t& declaration)
@@ -311,16 +328,20 @@ void slice_load_empty_children(svo_slice_t* slice, const children_params_t& chil
         child_slice->parent_slice = slice;
         child_slice->side = child_side;
         child_slice->parent_vcurve_begin = child_parent_vcurve_begin;
+        
+        child_slice->buffers->copy_schema(*slice->buffers);
+
+        assert(child_slice->buffers->schema() == slice->buffers->schema());
 
         slice->children->push_back(child_slice);
+        
+        
 
 
-        ///todo: make this an exception or return error code.
-        if(auto error = svo_slice_sanity(child_slice))
-        {
-            std::cerr << error << std::endl;
-            assert(false && "sanity fail");
-        }
+        //if(auto error = svo_slice_sanity(child_slice, svo_sanity_t::enum_t(svo_sanity_t::minimal), 0 /*recurse*/, false))
+        //{
+        //    throw std::runtime_error(fmt::format("Cannot load slice, the following sanity error occured: {}", error));
+        //}
     }
 }
 
@@ -367,13 +388,12 @@ children_params_t unserialize_slice(std::istream& in, svo_slice_t* slice, bool l
     unserialize_buffers(in, buffers, data_size);
     
 
-    ///todo: make this an exception or return error code.
-    if(auto error = svo_slice_sanity(slice))
+    if(auto error = svo_slice_sanity(slice, svo_sanity_t::enum_t(svo_sanity_t::all & ~(svo_sanity_t::children)), 0 /*recurse*/))
     {
-        std::cerr << error << std::endl;
-        assert(false && "sanity fail");
+        throw std::runtime_error(fmt::format("Cannot load slice, the following sanity error occured: {}", error));
     }
-
+    
+    
     return children_params;
 }
 

@@ -4,9 +4,12 @@
 #include "landscapes/svo_serialization.v1.hpp"
 #include "landscapes/svo_tree.sanity.hpp"
 #include "landscapes/svo_formatters.hpp"
+#include "landscapes/svo_slice.comparison.hpp"
 #include "gtest/gtest.h"
+#include "main.hpp"
 
 #include <vector>
+#include <deque>
 #include <sstream>
 #include <fstream>
 #include <random>
@@ -15,6 +18,7 @@
 struct SerializeTest : public ::testing::Test {
     std::vector<uint8_t> data0;
     const svo::svo_slice_t* slice0;
+    const svo::svo_slice_t* root_slice0;
 protected:
  
     svo::svo_slice_t* m_slice0;
@@ -49,7 +53,7 @@ protected:
             slice0 = m_slice0;
         }
 
-
+        root_slice0 = global_env->root_slice;
     }
 
     virtual void TearDown() {
@@ -323,7 +327,7 @@ TEST_F(SerializeTest,serialize_slice)
     
     std::ostringstream out;
     
-    svo::serialize_slice(out, slice0);
+    svo::serialize_slice(out, slice0, true /*debug*/);
     
     
     std::istringstream in(out.str());
@@ -410,7 +414,7 @@ TEST_F(SerializeTest,unserialize_slice)
     
     
     std::ostringstream out1;
-    svo::serialize_slice(out1, slice1);
+    svo::serialize_slice(out1, slice1, true/*debug*/);
     
     
     
@@ -432,8 +436,99 @@ TEST_F(SerializeTest,unserialize_slice)
 
 
 
+TEST_F(SerializeTest,serialize_tree)
+{
+
+    std::map<std::string, std::vector<uint8_t>> path2sbuffer;
+    
+    auto serialize_a_tree_slice = [&path2sbuffer](const svo::svo_slice_t* current_slice, const std::string& parent_node_path){
+
+
+        std::string current_node_path = parent_node_path;
+
+        if (current_slice->level > 0) {
+           current_node_path += fmt::format(".{0}.{1}", current_slice->side, current_slice->parent_vcurve_begin);
+        }
+
+        std::string outpath = fmt::format("{}/{}.slice", "", current_node_path);
+
+
+        auto& sbuffer = path2sbuffer[outpath] = std::vector<uint8_t>();
+        std::ostringstream out;
+
+        svo::serialize_slice(out, current_slice, true/*debug*/);
+        
+        auto serialized_str = out.str();
+        sbuffer.resize(serialized_str.size());
+        
+        std::memcpy(sbuffer.data(), serialized_str.data(), serialized_str.size());
+    
+        return current_node_path;
+    };
+
+    preorder_traverse_slices(root_slice0, std::string("r") /* initial node path */, serialize_a_tree_slice);
 
 
 
 
+    
+    auto load_slices = [&path2sbuffer](const std::string& slice_path, const std::string& root_node_name){
+        auto* root_slice = svo::svo_init_slice(0, 16);
+        std::size_t slice_count = 0;
+        
+        ///load serialized slices
+        {
 
+            std::deque< std::tuple< std::string, svo::svo_slice_t* > > queue { std::make_tuple(root_node_name, root_slice) };
+
+
+            while (queue.size())
+            {
+                
+                std::string node_path;
+                svo::svo_slice_t* slice;
+                std::tie(node_path, slice) = queue.front();
+                queue.pop_front();
+
+                assert(slice);
+                assert(slice->children);
+
+
+                std::string inpath = fmt::format("{}/{}.slice", slice_path, node_path);
+
+                auto w = path2sbuffer.find(inpath);
+                
+                if(w == path2sbuffer.end())
+                    throw std::runtime_error(fmt::format("Could not open serialized tree in path {}", inpath));
+                
+                const auto& sbuffer = w->second;
+                std::string instr(sbuffer.data(), sbuffer.data()+sbuffer.size());
+                std::istringstream in(instr);
+                
+                svo::unserialize_slice(in, slice, true/*load_empty_children*/);
+
+                for (auto* child : *slice->children)
+                {
+                    assert(child);
+
+                    std::string child_node_path = node_path + fmt::format(".{}.{}", child->side, child->parent_vcurve_begin);
+
+                    queue.push_back( std::make_tuple(child_node_path, child) );
+                }
+                slice_count++;
+
+            }
+        }
+        return root_slice;
+    };
+
+    auto* root_slice1 = load_slices("", "r");
+    
+    auto error = svo::svo_slice_sanity(root_slice1, svo::svo_sanity_t::enum_t::default_sanity,1000000);
+    
+    ASSERT_FALSE(error);
+    
+    auto slice_inequality = svo::svo_slice_inequality(root_slice0, root_slice1, svo::slice_cmp_t::all, 100000/*recure down*/);
+    
+    ASSERT_FALSE(slice_inequality);
+}

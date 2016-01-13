@@ -141,12 +141,12 @@ void svo_downsample_slice(svo_slice_t* parent_slice, const svo_slice_t* child_sl
 {
     DEBUG {
         
-        if (auto error = svo_slice_sanity(child_slice, svo_sanity_type_t::all, 0, false /* parent recurse */))
+        if (auto error = svo_slice_sanity(child_slice, svo_sanity_t::enum_t::all, 0, false /* parent recurse */))
         {
             std::cerr << "error: " << error << std::endl;
             assert(false && "sanity fail");
         }
-        if (auto error = svo_slice_sanity(parent_slice, svo_sanity_type_t(svo_sanity_type_t::all & ~svo_sanity_type_t::all_data), 0, false /* parent recurse */))
+        if (auto error = svo_slice_sanity(parent_slice, svo_sanity_t::enum_t(svo_sanity_t::enum_t::all & ~svo_sanity_t::enum_t::all_data), 0, false /* parent recurse */))
         {
             std::cerr << "error: " << error << std::endl;
             assert(false && "sanity fail");
@@ -250,7 +250,7 @@ void svo_downsample_slice(svo_slice_t* parent_slice, const svo_slice_t* child_sl
     
     DEBUG {
         
-        if (auto error = svo_slice_sanity(child_slice, svo_sanity_type_t::all, 0, false /* parent recurse */))
+        if (auto error = svo_slice_sanity(child_slice, svo_sanity_t::enum_t::all, 0, false /* parent recurse */))
         {
             std::cerr << "error: " << error << std::endl;
             assert(false && "sanity fail");
@@ -402,7 +402,7 @@ svo_slice_t* svo_entree_slices(const volume_of_slices_t& volume_of_slices, std::
             assert(parent_slice->children);
 
             DEBUG {
-                if (auto error = svo_slice_sanity(parent_slice, svo_sanity_type_t(svo_sanity_type_t::all & ~svo_sanity_type_t::all_data & ~svo_sanity_type_t::levels)))
+                if (auto error = svo_slice_sanity(parent_slice, svo_sanity_t::enum_t(svo_sanity_t::enum_t::all & ~svo_sanity_t::enum_t::all_data & ~svo_sanity_t::enum_t::levels)))
                 {
                     std::cerr << "error: " << error << std::endl;
                     assert(false && "sanity fail");
@@ -440,12 +440,12 @@ svo_slice_t* svo_entree_slices(const volume_of_slices_t& volume_of_slices, std::
 
             DEBUG {
                 
-                if (auto error = svo_slice_sanity(slice, svo_sanity_type_t(svo_sanity_type_t::all & ~svo_sanity_type_t::all_data & ~svo_sanity_type_t::levels)))
+                if (auto error = svo_slice_sanity(slice, svo_sanity_t::enum_t(svo_sanity_t::enum_t::all & ~svo_sanity_t::enum_t::all_data & ~svo_sanity_t::enum_t::levels)))
                 {
                     std::cerr << "error: " << error << std::endl;
                     assert(false && "sanity fail");
                 }
-                if (auto error = svo_slice_sanity(parent_slice, svo_sanity_type_t(svo_sanity_type_t::all & ~svo_sanity_type_t::all_data & ~svo_sanity_type_t::levels)))
+                if (auto error = svo_slice_sanity(parent_slice, svo_sanity_t::enum_t(svo_sanity_t::enum_t::all & ~svo_sanity_t::enum_t::all_data & ~svo_sanity_t::enum_t::levels)))
                 {
                     std::cerr << "error: " << error << std::endl;
                     assert(false && "sanity fail");
@@ -495,7 +495,7 @@ svo_slice_t* svo_entree_slices(const volume_of_slices_t& volume_of_slices, std::
 
     DEBUG {
         if (auto err = svo_slice_sanity(root_slice
-                            , svo_sanity_type_t(svo_sanity_type_t::all & ~(svo_sanity_type_t::pos_data | svo_sanity_type_t::channel_data))
+                            , svo_sanity_t::enum_t(svo_sanity_t::enum_t::all & ~(svo_sanity_t::enum_t::pos_data | svo_sanity_t::enum_t::channel_data))
                             , 1000000))
         {
             std::cerr << err << std::endl;
@@ -536,7 +536,7 @@ svo_slice_t* svo_entree_slices(const volume_of_slices_t& volume_of_slices, std::
         current_slice->buffers->assert_invariants();
         
         DEBUG {
-            if (auto err = svo_slice_sanity(current_slice, svo_sanity_type_t::minimal, 2))
+            if (auto err = svo_slice_sanity(current_slice, svo_sanity_t::enum_t::minimal, 2))
             {
                 std::cerr << err << std::endl;
                 assert(false && "sanity fail");
@@ -551,7 +551,7 @@ svo_slice_t* svo_entree_slices(const volume_of_slices_t& volume_of_slices, std::
             assert(postorder_slice_set.count(child_slice) == 1);
             
             DEBUG {
-                if (auto err = svo_slice_sanity(child_slice, svo_sanity_type_t::all, 2, false /*parent recurse*/))
+                if (auto err = svo_slice_sanity(child_slice, svo_sanity_t::enum_t::all, 2, false /*parent recurse*/))
                 {
                     std::cerr << err << std::endl;
                     assert(false && "sanity fail");
@@ -569,7 +569,7 @@ svo_slice_t* svo_entree_slices(const volume_of_slices_t& volume_of_slices, std::
         current_slice->buffers->assert_invariants();
         
         DEBUG {
-            if (auto err = svo_slice_sanity(current_slice, svo_sanity_type_t::all, 2, false /*parent recurse*/))
+            if (auto err = svo_slice_sanity(current_slice, svo_sanity_t::enum_t::all, 2, false /*parent recurse*/))
             {
                 std::cerr << err << std::endl;
                 assert(false && "sanity fail");
@@ -589,7 +589,7 @@ svo_slice_t* svo_entree_slices(const volume_of_slices_t& volume_of_slices, std::
     
     
     DEBUG {
-        if (auto err = svo_slice_sanity(root_slice, svo_sanity_type_t::all, 1000000))
+        if (auto err = svo_slice_sanity(root_slice, svo_sanity_t::enum_t::all, 1000000))
         {
             std::cerr << err << std::endl;
             assert(false && "sanity fail");
@@ -672,7 +672,7 @@ svo_slice_t* svo_entree_slices(const volume_of_slices_t& volume_of_slices, std::
 
 
     DEBUG {
-        if (auto err = svo_slice_sanity(root_slice, svo_sanity_type_t::default_sanity, 1000000))
+        if (auto err = svo_slice_sanity(root_slice, svo_sanity_t::enum_t::default_sanity, 1000000))
         {
             std::cerr << err << std::endl;
             assert(false && "sanity fail");

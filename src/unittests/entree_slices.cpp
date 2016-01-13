@@ -41,7 +41,7 @@ TEST_F(EntreeSlicesTest,entree_slices)
         ASSERT_NE(root, nullptr);
         
         
-        auto error = svo::svo_slice_sanity(root, svo::svo_sanity_type_t::default_sanity, 1000000);
+        auto error = svo::svo_slice_sanity(root, svo::svo_sanity_t::enum_t::default_sanity, 1000000);
         
         ASSERT_FALSE(error);
         
@@ -60,7 +60,7 @@ TEST_F(EntreeSlicesTest,entree_slices)
         ASSERT_NE(root, nullptr);
         
         
-        auto error = svo::svo_slice_sanity(root, svo::svo_sanity_type_t::default_sanity, 1000000);
+        auto error = svo::svo_slice_sanity(root, svo::svo_sanity_t::enum_t::default_sanity, 1000000);
         
         ASSERT_FALSE(error);
         

@@ -35,7 +35,7 @@ namespace svo{
     return out;
 }
 
-svo_slice_sanity_error_t svo_slice_sanity_minimal(const svo_slice_t* slice, svo_sanity_type_t sanity_type);
+svo_slice_sanity_error_t svo_slice_sanity_minimal(const svo_slice_t* slice, svo_sanity_t::enum_t sanity_type);
 svo_slice_sanity_error_t svo_slice_sanity_pos_data_to_parent(const svo_slice_t* slice);
 svo_slice_sanity_error_t svo_slice_sanity_channel_data_to_parent(const svo_slice_t* slice);
 
@@ -642,7 +642,7 @@ svo_block_sanity_error_t svo_block_sanity_check(const svo_block_t* block, int re
 svo_slice_sanity_error_t svo_slice_sanity_channel_data_to_parent(const svo_slice_t* slice)
 {
 
-    if (auto error = svo_slice_sanity_minimal(slice, svo_sanity_type_t::minimal))
+    if (auto error = svo_slice_sanity_minimal(slice, svo_sanity_t::enum_t::minimal))
     {
         return error;
     }
@@ -691,7 +691,7 @@ svo_slice_sanity_error_t svo_slice_sanity_channel_data_to_parent(const svo_slice
 
 svo_slice_sanity_error_t svo_slice_sanity_pos_data_to_parent(const svo_slice_t* slice)
 {
-    if (auto error = svo_slice_sanity_minimal(slice, svo_sanity_type_t::minimal))
+    if (auto error = svo_slice_sanity_minimal(slice, svo_sanity_t::enum_t::minimal))
     {
         return error;
     }
@@ -755,7 +755,7 @@ svo_slice_sanity_error_t svo_slice_sanity_pos_data_to_parent(const svo_slice_t* 
 
 }
 
-svo_slice_sanity_error_t svo_slice_sanity_minimal(const svo_slice_t* slice, svo_sanity_type_t sanity_type)
+svo_slice_sanity_error_t svo_slice_sanity_minimal(const svo_slice_t* slice, svo_sanity_t::enum_t sanity_type)
 {
     if(!slice)
         return svo_slice_sanity_error_t("slice is invalid pointer", slice);
@@ -766,7 +766,7 @@ svo_slice_sanity_error_t svo_slice_sanity_minimal(const svo_slice_t* slice, svo_
     {
         auto parent_slice = slice->parent_slice;
 
-        if (sanity_type & svo_sanity_type_t::levels)
+        if (sanity_type & svo_sanity_t::enum_t::levels)
             if (parent_slice->level + 1 != slice->level)
                 return svo_slice_sanity_error_t(
                             fmt::format("parent->level is not one less than slice->level"
@@ -1013,7 +1013,7 @@ svo_slice_sanity_error_t svo_slice_sanity_all(const svo_slice_t* slice)
 
 svo_slice_sanity_error_t svo_slice_sanity(
       const svo_slice_t* slice
-    , svo_sanity_type_t sanity_type
+    , svo_sanity_t::enum_t sanity_type
     , int recurse
     , bool parent_recurse)
 {
@@ -1023,20 +1023,20 @@ svo_slice_sanity_error_t svo_slice_sanity(
 
     const auto& children = *slice->children;
 
-    if (sanity_type & svo_sanity_type_t::pos_data)
+    if (sanity_type & svo_sanity_t::enum_t::pos_data)
         for (const auto* child_slice : children)
             if (auto error = svo_slice_sanity_pos_data_to_parent(child_slice))
                 return error;
-    if (sanity_type & svo_sanity_type_t::channel_data)
+    if (sanity_type & svo_sanity_t::enum_t::channel_data)
         for (const auto* child_slice : children)
             if (auto error = svo_slice_sanity_channel_data_to_parent(child_slice))
                 return error;
 
-    if (sanity_type & svo_sanity_type_t::parent && slice->parent_slice && parent_recurse)
+    if (sanity_type & svo_sanity_t::enum_t::parent && slice->parent_slice && parent_recurse)
         if (auto error = svo_slice_sanity(slice->parent_slice, sanity_type, 0/*recurse*/, false/*parent_recurse*/))
             return error;
 
-    if (sanity_type & svo_sanity_type_t::children && recurse > 0)
+    if (sanity_type & svo_sanity_t::enum_t::children && recurse > 0)
     {
         for (const auto* child_slice : children)
         {
