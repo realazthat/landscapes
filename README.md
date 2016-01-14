@@ -36,6 +36,12 @@ As for the rest of the project, code written by me in this project is released u
 Dependencies
 ----
 
+Requires C++14 compatible compiler. Tested with:
+
+* windows/msys2/mingw-w64/gcc (windows 7)
+* linux/gcc (ubuntu)
+
+
 Build system:
 
 * CMake >= 3.1 (if using CMake)
@@ -101,31 +107,48 @@ Building
     git clone https://github.com/realazthat/landscapes.git
     cd landscapes
 
-
-    #optionally download and build googletest (only matters if you are going to run the unittests)
+    #install dependencies, there are some bash scripts provided in the ./scripts/ directory
+    # that will download and build many of the dependencies and put them in the ./libs directory
+    # the scripts are meant for the continuous integration system, but you can run them yourself
+    # or read them for assistance.
+    
+    #optionally install or download and build googletest (only matters if you are going to run the unittests)
     #note, choose the appropriate generator
-    CMAKE_GENERATOR="MSYS Makefiles" bash ./scripts/download-and-build-googletest.sh
-
-    #optionally download and build dependencies
-    #note, choose the appropriate generator
-    CMAKE_GENERATOR="MSYS Makefiles" bash ./scripts/download-and-build-libs-with-no-pkg.sh
+    #see the bash scripts for for more details
+    CMAKE_GENERATOR="MSYS Makefiles" CMAKE_BUILD_TYPE="Debug" bash ./scripts/download-and-build-googletest.sh
+    #... etc. install dependencies
 
 
-
-    rm -rf ./build
+    #make a build directory
     mkdir -p build && cd build
 
-    cmake -G"MSYS Makefiles" ..
+    
+    #note, choose the appropriate generator
+    cmake -G"MSYS Makefiles" .. -DCMAKE_BUILD_TYPE="Debug"
+    
+    #if you built the dependencies and put them in the libs directory, then you are good to build
+    
+    #if you installed the dependencies to the system, you are prolly good to build
+    
+    #if you built the dependencies yourself outside the expected ./libs subdirectories, then you will need to
+    # define/override the paths to the projects (which by default point to the ./libs directory)
+    # for example, like so:
+    cmake -L # list all the user-definable variables
+    cmake . -DGLFW3_INCLUDE_DIR=/path/to/cppformat/include -DGLFW3_LIB=glfw3 -DGLFW3_LIB_DIR=/path/to/glfw/build/src
+    # .. and so on for each dependency that is not in the ./libs directory and not installed in the system
+    
+    
+    #build the targets you want to build
     cmake --build . --target landscapes
     cmake --build . --target landscapes-mc
+    cmake --build . --target landscapes-mc-demo
+    cmake --build . --target landscapes-mc-zorder-genconsts
+    cmake --build . --target unittests
     # ... etc.
 
-
-
-
-    #optionally build and execut the unittests
-    cmake --build . --target unittests
+    #execute the unittests if you want to
     ./unittests
 
+    #see ./scripts/rebuild.it.all.for.msys.sh for how the integration tests do it
 
 ```
