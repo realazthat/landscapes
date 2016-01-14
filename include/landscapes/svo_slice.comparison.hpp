@@ -13,8 +13,8 @@ namespace svo{
     
     struct svo_slice_inequality_t{
         svo_slice_inequality_t(
-                const svo_slice_t* slice0=nullptr, const svo_slice_t* slice1=nullptr
-              , const std::string& message="")
+                const svo_slice_t* slice0, const svo_slice_t* slice1
+              , const std::string& message)
             : slice0(slice0), slice1(slice1)
             , message(message)
         {
@@ -30,9 +30,6 @@ namespace svo{
             assert( (slice1 != nullptr || message.size() == 0) && "slice1 is null => message is empty fails");
         }
         
-        operator bool() const{
-            return message.size() > 0;
-        }
         
         const svo_slice_t* slice0;
         const svo_slice_t* slice1;
@@ -57,8 +54,7 @@ namespace svo{
             assert(slice_inequality.slice0 == slice0);
             assert(slice_inequality.slice1 == slice1);
             
-            if (slice_inequality)
-                messages.push_back(slice_inequality.message);
+            messages.push_back(slice_inequality.message);
             
             return *this;
         }
