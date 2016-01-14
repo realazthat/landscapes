@@ -34,7 +34,7 @@ set(MGL_LIB "MathGeoLib"
 
 set(GLFW3_INCLUDE_DIR "./libs/glfw3/glfw/include"
     CACHE STRING "Paths to glfw3 includes")
-set(GLFW3_LIB_DIR "./libs/glfw3/glfw/build"
+set(GLFW3_LIB_DIR "./libs/glfw3/glfw/build/src"
     CACHE STRING "Paths to glfw3 libs")
 set(GLFW3_LIB "glfw3"
     CACHE STRING "Libs for glfw3")
