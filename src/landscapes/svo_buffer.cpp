@@ -1,13 +1,61 @@
 
 #include "landscapes/svo_buffer.hpp"
-
 #include "landscapes/svo_tree.hpp"
-
-#include <exception>
-#include "format.h"
 #include "landscapes/unused.h"
 
+#include <exception>
+#include <sstream>
+
+#include "format.h"
+
 namespace svo{
+
+
+
+
+
+void tostr(std::ostream& out
+    , const uint8_t* entry_data_ptr
+    , const svo_declaration_t& declaration
+    , std::size_t element_index)
+{
+    assert(element_index < declaration.elements().size());
+    
+    const auto& element = declaration.elements()[element_index];
+    
+    auto offset = declaration.offset(element_index);
+    
+    const auto* element_data_ptr = entry_data_ptr + offset;
+    
+    auto visitor = [&out](const auto* data, const svo_element_t& element)
+    {
+        out << "(";
+        
+        for (std::size_t i = 0; i < element.count(); ++i)
+        {
+            out << (i == 0 ? "" : ", ") << data[i];
+        }
+        
+        out << ")";
+        
+        return;
+    };
+    
+    visit_element(element_data_ptr, element, visitor);
+    
+}
+
+
+
+std::string tostr(
+      const uint8_t* entry_data_ptr
+    , const svo_declaration_t& declaration
+    , std::size_t element_index)
+{
+    std::ostringstream out;
+    tostr(out, entry_data_ptr, declaration, element_index);
+    return out.str();
+}
 
 template<typename svo_buffer_t>
 svo_base_buffer_t<svo_buffer_t>::
@@ -15,7 +63,9 @@ svo_base_buffer_t(const svo_declaration_t& declaration, std::size_t initial_entr
     : m_declaration(declaration)
     , m_entries(initial_entries)
     , m_rawdata(rawdata)
-{}
+{
+    
+}
 
 namespace detail{
     template<typename dst_buffer_t, typename src_buffer_t>
@@ -42,7 +92,9 @@ void
 svo_base_buffer_t<svo_buffer_t>::
 append_buffer(const svo_cpu_buffer_t& src_buffer)
 {
+    self().assert_invariants();
     svo::detail::append_buffer(*static_cast<svo_buffer_t*>(this), src_buffer);
+    self().assert_invariants();
 }
 
 template<typename svo_buffer_t>
@@ -50,8 +102,44 @@ void
 svo_base_buffer_t<svo_buffer_t>::
 append_buffer(const svo_gpu_buffer_t& src_buffer)
 {
+    self().assert_invariants();
     svo::detail::append_buffer(*static_cast<svo_buffer_t*>(this), src_buffer);
+    self().assert_invariants();
 }
+
+
+
+
+
+
+template<typename svo_buffer_t>
+void
+svo_base_buffer_t<svo_buffer_t>::
+tostr(std::ostream& out, std::size_t entry) const
+{
+    self().assert_invariants();
+    
+    assert(entry < self().entries());
+    
+    const auto* entry_data_ptr = self().rawdata() + (self().stride() * entry);
+    
+    for (std::size_t element_index = 0; element_index < declaration().elements().size(); ++element_index)
+    {
+        svo::tostr(out, entry_data_ptr, declaration(), element_index);
+    }
+}
+
+
+template<typename svo_buffer_t>
+std::string
+svo_base_buffer_t<svo_buffer_t>::
+tostr(std::size_t entry) const
+{
+    std::ostringstream out;
+    self().tostr(out, entry);
+    return out.str();
+}
+
 
 
 

@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <typeinfo>
 #include <typeindex>
+#include <iosfwd>
 
 #include "svo_buffer.fwd.hpp"
 #include "svo_tofromstr.hpp"
@@ -85,6 +86,17 @@ private:
     std::size_t m_stride;
     std::set<std::string> m_names;
 };
+
+
+void tostr(
+      std::ostream& out
+    , const uint8_t* entry_data_ptr
+    , const svo_declaration_t& declaration
+    , std::size_t element_index);
+std::string tostr(
+      const uint8_t* entry_data_ptr
+    , const svo_declaration_t& declaration
+    , std::size_t element_index);
 
 template<typename svo_buffer_t>
 struct svo_base_buffer_t{
