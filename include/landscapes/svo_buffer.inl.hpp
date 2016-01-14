@@ -61,9 +61,6 @@ static inline const char* tostr(svo_data_type_t data_type)
             return "FLOAT";
         case(svo_data_type_t::DOUBLE):
             return "DOUBLE";
-        case(svo_data_type_t::COUNT):
-            assert(false);
-            return "COUNT";
     }
     assert(false);
     return "UNKNOWN";
@@ -80,9 +77,6 @@ static inline const char* tostr(svo_semantic_t semantic)
             return "COLOR";
         case(svo_semantic_t::NORMAL):
             return "NORMAL";
-        case(svo_semantic_t::COUNT):
-            assert(false);
-            return "COUNT";
     }
     assert(false);
     return "UNKNOWN";

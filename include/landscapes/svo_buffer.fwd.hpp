@@ -11,7 +11,6 @@ enum class svo_semantic_t{
       NONE
     , COLOR
     , NORMAL
-    , COUNT
 };
 
 static const std::vector<svo_semantic_t> all_semantics {svo_semantic_t::NONE, svo_semantic_t::COLOR, svo_semantic_t::NORMAL};
@@ -27,11 +26,10 @@ enum class svo_data_type_t{
     UNSIGNED_INT,
     UNSIGNED_LONG,
     FLOAT,
-    DOUBLE,
-    COUNT
+    DOUBLE
 };
 
-static const std::vector<svo_data_type_t> all_data_types {
+static const std::vector<svo_data_type_t> all_buffer_data_types {
       svo_data_type_t::BYTE
     , svo_data_type_t::SHORT
     , svo_data_type_t::INT
@@ -44,7 +42,8 @@ static const std::vector<svo_data_type_t> all_data_types {
     , svo_data_type_t::DOUBLE
 };
 
-static const std::set<svo_data_type_t> all_data_types_set = std::set<svo_data_type_t>(all_data_types.begin(), all_data_types.end());
+static const std::set<svo_data_type_t> all_buffer_data_types_set =
+    std::set<svo_data_type_t>(all_buffer_data_types.begin(), all_buffer_data_types.end());
 
 struct svo_element_t;
 struct svo_declaration_t;

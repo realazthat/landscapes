@@ -93,7 +93,7 @@ template<typename rng_t>
 svo::svo_element_t generate_element(rng_t& rng, const std::string& name)
 {
     auto semantic = svo::all_semantics.at(rng(0, svo::all_semantics.size()-1));
-    auto data_type = svo::all_data_types.at(rng(0, svo::all_data_types.size()-1));
+    auto data_type = svo::all_buffer_data_types.at(rng(0, svo::all_buffer_data_types.size()-1));
     auto count = rng(1, 15);
 
     return svo::svo_element_t(name, semantic, data_type, count);
