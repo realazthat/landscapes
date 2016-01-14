@@ -145,6 +145,7 @@ add_library(landscapes
     src/landscapes/svo_serialization.v1.cpp
     src/landscapes/svo_formatters.cpp
     src/landscapes/svo_render.cpp
+    src/landscapes/svo_slice.comparison.cpp
     )
 set_property(TARGET landscapes PROPERTY CXX_STANDARD 14)
 
@@ -167,21 +168,18 @@ set_property(TARGET landscapes-zorder-genconsts PROPERTY CXX_STANDARD 14)
 add_executable(landscapes-mc-demo
     src/landscapes/mc-demo.cpp
     )
-set_property(TARGET landscapes-mc-demo PROPERTY CXX_STANDARD 11)
-target_compile_definitions(landscapes-mc-demo PUBLIC)
 
 target_link_libraries(landscapes-mc-demo
     landscapes
     landscapes-mc
     
     ${MGL_LIB}
-    ${CBNT_LIB}
+    ${CNBT_LIB}
     z
     ${CPPFORMAT_LIB}
     ${BPRINTER_LIB}
     ${SGFXAPI_LIB}
     ${CEGUI_LIB}
-    #CEGUIBase-0 CEGUIOpenGLRenderer-0 CEGUIExpatParser CEGUICoreWindowRendererSet CEGUICommonDialogs-0
 
     ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32)
 
