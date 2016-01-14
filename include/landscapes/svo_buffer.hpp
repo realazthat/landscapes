@@ -140,6 +140,10 @@ struct svo_base_buffer_t{
     void append_buffer(const svo_cpu_buffer_t& src_buffer);
     void append_buffer(const svo_gpu_buffer_t& src_buffer);
 
+    
+    void tostr(std::ostream& out, std::size_t entry) const;
+    std::string tostr(std::size_t entry) const;
+
     svo_buffer_t& self();
     const svo_buffer_t& self() const;
 protected:
@@ -288,6 +292,33 @@ struct svo_gpu_buffers_t : svo_base_buffers_t<svo_gpu_buffer_t, svo_gpu_buffers_
 private:
     svo_block_t* m_block;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+template<typename visitor_t>
+inline auto
+visit_unsigned_element(const uint8_t* data, const svo_element_t& element, visitor_t visitor)
+    -> decltype(visitor(data, element))
+;
+template<typename visitor_t>
+inline auto
+visit_element(const uint8_t* data, const svo_element_t& element, visitor_t visitor)
+    -> decltype(visitor(data, element))
+;
 
 
 

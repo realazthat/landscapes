@@ -968,7 +968,75 @@ namespace detail{
 
 
 
+template<typename visitor_t>
+inline auto
+visit_unsigned_element(const uint8_t* data, const svo_element_t& element, visitor_t visitor)
+    -> decltype(visitor(data, element))
+{
+    
+    switch(element.type())
+    {
+        case(svo_data_type_t::BYTE):
+        case(svo_data_type_t::UNSIGNED_BYTE):
+            return visitor(reinterpret_cast<const uint8_t*>(data), element);
+        case(svo_data_type_t::SHORT):
+        case(svo_data_type_t::UNSIGNED_SHORT):
+            return visitor(reinterpret_cast<const uint16_t*>(data), element);
+        case(svo_data_type_t::INT):
+        case(svo_data_type_t::UNSIGNED_INT):
+            return visitor(reinterpret_cast<const uint32_t*>(data), element);
+        case(svo_data_type_t::LONG):
+        case(svo_data_type_t::UNSIGNED_LONG):
+            return visitor(reinterpret_cast<const uint64_t*>(data), element);
+        case(svo_data_type_t::FLOAT):
+            return visitor(reinterpret_cast<const float*>(data), element);
+        case(svo_data_type_t::DOUBLE):
+            return visitor(reinterpret_cast<const double*>(data), element);
+    }
+    
+    // this should never ever happen
+    assert(false);
+    
+    // we need to return *something* so we abuse the uint8_t* template call
+    return visitor(reinterpret_cast<const uint8_t*>(data), element);
+}
 
+template<typename visitor_t>
+inline auto
+visit_element(const uint8_t* data, const svo_element_t& element, visitor_t visitor)
+    -> decltype(visitor(data, element))
+{
+    
+    switch(element.type())
+    {
+        case(svo_data_type_t::BYTE):
+            return visitor(reinterpret_cast<const int8_t*>(data), element);
+        case(svo_data_type_t::UNSIGNED_BYTE):
+            return visitor(reinterpret_cast<const uint8_t*>(data), element);
+        case(svo_data_type_t::SHORT):
+            return visitor(reinterpret_cast<const int16_t*>(data), element);
+        case(svo_data_type_t::UNSIGNED_SHORT):
+            return visitor(reinterpret_cast<const uint16_t*>(data), element);
+        case(svo_data_type_t::INT):
+            return visitor(reinterpret_cast<const int32_t*>(data), element);
+        case(svo_data_type_t::UNSIGNED_INT):
+            return visitor(reinterpret_cast<const uint32_t*>(data), element);
+        case(svo_data_type_t::LONG):
+            return visitor(reinterpret_cast<const int64_t*>(data), element);
+        case(svo_data_type_t::UNSIGNED_LONG):
+            return visitor(reinterpret_cast<const uint64_t*>(data), element);
+        case(svo_data_type_t::FLOAT):
+            return visitor(reinterpret_cast<const float*>(data), element);
+        case(svo_data_type_t::DOUBLE):
+            return visitor(reinterpret_cast<const double*>(data), element);
+    }
+    
+    // this should never ever happen
+    assert(false);
+    
+    // we need to return *something* so we abuse the uint8_t* template call
+    return visitor(reinterpret_cast<const uint8_t*>(data), element);
+}
 
 
 
