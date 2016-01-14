@@ -5,7 +5,12 @@ Sparse Voxel Octree implementation. Based on the paper
 [Efficient Sparse Voxel Octrees – Analysis, Extensions, and Implementation](https://mediatech.aalto.fi/~samuli/publications/laine2010tr1_paper.pdf)
 by Samuli Laine and Tero Karras of NVIDIA Research.
 
-[![Build Status](https://travis-ci.org/realazthat/landscapes.svg?branch=master)](https://travis-ci.org/realazthat/landscapes)
+
+
+Branch  | Status
+---     | ---
+master  | [![Build Status](https://travis-ci.org/realazthat/landscapes.svg?branch=master)](https://travis-ci.org/realazthat/landscapes)
+develop | [![Build Status](https://travis-ci.org/realazthat/landscapes.svg?branch=develop)](https://travis-ci.org/realazthat/landscapes)
 
 
 {Long Description}
