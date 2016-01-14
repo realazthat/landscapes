@@ -106,9 +106,42 @@ namespace svo{
                                                 , slice0->buffers->schema(), slice1->buffers->schema()));
                                                 
                 } else {
-                    for (std::size_t element_index = 0; element_index < elements; ++element_index)
+                    
+                    const auto& buffer0_list = buffers0.buffers();
+                    const auto& buffer1_list = buffers1.buffers();
+                    std::size_t buffer_count = buffer0_list.size();
+                    
+                    for (std::size_t buffer_index = 0; buffer_index < buffer_count; ++buffer_index)
                     {
-                        assert(false && "TODO");
+                        const auto& buffer0 = buffer0_list[buffer_index];
+                        const auto& buffer1 = buffer1_list[buffer_index];
+                        
+                        auto vertex_bytes = buffer0.stride();
+                        
+                        const auto* rawdata0 = buffer0.rawdata();
+                        const auto* rawdata1 = buffer1.rawdata();
+                        
+                        const auto* vertex_data0_ptr = rawdata0;
+                        const auto* vertex_data1_ptr = rawdata1;
+                        for (std::size_t element_index = 0; element_index < elements; ++element_index)
+                        {
+                            auto notequal = std::memcmp(vertex_data0_ptr, vertex_data1_ptr, vertex_bytes);
+                            
+                            if (notequal)
+                            {
+                                
+                                results += svo_slice_inequality_t(slice0, slice1,
+                                        fmt::format("{name0}->buffers[{buffer_index}][{element_index}] != {name1}->buffers[{buffer_index}][{element_index}]"
+                                                    ", {name0}->buffers[{buffer_index}][{element_index}]: {value0}, {name1}->buffers[{buffer_index}][{element_index}]: {value1}"
+                                                    , fmt::arg("name0",name0), fmt::arg("name1",name1)
+                                                    , fmt::arg("value0", buffer0.tostr(element_index))
+                                                    , fmt::arg("value1", buffer1.tostr(element_index))));
+                                break;
+                            }
+                            
+                            vertex_data0_ptr += vertex_bytes;
+                            vertex_data1_ptr += vertex_bytes;
+                        }
                     }
                 }
                 
