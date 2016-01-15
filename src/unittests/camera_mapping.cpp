@@ -8,6 +8,7 @@
 #include <vector>
 #include <fstream>
 #include <tuple>
+#include <random>
 
 int screen_width = 100, screen_height = 100;
 
@@ -82,8 +83,7 @@ TEST_F(CameraMappingTest,mgl_corners_mapping)
     {
         auto key = std::make_tuple(x,y,z);
         ASSERT_GT(mgl_corners_mapping.count(key), std::size_t(0))
-            << "key: " << std::get<0>(key) << ", " << std::get<1>(key) << ", " << std::get<2>(key)
-            << ", mgl_corners_mapping: " << mgl_corners_mapping;
+            << "key: " << std::get<0>(key) << ", " << std::get<1>(key) << ", " << std::get<2>(key);
     }
     
 }
