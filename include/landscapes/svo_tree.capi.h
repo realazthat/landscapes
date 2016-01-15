@@ -16,7 +16,7 @@ typedef struct child_descriptor_t{
 
 typedef struct svo_info_section_t{
     
-    
+    bool dummy;
 } svo_info_section_t;
 
 typedef struct svo_page_header_t{
