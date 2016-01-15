@@ -408,9 +408,9 @@ void svo_block_t::reset()
     this->tree = nullptr;
     this->parent_block = nullptr;
     this->trunk = false;
-    this->root_level = root_level;
+    this->root_level = 0;
     this->height = 0;
-    this->side = side;
+    this->side = 0;
     this->userdata = 0;
 
     this->block_start = invalid_goffset;
