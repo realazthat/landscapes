@@ -95,6 +95,10 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_WARNINGS} -fvisibility-inlines-hidden")
 endif()
 
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CXX_WARNINGS "-Wall -Wextra -Wpointer-arith -Wcast-align -fstrict-aliasing -Wno-unused-local-typedefs")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_WARNINGS} -std=c++14")
+endif()
 
 include_directories(
     ./include
@@ -215,6 +219,8 @@ target_link_libraries(unittests
 
 
 set_property(TARGET unittests PROPERTY CXX_STANDARD 14)
+set_property(TARGET unittests PROPERTY CXX_STANDARD_REQUIRED ON)
+#target_compile_features(unittests PUBLIC cxx_deleted_functions)
 
 
 ################################################################################
