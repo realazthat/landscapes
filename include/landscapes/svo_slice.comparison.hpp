@@ -13,9 +13,11 @@ namespace svo{
     
     struct svo_slice_inequality_t{
         svo_slice_inequality_t(
-                const svo_slice_t* slice0, const svo_slice_t* slice1
+                const svo_slice_t* slice0, const std::string& name0
+              , const svo_slice_t* slice1, const std::string& name1
               , const std::string& message)
-            : slice0(slice0), slice1(slice1)
+            : slice0(slice0), name0(name0)
+            , slice1(slice1), name1(name1)
             , message(message)
         {
             // message is empty => slice0 is null
@@ -31,49 +33,43 @@ namespace svo{
         }
         
         
-        const svo_slice_t* slice0;
-        const svo_slice_t* slice1;
+        const svo_slice_t* slice0; std::string name0;
+        const svo_slice_t* slice1; std::string name1;
         std::string message;
     };
     
     
     struct svo_slice_inequalities_t{
-        svo_slice_inequalities_t(const svo_slice_t* slice0, const svo_slice_t* slice1)
-            : slice0(slice0), slice1(slice1)
+        svo_slice_inequalities_t()
         {
-            assert(slice0 != nullptr);
-            assert(slice1 != nullptr);
         }
             
         operator bool() const{
-            return messages.size() > 0;
+            return issues.size() > 0;
         }
         
         svo_slice_inequalities_t& operator+=(const svo_slice_inequality_t& slice_inequality)
         {
-            assert(slice_inequality.slice0 == slice0);
-            assert(slice_inequality.slice1 == slice1);
             
-            messages.push_back(slice_inequality.message);
+            issues.push_back(slice_inequality);
             
             return *this;
         }
         svo_slice_inequalities_t& operator+=(const svo_slice_inequalities_t& slice_inequalities)
         {
-            assert(slice_inequalities.slice0 == slice0);
-            assert(slice_inequalities.slice1 == slice1);
             
-            for (const auto& message : slice_inequalities.messages)
-                messages.push_back(message);
+            for (const auto& issue : slice_inequalities.issues)
+                issues.push_back(issue);
             
             return *this;
         }
         
-        std::vector<std::string> messages;
-        const svo_slice_t* slice0;
-        const svo_slice_t* slice1;
+        std::vector<svo_slice_inequality_t> issues;
     };
 
+    ::std::ostream& operator<<(::std::ostream& out, const svo_slice_inequality_t& svo_slice_inequality);
+    ::std::ostream& operator<<(::std::ostream& out, const svo_slice_inequalities_t& svo_slice_inequalities);
+    
     namespace slice_cmp_t{
         enum enum_t{
             

@@ -10,6 +10,34 @@ namespace svo{
     
     
     
+    
+
+    ::std::ostream& operator<<(::std::ostream& out, const svo_slice_inequality_t& svo_slice_inequality)
+    {
+        return out << "<svo_slice_inequality_t"
+                   << ", slice0: " << svo_slice_inequality.name0
+                   << ", slice1: " svo_slice_inequality.name1
+                   << ", message: " <<  svo_slice_inequality.message
+                   << ">";
+    }
+    ::std::ostream& operator<<(::std::ostream& out, const svo_slice_inequalities_t& svo_slice_inequalities)
+    {
+        out << "[";
+        for (std::size_t i = 0; i < svo_slice_inequalities.messages.size(); ++i)
+        {
+            const auto& issues = svo_slice_inequalities.issues[i];
+            
+            out << (i == 0 ? "" : ", ") << issues;
+        }
+        
+        return out << "]";
+        
+    }
+    
+    
+    
+    
+    
     static svo_slice_inequalities_t svo_slice_inequality_internal(
           const svo_slice_t* slice0, const std::string& name0
         , const svo_slice_t* slice1, const std::string& name1
@@ -49,32 +77,38 @@ namespace svo{
         
         
         
-        
+        // compare position data
         if (svo_slice_cmp_type & slice_cmp_t::enum_t::pos_data)
         {
-            if (slice0->pos_data->size() != slice1->pos_data->size()) {
+            assert(slice0->pos_data);
+            assert(slice1->pos_data);
+            const auto& pos_data0 = *slice0->pos_data;
+            const auto& pos_data1 = *slice1->pos_data;
+            
+            if (pos_data0.size() != pos_data1.size()) {
                 results += svo_slice_inequality_t(slice0, slice1,
                                 fmt::format("{0}->pos_data->size() != {1}->pos_data->size()"
                                             ", {0}->pos_data->size(): {2}, {1}->pos_data->size(): {3}"
                                             , name0, name1
-                                            , slice0->pos_data->size(), slice1->pos_data->size()));
+                                            , pos_data0.size(), pos_data1.size()));
             } else {
-                std::size_t elements = slice0->pos_data->size();
+                std::size_t elements = pos_data0.size();
+                assert( pos_data0.size() == pos_data1.size() );
                 
-                const auto& pos_data0 = *slice0->pos_data;
-                const auto& pos_data1 = *slice1->pos_data;
                 for (std::size_t element_index = 0; element_index < elements; ++element_index)
                 {
+                    assert(element_index < pos_data0.size());
+                    assert(element_index < pos_data1.size());
                     vcurve_t vcurve0 = pos_data0[element_index];
                     vcurve_t vcurve1 = pos_data1[element_index];
                     
                     if (vcurve0 != vcurve1){
                         results += svo_slice_inequality_t(slice0, slice1,
-                                fmt::format("{0}->pos_data[{4}] != {1}->pos_data[{4}]"
-                                            ", {0}->pos_data[{4}]: {2}, {1}->pos_data[{4}]: {3}"
-                                            , name0, name1
-                                            , vcurve0, vcurve1
-                                            , element_index));
+                                fmt::format("{name0}->pos_data[{element_index}] != {name1}->pos_data[{element_index}]"
+                                            ", {name0}->pos_data[{element_index}]: {vcurve0}, {name1}->pos_data[{element_index}]: {vcurve1}"
+                                            , fmt::arg("name0",name0), fmt::arg("name1",name1)
+                                            , fmt::arg("vcurve0",vcurve0), fmt::arg("vcurve1",vcurve1)
+                                            , fmt::arg("element_index",element_index)));
                         break;
                     }
                 }
@@ -84,26 +118,27 @@ namespace svo{
         
         
         
+        // compare channel data
         if (svo_slice_cmp_type & slice_cmp_t::enum_t::channel_data)
         {
-            if (slice0->buffers->entries() != slice1->buffers->entries()) {
+            const auto& buffers0 = *slice0->buffers;
+            const auto& buffers1 = *slice1->buffers;
+            if (buffers0.entries() != buffers1.entries()) {
                 results += svo_slice_inequality_t(slice0, slice1,
                                 fmt::format("{0}->buffers->entries() != {1}->buffers->entries()"
                                             ", {0}->buffers->entries(): {2}, {1}->buffers->entries(): {3}"
                                             , name0, name1
-                                            , slice0->buffers->entries(), slice1->buffers->entries()));
+                                            , buffers0.entries(), buffers1.entries()));
             } else {
-                std::size_t elements = slice0->buffers->entries();
+                std::size_t elements = buffers0.entries();
                 
-                const auto& buffers0 = *slice0->buffers;
-                const auto& buffers1 = *slice1->buffers;
                 
                 if (buffers0.schema() != buffers1.schema()) {
                     results += svo_slice_inequality_t(slice0, slice1,
                                     fmt::format("{0}->buffers->schema() != {1}->buffers->schema()"
                                                 ", {0}->buffers->schema(): {2}, {1}->buffers->schema(): {3}"
                                                 , name0, name1
-                                                , slice0->buffers->schema(), slice1->buffers->schema()));
+                                                , buffers0.schema(), buffers1.schema()));
                                                 
                 } else {
                     
@@ -113,21 +148,23 @@ namespace svo{
                     
                     for (std::size_t buffer_index = 0; buffer_index < buffer_count; ++buffer_index)
                     {
+                        assert(buffer_index < buffer0_list.size());
+                        assert(buffer_index < buffer1_list.size());
                         const auto& buffer0 = buffer0_list[buffer_index];
                         const auto& buffer1 = buffer1_list[buffer_index];
                         
                         auto vertex_bytes = buffer0.stride();
                         
-                        const auto* rawdata0 = buffer0.rawdata();
-                        const auto* rawdata1 = buffer1.rawdata();
+                        const uint8_t* rawdata0 = buffer0.rawdata();
+                        const uint8_t* rawdata1 = buffer1.rawdata();
                         
-                        const auto* vertex_data0_ptr = rawdata0;
-                        const auto* vertex_data1_ptr = rawdata1;
+                        const uint8_t* vertex_data0_ptr = rawdata0;
+                        const uint8_t* vertex_data1_ptr = rawdata1;
                         for (std::size_t element_index = 0; element_index < elements; ++element_index)
                         {
-                            auto notequal = std::memcmp(vertex_data0_ptr, vertex_data1_ptr, vertex_bytes);
+                            int cmp = std::memcmp(vertex_data0_ptr, vertex_data1_ptr, vertex_bytes);
                             
-                            if (notequal)
+                            if (cmp != 0)
                             {
                                 
                                 results += svo_slice_inequality_t(slice0, slice1,
@@ -202,6 +239,8 @@ namespace svo{
                                         | slice_cmp_t::enum_t::parent_vcurve_begin
                                         | slice_cmp_t::enum_t::has_parent | slice_cmp_t::enum_t::child_count);
                 child_cmp_mask = slice_cmp_t::enum_t(child_cmp_mask & svo_slice_cmp_type);
+                
+                assert( (child_cmp_mask & slice_cmp_t::enum_t::child_props) == 0 );
                 results += svo_slice_inequality_internal(slice0, child0_name, slice1, child1_name
                                     , child_cmp_mask, 0 /*recurse_down*/, 0 /*recurse_up*/);
                 
@@ -230,14 +269,18 @@ namespace svo{
         
         if ((recurse_down > 0) && children0.size() == children1.size())
         {
-            std::size_t child_count = slice0->children->size();
+            std::size_t child_count = children0.size();
             
             for (std::size_t child_index = 0; child_index < child_count; ++child_index)
             {
-            
+                assert(child_index < children0.size());
+                assert(child_index < children1.size());
+                const auto* child0 = children0[child_index];
+                const auto* child1 = children1[child_index];
+                
                 std::string child0_name = fmt::format("{0}->children[{1}]", name0, child_index);
                 std::string child1_name = fmt::format("{0}->children[{1}]", name1, child_index);
-                results += svo_slice_inequality_internal(slice0, child0_name, slice1, child1_name
+                results += svo_slice_inequality_internal(child0, child0_name, child1, child1_name
                                     , svo_slice_cmp_type, recurse_down-1 /*recurse_down*/, 0 /*recurse_up*/);
                                 
             }
@@ -245,10 +288,11 @@ namespace svo{
         
         if ((recurse_up > 0) && (slice0_has_parent && slice1_has_parent))
         {
-            
-            std::string child0_name = fmt::format("{0}->parent", name0);
-            std::string child1_name = fmt::format("{0}->parent", name1);
-            results += svo_slice_inequality_internal(slice0, child0_name, slice1, child1_name
+            assert(slice0->parent_slice);
+            assert(slice1->parent_slice);
+            std::string parent0_name = fmt::format("{0}->parent", name0);
+            std::string parent1_name = fmt::format("{0}->parent", name1);
+            results += svo_slice_inequality_internal(slice0->parent_slice, parent0_name, slice1->parent_slice, parent1_name
                                 , svo_slice_cmp_type, 1 /*recurse_down*/, recurse_up - 1/*recurse_up*/);
             
         }
