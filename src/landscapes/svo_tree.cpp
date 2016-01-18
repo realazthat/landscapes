@@ -2547,12 +2547,13 @@ void svo_join_slices(svo_slice_t* dst_slice, const std::array<svo_slice_t*, 8>& 
             }
         }
         
-        
+
+#ifndef NDEBUG
         for (auto* sibling : parent_children1){
             assert(sibling);
             assert(src_slice_set.count(sibling) == 0);
-            
         }
+#endif
         assert(std::find(parent_children1.begin(), parent_children.end(), dst_slice) != parent_children1.end());
         
         assert(parent_children1.size() == parent_children.size() - src_slice_count + 1);
