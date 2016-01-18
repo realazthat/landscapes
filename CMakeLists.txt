@@ -185,6 +185,21 @@ target_link_libraries(landscapes-mc-demo
 
 set_property(TARGET landscapes-mc-demo PROPERTY CXX_STANDARD 14)
 ################################################################################
+add_executable(landscapes-mc-converter
+    src/landscapes/mc-converter.cpp
+    )
+
+target_link_libraries(landscapes-mc-converter
+    landscapes
+    landscapes-mc
+    
+    ${CNBT_LIB}
+    z
+    ${CPPFORMAT_LIB}
+    ${BPRINTER_LIB})
+
+set_property(TARGET landscapes-mc-converter PROPERTY CXX_STANDARD 14)
+################################################################################
 
 
 add_executable(unittests

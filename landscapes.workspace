@@ -1,34 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="codeliteworkspace" Database="">
-  <Project Name="landscapes" Path="landscapes.project" Active="No"/>
+  <Project Name="landscapes" Path="landscapes.project" Active="Yes"/>
   <Project Name="landscapes-unittests" Path="landscapes-unittests.project" Active="No"/>
   <Project Name="landscapes-mc" Path="landscapes-mc.project" Active="No"/>
   <Project Name="landscapes-mc-demo" Path="landscapes-mc-demo.project" Active="No"/>
-  <Project Name="landscapes-zorder-genconsts" Path="landscapes-zorder-genconsts.project" Active="Yes"/>
+  <Project Name="landscapes-zorder-genconsts" Path="landscapes-zorder-genconsts.project" Active="No"/>
+  <Project Name="landscapes-mc-converter" Path="landscapes-mc-converter.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug64" Selected="yes">
+    <WorkspaceConfiguration Name="Debug64" Selected="no">
       <Environment/>
       <Project Name="landscapes" ConfigName="Debug64"/>
       <Project Name="landscapes-mc" ConfigName="Debug64"/>
+      <Project Name="landscapes-mc-converter" ConfigName="Debug64"/>
       <Project Name="landscapes-mc-demo" ConfigName="Debug64"/>
       <Project Name="landscapes-unittests" ConfigName="Debug64"/>
-      <Project Name="landscapes-zorder-genconsts" ConfigName="Debug"/>
+      <Project Name="landscapes-zorder-genconsts" ConfigName="Debug64"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release64" Selected="yes">
+    <WorkspaceConfiguration Name="Release64" Selected="no">
       <Environment/>
-      <Project Name="landscapes" ConfigName="Release"/>
+      <Project Name="landscapes" ConfigName="Release64"/>
+      <Project Name="landscapes-mc" ConfigName="Release64"/>
+      <Project Name="landscapes-mc-converter" ConfigName="Release64"/>
+      <Project Name="landscapes-mc-demo" ConfigName="Release64"/>
       <Project Name="landscapes-unittests" ConfigName="Release64"/>
-      <Project Name="landscapes-mc" ConfigName="Debug"/>
-      <Project Name="landscapes-mc-demo" ConfigName="Debug"/>
-      <Project Name="landscapes-zorder-genconsts" ConfigName="Debug"/>
+      <Project Name="landscapes-zorder-genconsts" ConfigName="Release64"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="MSVCDebug64" Selected="yes">
       <Environment/>
       <Project Name="landscapes" ConfigName="MSVCDebug64"/>
       <Project Name="landscapes-mc" ConfigName="MSVCDebug64"/>
+      <Project Name="landscapes-mc-converter" ConfigName="MSVCDebug64"/>
       <Project Name="landscapes-mc-demo" ConfigName="MSVCDebug64"/>
       <Project Name="landscapes-unittests" ConfigName="MSVCDebug64"/>
-      <Project Name="landscapes-zorder-genconsts" ConfigName="Debug"/>
+      <Project Name="landscapes-zorder-genconsts" ConfigName="MSVCDebug64"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
