@@ -152,6 +152,8 @@ add_library(landscapes
     src/landscapes/svo_slice.comparison.cpp
     )
 set_property(TARGET landscapes PROPERTY CXX_STANDARD 14)
+set_property(TARGET landscapes PROPERTY CXX_STANDARD_REQUIRED ON)
+#target_compile_features(landscapes PUBLIC cxx_deleted_functions)
 
 ################################################################################
 
@@ -159,6 +161,8 @@ add_library(landscapes-mc
     src/landscapes/mcloader.cpp
     )
 set_property(TARGET landscapes-mc PROPERTY CXX_STANDARD 14)
+set_property(TARGET landscapes-mc PROPERTY CXX_STANDARD_REQUIRED ON)
+#target_compile_features(landscapes-mc PUBLIC cxx_deleted_functions)
 
 ################################################################################
 
@@ -166,6 +170,8 @@ add_executable(landscapes-zorder-genconsts
     src/landscapes/svo_curves.genconsts.cpp
     )
 set_property(TARGET landscapes-zorder-genconsts PROPERTY CXX_STANDARD 14)
+set_property(TARGET landscapes-zorder-genconsts PROPERTY CXX_STANDARD_REQUIRED ON)
+#target_compile_features(landscapes-zorder-genconsts PUBLIC cxx_deleted_functions)
 
 
 ################################################################################
@@ -188,6 +194,8 @@ target_link_libraries(landscapes-mc-demo
     ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32)
 
 set_property(TARGET landscapes-mc-demo PROPERTY CXX_STANDARD 14)
+set_property(TARGET landscapes-mc-demo PROPERTY CXX_STANDARD_REQUIRED ON)
+#target_compile_features(landscapes-mc-demo PUBLIC cxx_deleted_functions)
 ################################################################################
 
 
