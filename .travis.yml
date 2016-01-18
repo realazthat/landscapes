@@ -45,7 +45,7 @@ install:
     #takes too long, we'll download the binaries instead.
     #- sudo bash ./scripts/build-install-cmake3.sh
     #- sudo bash ./scripts/download-install-cmake3.sh
-    - rm -rf ./build mkdir -p ./build
+    - rm -rf ./build && mkdir -p ./build
     - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$GTEST_BUILD_TYPE" bash ./scripts/download-and-build-googletest.sh
     - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-glm.sh
     - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-corner-cases.sh
