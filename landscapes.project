@@ -47,8 +47,8 @@
       <File Name="src/landscapes/svo_tree.sanity.cpp"/>
       <File Name="src/landscapes/svo_tree.slice_mgmt.cpp"/>
       <File Name="src/landscapes/svo_render.cpp"/>
+      <File Name="src/landscapes/svo_slice.comparison.cpp"/>
     </VirtualDirectory>
-    <File Name="src/pempek_assert.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="landscapes">
@@ -78,10 +78,11 @@
       <File Name="include/landscapes/svo_render.hpp"/>
       <File Name="include/landscapes/svo_camera_mapping.cl.h"/>
       <File Name="include/landscapes/svo_camera_mapping.cl.fwd.h"/>
+      <File Name="include/landscapes/svo_slice.comparison.hpp"/>
     </VirtualDirectory>
-    <File Name="include/pempek_assert.h"/>
   </VirtualDirectory>
   <Dependencies Name="Release64"/>
+  <Dependencies Name="Debug64"/>
   <Settings Type="Static Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -93,7 +94,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug64" CompilerType="mingw64-64" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-std=c++11;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-O0;-std=c++14;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./src"/>
         <IncludePath Value="./include"/>
@@ -223,5 +224,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug64"/>
 </CodeLite_Project>
