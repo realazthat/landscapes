@@ -136,7 +136,8 @@ Building
     cmake -L # list all the user-definable variables
     cmake . -DGLFW3_INCLUDE_DIR=/path/to/cppformat/include -DGLFW3_LIB=glfw3 -DGLFW3_LIB_DIR=/path/to/glfw/build/src
     # .. and so on for each dependency that is not in the ./libs directory and not installed in the system
-    
+    #alternatively, we can set these via the GUI
+    cmake-gui .
     
     #build the targets you want to build
     cmake --build . --target landscapes
