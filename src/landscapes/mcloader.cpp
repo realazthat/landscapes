@@ -678,7 +678,7 @@ void load_mca_region(volume_of_slices_t& slices, std::ifstream& region_file, std
         job.second = lengthCompressed;
     }
     
-    ThreadPool pool(num_threads);
+    //ThreadPool pool(num_threads);
     
     for (const auto& id_job_pair : jobs)
     {
@@ -686,7 +686,10 @@ void load_mca_region(volume_of_slices_t& slices, std::ifstream& region_file, std
         const auto& job = id_job_pair.second;
         const uint8_t* compressed_buffer_ptr = job.first;
         std::size_t compressed_buffer_len = job.second;
-        pool.enqueue( std::bind(extract_chunk, chunk_id, compressed_buffer_ptr, compressed_buffer_len, vertical_slices, std::ref(all_slices)) );
+        
+        auto f = std::bind(extract_chunk, chunk_id, compressed_buffer_ptr, compressed_buffer_len, vertical_slices, std::ref(all_slices));
+        //pool.enqueue( f );
+        f();
     }
 }
 
