@@ -26,13 +26,13 @@ children_params_t unserialize_slice(std::istream& in, svo_slice_t* slice, bool l
 
 
 
-void serialize_string(std::ostream& out, const std::string& v);
-void serialize_buffer(std::ostream& out, const svo_cpu_buffer_t& buffer);
-void serialize_buffer_data(std::ostream& out, const svo_cpu_buffer_t& buffer);
-void serialize_buffers(std::ostream& out, const svo_cpu_buffers_t& buffers, std::size_t expected_entries);
-void serialize_declaration(std::ostream& out, const svo_declaration_t& declaration);
-void serialize_schema(std::ostream& out, const svo_schema_t& schema);
-void serialize_slice_child_info(std::ostream& out, const svo_slice_t* slice);
+void serialize_string(std::ostream& out, const std::string& v, bool debug=false);
+void serialize_buffer(std::ostream& out, const svo_cpu_buffer_t& buffer, bool debug=false);
+void serialize_buffer_data(std::ostream& out, const svo_cpu_buffer_t& buffer, bool debug=false);
+void serialize_buffers(std::ostream& out, const svo_cpu_buffers_t& buffers, std::size_t expected_entries, bool debug=false);
+void serialize_declaration(std::ostream& out, const svo_declaration_t& declaration, bool debug=false);
+void serialize_schema(std::ostream& out, const svo_schema_t& schema, bool debug=false);
+void serialize_slice_child_info(std::ostream& out, const svo_slice_t* slice, bool debug=false);
 
 std::string unserialize_string(std::istream& in);
 std::unique_ptr<svo_cpu_buffer_t> unserialize_buffer(std::istream& in);
