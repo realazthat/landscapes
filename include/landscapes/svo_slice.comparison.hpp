@@ -84,9 +84,9 @@ namespace svo{
             , pos_data =                1 << 5
             , channel_data =            1 << 6
             , child_count =             1 << 7
-            , child_props =             1 << 7
-            , has_parent =              1 << 8
-            , parent_props =            1 << 9
+            , child_props =             1 << 8
+            , has_parent =              1 << 9
+            , parent_props =            1 << 10
             , all_data =                pos_data | channel_data
             , all =                     level | side | parent_vcurve_begin | pos_data | channel_data
                                           | child_count| child_props | has_parent
