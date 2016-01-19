@@ -18,7 +18,7 @@
 #include "landscapes/svo_tree.sanity.hpp"
 
 
-
+namespace svo{
 struct timer_t{
     timer_t(std::ostream& out, const std::string& name)
         : out(out), name(name)
@@ -38,7 +38,7 @@ struct timer_t{
     std::string name;
     std::chrono::time_point<std::chrono::steady_clock> start;
 };
-
+} // namespace
 
 
 svo::svo_slice_t* load_slices(const std::string& slice_path, const std::string& root_node_name){
@@ -126,7 +126,7 @@ int main(int argc, const char** argv)
         }
         
         {
-            timer_t load_mca_region_timer(std::cout, "loading MCA region");
+            svo::timer_t load_mca_region_timer(std::cout, "loading MCA region");
             
             svo::load_mca_region(wanted_slices, infile, threadsArg.getValue());
         }
@@ -137,14 +137,14 @@ int main(int argc, const char** argv)
         svo::svo_slice_t* root_slice = nullptr;
         
         {
-            timer_t entree_slices_timer(std::cout, "entreeing slices");
+            svo::timer_t entree_slices_timer(std::cout, "entreeing slices");
             root_slice = svo::svo_entree_slices(volume_of_slices, 1024*100/*max_voxels_per_slice*/);
         }
         
         assert(root_slice);
         
         {
-            timer_t serialize_slices_timer(std::cout, "serialize slices");
+            svo::timer_t serialize_slices_timer(std::cout, "serialize slices");
 
             auto serialize_a_tree_slice = [&treePathArg](svo::svo_slice_t* current_slice, const std::string& parent_node_path){
 
@@ -173,7 +173,7 @@ int main(int argc, const char** argv)
         
         if (testLoadArg.getValue())
         {
-            timer_t unserialize_slices_timer(std::cout, "test: reload serialized slices");
+            svo::timer_t unserialize_slices_timer(std::cout, "test: reload serialized slices");
             auto* root_slice1 = load_slices(treePathArg.getValue(), "r");
             
             
