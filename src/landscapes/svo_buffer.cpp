@@ -5,6 +5,7 @@
 
 #include <exception>
 #include <sstream>
+#include <istream>
 
 #include "format.h"
 
@@ -12,7 +13,26 @@ namespace svo{
 
 
 
-
+struct tostr_visitor_t{
+    std::ostream& out;
+    
+    tostr_visitor_t(std::ostream& out) : out(out) {};
+    
+    template<typename T>
+    void operator()(const T* data, const svo_element_t& element)
+    {
+        out << "(";
+        
+        for (std::size_t i = 0; i < element.count(); ++i)
+        {
+            out << (i == 0 ? "" : ", ") << data[i];
+        }
+        
+        out << ")";
+        
+        return;
+    }
+};
 
 void tostr(std::ostream& out
     , const uint8_t* entry_data_ptr
@@ -27,21 +47,8 @@ void tostr(std::ostream& out
     
     const auto* element_data_ptr = entry_data_ptr + offset;
     
-    auto visitor = [&out](const auto* data, const svo_element_t& element)
-    {
-        out << "(";
-        
-        for (std::size_t i = 0; i < element.count(); ++i)
-        {
-            out << (i == 0 ? "" : ", ") << data[i];
-        }
-        
-        out << ")";
-        
-        return;
-    };
     
-    visit_element(element_data_ptr, element, visitor);
+    visit_element(element_data_ptr, element, tostr_visitor_t(out));
     
 }
 
