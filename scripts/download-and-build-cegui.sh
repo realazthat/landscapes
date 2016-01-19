@@ -43,4 +43,6 @@ cmake -G"$CMAKE_GENERATOR" .. \
         -DCMAKE_PREFIX_PATH:PATH="$PROJECT_PATH/libs/cegui/cegui-dependencies/build/dependencies"
 cmake --build .
 
-cp -f "./bin/"/* "$PROJECT_PATH/build/."
+#create the directory in case it does not exist; when deps are built statically it might not exist
+mkdir -p ./bin/ && touch ./bin/ignorethisfile
+cp -f ./bin/* "$PROJECT_PATH/build/."

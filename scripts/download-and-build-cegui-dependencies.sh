@@ -52,6 +52,6 @@ cmake -G"$CMAKE_GENERATOR" .. \
 cmake --build .
 
 #create the directory in case it does not exist; when deps are built statically it might not exist
-mkdir -p ./dependencies/bin/
+mkdir -p ./dependencies/bin/ && touch ./dependencies/bin/ignorethisfile
 cp -f ./dependencies/bin/* "$PROJECT_PATH/build/."
 
