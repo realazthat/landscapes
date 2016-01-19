@@ -26,7 +26,7 @@ cd libs
 
 mkdir -p mathgeolib && cd mathgeolib
 
-rm -rf ./mathgeolib/
+rm -rf ./MathGeoLib/
 git clone https://github.com/juj/MathGeoLib.git
 cd MathGeoLib
 git checkout "915501a"
