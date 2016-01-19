@@ -148,6 +148,7 @@ add_library(landscapes
     src/landscapes/svo_slice.comparison.cpp
     )
 set_property(TARGET landscapes PROPERTY CXX_STANDARD 14)
+set_property(TARGET landscapes PROPERTY CXX_STANDARD_REQUIRED ON)
 
 ################################################################################
 
@@ -155,6 +156,7 @@ add_library(landscapes-mc
     src/landscapes/mcloader.cpp
     )
 set_property(TARGET landscapes-mc PROPERTY CXX_STANDARD 14)
+set_property(TARGET landscapes-mc PROPERTY CXX_STANDARD_REQUIRED ON)
 
 ################################################################################
 
@@ -162,6 +164,7 @@ add_executable(landscapes-zorder-genconsts
     src/landscapes/svo_curves.genconsts.cpp
     )
 set_property(TARGET landscapes-zorder-genconsts PROPERTY CXX_STANDARD 14)
+set_property(TARGET landscapes-zorder-genconsts PROPERTY CXX_STANDARD_REQUIRED ON)
 
 
 ################################################################################
@@ -184,6 +187,7 @@ target_link_libraries(landscapes-mc-demo
     ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32)
 
 set_property(TARGET landscapes-mc-demo PROPERTY CXX_STANDARD 14)
+set_property(TARGET landscapes-mc-demo PROPERTY CXX_STANDARD_REQUIRED ON)
 ################################################################################
 add_executable(landscapes-mc-converter
     src/landscapes/mc-converter.cpp
@@ -199,6 +203,7 @@ target_link_libraries(landscapes-mc-converter
     ${BPRINTER_LIB})
 
 set_property(TARGET landscapes-mc-converter PROPERTY CXX_STANDARD 14)
+set_property(TARGET landscapes-mc-converter PROPERTY CXX_STANDARD_REQUIRED ON)
 ################################################################################
 
 
@@ -230,6 +235,7 @@ target_link_libraries(unittests
 
 
 set_property(TARGET unittests PROPERTY CXX_STANDARD 14)
+set_property(TARGET unittests PROPERTY CXX_STANDARD_REQUIRED ON)
 
 
 ################################################################################
