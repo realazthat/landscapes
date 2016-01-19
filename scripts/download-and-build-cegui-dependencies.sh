@@ -51,5 +51,5 @@ cmake -G"$CMAKE_GENERATOR" .. \
     
 cmake --build .
 
-cp -f "./dependencies/bin/"/* "$PROJECT_PATH/build/."
+cp -f ./dependencies/bin/* "$PROJECT_PATH/build/."
 
