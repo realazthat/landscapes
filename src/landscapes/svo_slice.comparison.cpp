@@ -16,14 +16,14 @@ namespace svo{
     {
         return out << "<svo_slice_inequality_t"
                    << ", slice0: " << svo_slice_inequality.name0
-                   << ", slice1: " svo_slice_inequality.name1
+                   << ", slice1: " << svo_slice_inequality.name1
                    << ", message: " <<  svo_slice_inequality.message
                    << ">";
     }
     ::std::ostream& operator<<(::std::ostream& out, const svo_slice_inequalities_t& svo_slice_inequalities)
     {
         out << "[";
-        for (std::size_t i = 0; i < svo_slice_inequalities.messages.size(); ++i)
+        for (std::size_t i = 0; i < svo_slice_inequalities.issues.size(); ++i)
         {
             const auto& issues = svo_slice_inequalities.issues[i];
             
@@ -49,11 +49,11 @@ namespace svo{
         assert(slice1);
         
         
-        svo_slice_inequalities_t results(slice0, slice1);
+        svo_slice_inequalities_t results;
         
         if (    (svo_slice_cmp_type & slice_cmp_t::enum_t::level)
                 && slice0->level != slice1->level)
-            results += svo_slice_inequality_t(slice0, slice1,
+            results += svo_slice_inequality_t(slice0, name0, slice1, name1,
                             fmt::format("{0}->level != {1}->level"
                                         ", {0}->level: {2}, {1}->level: {3}"
                                         , name0, name1
@@ -61,7 +61,7 @@ namespace svo{
         
         if (   (svo_slice_cmp_type & slice_cmp_t::enum_t::side)
                && slice0->side != slice1->side)
-            results += svo_slice_inequality_t(slice0, slice1,
+            results += svo_slice_inequality_t(slice0, name0, slice1, name1,
                             fmt::format("{0}->side != {1}->side"
                                         ", {0}->side: {2}, {1}->side: {3}"
                                         , name0, name1
@@ -69,7 +69,7 @@ namespace svo{
         
         if ( (svo_slice_cmp_type & slice_cmp_t::enum_t::parent_vcurve_begin) 
              && slice0->parent_vcurve_begin != slice1->parent_vcurve_begin)
-            results += svo_slice_inequality_t(slice0, slice1,
+            results += svo_slice_inequality_t(slice0, name0, slice1, name1,
                             fmt::format("{0}->parent_vcurve_begin != {1}->parent_vcurve_begin"
                                         ", {0}->parent_vcurve_begin: {2}, {1}->parent_vcurve_begin: {3}"
                                         , name0, name1
@@ -86,7 +86,7 @@ namespace svo{
             const auto& pos_data1 = *slice1->pos_data;
             
             if (pos_data0.size() != pos_data1.size()) {
-                results += svo_slice_inequality_t(slice0, slice1,
+                results += svo_slice_inequality_t(slice0, name0, slice1, name1,
                                 fmt::format("{0}->pos_data->size() != {1}->pos_data->size()"
                                             ", {0}->pos_data->size(): {2}, {1}->pos_data->size(): {3}"
                                             , name0, name1
@@ -103,7 +103,7 @@ namespace svo{
                     vcurve_t vcurve1 = pos_data1[element_index];
                     
                     if (vcurve0 != vcurve1){
-                        results += svo_slice_inequality_t(slice0, slice1,
+                        results += svo_slice_inequality_t(slice0, name0, slice1, name1,
                                 fmt::format("{name0}->pos_data[{element_index}] != {name1}->pos_data[{element_index}]"
                                             ", {name0}->pos_data[{element_index}]: {vcurve0}, {name1}->pos_data[{element_index}]: {vcurve1}"
                                             , fmt::arg("name0",name0), fmt::arg("name1",name1)
@@ -124,7 +124,7 @@ namespace svo{
             const auto& buffers0 = *slice0->buffers;
             const auto& buffers1 = *slice1->buffers;
             if (buffers0.entries() != buffers1.entries()) {
-                results += svo_slice_inequality_t(slice0, slice1,
+                results += svo_slice_inequality_t(slice0, name0, slice1, name1,
                                 fmt::format("{0}->buffers->entries() != {1}->buffers->entries()"
                                             ", {0}->buffers->entries(): {2}, {1}->buffers->entries(): {3}"
                                             , name0, name1
@@ -134,7 +134,7 @@ namespace svo{
                 
                 
                 if (buffers0.schema() != buffers1.schema()) {
-                    results += svo_slice_inequality_t(slice0, slice1,
+                    results += svo_slice_inequality_t(slice0, name0, slice1, name1,
                                     fmt::format("{0}->buffers->schema() != {1}->buffers->schema()"
                                                 ", {0}->buffers->schema(): {2}, {1}->buffers->schema(): {3}"
                                                 , name0, name1
@@ -167,7 +167,7 @@ namespace svo{
                             if (cmp != 0)
                             {
                                 
-                                results += svo_slice_inequality_t(slice0, slice1,
+                                results += svo_slice_inequality_t(slice0, name0, slice1, name1,
                                         fmt::format("{name0}->buffers[{buffer_index}][{element_index}] != {name1}->buffers[{buffer_index}][{element_index}]"
                                                     ", {name0}->buffers[{buffer_index}][{element_index}]: {value0}, {name1}->buffers[{buffer_index}][{element_index}]: {value1}"
                                                     , fmt::arg("name0",name0), fmt::arg("name1",name1)
@@ -192,7 +192,7 @@ namespace svo{
         bool should_care_about_parent =  (svo_slice_cmp_type & slice_cmp_t::enum_t::has_parent)
                                     ||  (svo_slice_cmp_type & slice_cmp_t::enum_t::parent_props); 
         if ( should_care_about_parent && (slice0_has_parent != slice1_has_parent))
-            results += svo_slice_inequality_t(slice0, slice1,
+            results += svo_slice_inequality_t(slice0, name0, slice1, name1,
                             fmt::format("{0}->parent is {2} and {1}->parent is {3}"
                                         , name0, name1
                                         , (slice0_has_parent ? "is null" : "is not null")
@@ -213,7 +213,7 @@ namespace svo{
         
         bool should_care_about_child_count = (svo_slice_cmp_type & slice_cmp_t::enum_t::child_count)  || (svo_slice_cmp_type & slice_cmp_t::enum_t::child_props);
         if (should_care_about_child_count && children0.size() != children1.size())
-            results += svo_slice_inequality_t(slice0, slice1,
+            results += svo_slice_inequality_t(slice0, name0, slice1, name1,
                             fmt::format("{0}->children->size() != {1}->children->size()"
                                         ", {0}->children->size(): {2}, {1}->children->size(): {3}"
                                         , name0, name1
@@ -251,7 +251,7 @@ namespace svo{
                     bool child1_points_back_to_parent = child1->parent_slice == slice1;
                     
                     if (child0_points_back_to_parent != child1_points_back_to_parent)
-                        results += svo_slice_inequality_t(slice0, slice1,
+                        results += svo_slice_inequality_t(slice0, name0, slice1, name1,
                             fmt::format("{0} {2}, but {1} {3}"
                                         , child0_name, child1_name
                                         , (child0_points_back_to_parent ? "points back to parent" : "does not point back to parent")
