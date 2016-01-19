@@ -33,12 +33,10 @@ set(MGL_LIB "MathGeoLib"
     CACHE STRING "Libs for MathGeoLib")
 
 
-set(GLFW3_LIB_DEFAULT "glfw3")
-
-if (LINUX)
-    set(GLFW3_LIB_DEFAULT "glfw")
+set(GLFW3_LIB_DEFAULT "glfw")
+if (WIN32)
+    set(GLFW3_LIB_DEFAULT "glfw3")
 endif()
-
 set(GLFW3_INCLUDE_DIR "./libs/glfw3/glfw/include"
     CACHE STRING "Paths to glfw3 includes")
 set(GLFW3_LIB_DIR "./libs/glfw3/glfw/build/src"
@@ -84,13 +82,49 @@ set(SGFXAPI_INCLUDE_DIR "./libs/sgfxapi/sgfxapi/include" CACHE STRING "Paths to 
 set(SGFXAPI_LIB_DIR "./libs/sgfxapi/sgfxapi/build" CACHE STRING "Paths to sgfxapi libs")
 set(SGFXAPI_LIB "sgfxapi;sgfxapi-drawutils" CACHE STRING "Libs for sgfxapi")
 
-set(GLEW_INCLUDE_DIR "" CACHE STRING "Paths to glew includes")
-set(GLEW_LIB_DIR "" CACHE STRING "Paths to glew libs")
-set(GLEW_LIB "glew32" CACHE STRING "Lib for glew")
+set(GLEW_LIB_DEFAULT "GLEW")
+if (WIN32)
+    set(GLEW_LIB_DEFAULT "glew32")
+endif()
+set(GLEW_INCLUDE_DIR "" CACHE STRING "Paths to GLEW includes")
+set(GLEW_LIB_DIR "" CACHE STRING "Paths to GLEW libs")
+set(GLEW_LIB "${GLEW_LIB_DEFAULT}" CACHE STRING "Lib for GLEW")
 
-set(GLU_INCLUDE_DIR "" CACHE STRING "Paths to glut includes")
-set(GLU_LIB_DIR "" CACHE STRING "Paths to glut libs")
-set(GLU_LIB "glu32" CACHE STRING "Paths to glut libs")
+set(GLU_LIB_DEFAULT "GLU")
+if (WIN32)
+    set(GLU_LIB_DEFAULT "glu32")
+endif()
+set(GLU_INCLUDE_DIR "" CACHE STRING "Paths to GLU includes")
+set(GLU_LIB_DIR "" CACHE STRING "Paths to GLU libs")
+set(GLU_LIB "${GLU_LIB_DEFAULT}" CACHE STRING "Libs for GLU")
+
+
+set(GLUT_INCLUDE_DIR "" CACHE STRING "Paths to glut includes")
+set(GLUT_LIB_DIR "" CACHE STRING "Paths to glut libs")
+set(GLUT_LIB "glut" CACHE STRING "Libs for glut")
+
+
+set(OPENGL_LIB_DEFAULT "opengl")
+if (WIN32)
+    set(OPENGL_LIB_DEFAULT "opengl32")
+endif()
+set(OPENGL_INCLUDE_DIR "" CACHE STRING "Paths to opengl includes")
+set(OPENGL_LIB_DIR "" CACHE STRING "Paths to opengl libs")
+set(OPENGL_LIB "${OPENGL_LIB_DEFAULT}" CACHE STRING "Libs for opengl")
+
+
+
+set(PLATFORM_LIB_DEFAULT "")
+if (WIN32)
+    set(PLATFORM_LIB_DEFAULT "gdi32")
+endif()
+set(PLATFORM_INCLUDE_DIR "" CACHE STRING "Paths to Platform-specific includes")
+set(PLATFORM_LIB_DIR "" CACHE STRING "Paths to Platform-specific libs")
+set(PLATFORM_LIB "${PLATFORM_LIB_DEFAULT}" CACHE STRING "Platform-specific libs")
+
+
+
+
 
 
 if (MSVC)
@@ -191,7 +225,7 @@ target_link_libraries(landscapes-mc-demo
     ${SGFXAPI_LIB}
     ${CEGUI_LIB}
 
-    ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32)
+    ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} ${OPENGL_LIB} ${PLATFORM_LIB})
 
 set_property(TARGET landscapes-mc-demo PROPERTY CXX_STANDARD 14)
 set_property(TARGET landscapes-mc-demo PROPERTY CXX_STANDARD_REQUIRED ON)
@@ -207,7 +241,8 @@ target_link_libraries(landscapes-mc-converter
     ${CNBT_LIB}
     z
     ${CPPFORMAT_LIB}
-    ${BPRINTER_LIB})
+    ${BPRINTER_LIB}
+    ${PLATFORM_LIB})
 
 set_property(TARGET landscapes-mc-converter PROPERTY CXX_STANDARD 14)
 set_property(TARGET landscapes-mc-converter PROPERTY CXX_STANDARD_REQUIRED ON)
@@ -238,6 +273,7 @@ target_link_libraries(unittests
     ${BPRINTER_LIB}
     
     ${GTEST_LIB}
+    ${PLATFORM_LIB}
     )
 
 
