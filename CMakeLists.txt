@@ -6,6 +6,8 @@ project(landscapes)
 cmake_policy(SET CMP0015 NEW)
 
 
+
+
 set(GLM_INCLUDE_DIR "./libs/glm/glm"
     CACHE STRING "Paths to glm includes")
 set(GLM_LIB_DIR ""
@@ -31,12 +33,17 @@ set(MGL_LIB "MathGeoLib"
     CACHE STRING "Libs for MathGeoLib")
 
 
+set(GLFW3_LIB_DEFAULT "glfw3")
+
+if (LINUX)
+    set(GLFW3_LIB_DEFAULT "glfw")
+endif()
 
 set(GLFW3_INCLUDE_DIR "./libs/glfw3/glfw/include"
     CACHE STRING "Paths to glfw3 includes")
 set(GLFW3_LIB_DIR "./libs/glfw3/glfw/build/src"
     CACHE STRING "Paths to glfw3 libs")
-set(GLFW3_LIB "glfw3"
+set(GLFW3_LIB "${GLFW3_LIB_DEFAULT}"
     CACHE STRING "Libs for glfw3")
 
 set(CPPFORMAT_INCLUDE_DIR "./libs/cppformat/cppformat"
