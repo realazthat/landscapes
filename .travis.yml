@@ -27,7 +27,7 @@ addons:
     # for cegui
     - libfreetype6-dev
     - libpcre3-dev
-    - libsilly-dev
+    #- libsilly-dev
     - libxml2-dev
     - libexpat1-dev 
     - libosmesa6
