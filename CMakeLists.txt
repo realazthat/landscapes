@@ -104,7 +104,7 @@ set(GLUT_LIB_DIR "" CACHE STRING "Paths to glut libs")
 set(GLUT_LIB "glut" CACHE STRING "Libs for glut")
 
 
-set(OPENGL_LIB_DEFAULT "opengl")
+set(OPENGL_LIB_DEFAULT "GL")
 if (WIN32)
     set(OPENGL_LIB_DEFAULT "opengl32")
 endif()
