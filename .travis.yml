@@ -27,14 +27,15 @@ addons:
     # for cegui
     - libfreetype6-dev
     - libpcre3-dev
-    #- libsilly-dev
+    - libsilly-dev
+    - libsilly-dev
     - libxml2-dev
     - libexpat1-dev 
     - libosmesa6
     - libglapi-mesa
     - mesa-utils
     - libglew-dev
-    - libglfw-dev
+    #- libglfw-dev
     #- libglm-dev
     #- wget
     #- ca-certificates #for wget
@@ -52,7 +53,7 @@ install:
     - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-cnbt.sh
     - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-mathgeolib.sh
     
-    - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-cegui-dependencies.sh
+    #- CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-cegui-dependencies.sh
     - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-cegui.sh
     - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-tclap.sh
     - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-glfw3.sh
