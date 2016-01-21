@@ -99,9 +99,13 @@ set(GLU_LIB_DIR "" CACHE STRING "Paths to GLU libs")
 set(GLU_LIB "${GLU_LIB_DEFAULT}" CACHE STRING "Libs for GLU")
 
 
+set(GLUT_LIB_DEFAULT "freeglut")
+if (WIN32)
+    set(GLUT_LIB_DEFAULT "freeglut")
+endif()
 set(GLUT_INCLUDE_DIR "" CACHE STRING "Paths to glut includes")
 set(GLUT_LIB_DIR "" CACHE STRING "Paths to glut libs")
-set(GLUT_LIB "glut" CACHE STRING "Libs for glut")
+set(GLUT_LIB "${GLUT_LIB_DEFAULT}" CACHE STRING "Libs for glut")
 
 
 set(OPENGL_LIB_DEFAULT "GL")
