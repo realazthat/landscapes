@@ -25,6 +25,8 @@ addons:
     - clang
     - mercurial
     # for cegui
+    - xorg-dev
+    - libglu1-mesa-dev
     - libfreetype6-dev
     - libpcre3-dev
     - libsilly-dev
