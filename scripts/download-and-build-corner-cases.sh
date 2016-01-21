@@ -23,7 +23,8 @@ cd libs
 mkdir -p corner-cases && cd corner-cases
 rm -rf ./corner-cases/
 git clone https://github.com/realazthat/corner-cases.git
-
+cd ./corner-cases
+git checkout e1f6a4d61fc31a674588225fd06569492b007b44
 
 
 
