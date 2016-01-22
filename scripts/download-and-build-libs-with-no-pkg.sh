@@ -66,23 +66,3 @@ git clone https://github.com/progschj/ThreadPool.git
 cd ThreadPool
 git checkout "9a42ec1"
 
-
-
-#############################################################################
-## get/build cppformat
-#############################################################################
-cd "$PROJECT_PATH"
-cd libs
-
-mkdir -p cppformat && cd cppformat
-rm -rf ./cppformat/
-git clone https://github.com/cppformat/cppformat.git
-cd cppformat
-git checkout "4797ca0"
-
-mkdir -p build && cd build
-cmake -G"$CMAKE_GENERATOR" ..
-cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
-cmake . -DCMAKE_VERBOSE_MAKEFILE=1
-cmake --build . --target cppformat
-

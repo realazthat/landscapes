@@ -38,14 +38,14 @@ CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bas
 CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-freeglut.sh
 CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE" bash ./scripts/download-and-build-sgfxapi.sh
 
+CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-cppformat.sh
 CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-libs-with-no-pkg.sh
 CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-unittest-data.sh
 
 cd "$PROJECT_PATH/build"
 
 cmake -G"$CMAKE_GENERATOR" ..
-cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
-cmake . -DCMAKE_VERBOSE_MAKEFILE=1
+cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE" -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_CXX_FLAGS=""
 cmake --build . --target unittests
 cmake --build . --target landscapes-zorder-genconsts
 
