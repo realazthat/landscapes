@@ -61,7 +61,7 @@ namespace svo{
         std::size_t near_bottom_left_index = 0b000;
         
         std::size_t far_top_left_index = 0b110;
-        std::size_t far_top_right_index = 01011;
+        std::size_t far_top_right_index = 0b111;
         std::size_t far_bottom_right_index = 0b101;
         std::size_t far_bottom_left_index = 0b100;
         
