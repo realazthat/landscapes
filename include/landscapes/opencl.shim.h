@@ -61,6 +61,7 @@
 #ifdef __OPENCL_VERSION__
 #define glm_all all
 #define glm_any any
+#define glm_equal isequal
 #define glm_isnan isnan
 #define glm_isinf isinf
 #define glm_min min
@@ -95,6 +96,7 @@ static inline float3_t select(const float3_t& a, const float3_t& b, const svec_t
 
 #define glm_all glm::all
 #define glm_any glm::any
+#define glm_equal glm::equal
 #define glm_isnan glm::isnan
 #define glm_isinf glm::isinf
 #define glm_min glm::min
