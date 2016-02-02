@@ -19,6 +19,9 @@ struct child_descriptor_t;
 std::ostream& operator<<(std::ostream& out, const glm::vec3& v);
 std::ostream& operator<<(std::ostream& out, const glm::uvec3& v);
 std::ostream& operator<<(std::ostream& out, const glm::ivec3& v);
+std::ostream& operator<<(std::ostream& out, const glm::vec2& v);
+std::ostream& operator<<(std::ostream& out, const glm::uvec2& v);
+std::ostream& operator<<(std::ostream& out, const glm::ivec2& v);
 
 std::ostream& operator<<(std::ostream& out, const child_descriptor_t& cd);
 

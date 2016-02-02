@@ -32,6 +32,30 @@ std::ostream& operator<<(std::ostream& out, const glm::ivec3& v)
 
 
 
+inline
+std::ostream& operator<<(std::ostream& out, const glm::vec2& v)
+{
+    out << std::setprecision(std::numeric_limits<float>::digits10+1) << "(" << v.x << "," << v.y << ")";
+    return out;
+}
+
+
+inline
+std::ostream& operator<<(std::ostream& out, const glm::uvec2& v)
+{
+    out << std::setprecision(std::numeric_limits<float>::digits10+1) << "(" << v.x << "," << v.y << ")";
+    return out;
+}
+
+
+inline
+std::ostream& operator<<(std::ostream& out, const glm::ivec2& v)
+{
+    out << "(" << v.x << "," << v.y << ")";
+    return out;
+}
+
+
 
 
 
