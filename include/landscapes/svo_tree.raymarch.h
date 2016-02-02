@@ -394,7 +394,7 @@ cube_hit_t calculate_t1_f3( float3_t raypos
     float3_t t1 = raypos + raydir*Q;
 
 #if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
-    if(!fequalsf3(t1, dir_upper))
+    if(!is_on_surface(t1, dir_upper))
     {
         throw std::runtime_error(fmt::format(  "t1 not on dir_upper surface" " raypos: {}, raydir: {}, dir_upper: {}" "{}"
                 , tostr(raypos), tostr(raydir), tostr(dir_upper)
@@ -560,7 +560,7 @@ cube_hit_t calculate_t0_f3( float3_t raypos
     float3_t t0 = raypos + raydir*Q;
 
 #if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
-    if( !(fequalsf3(t0, dir_lower)) )
+    if( !(is_on_surface(t0, dir_lower)) )
     {
         throw std::runtime_error( fmt::format("t0 not on dir_lower surface" " raypos: {}, raydir: {}, dir_lower: {}" "{}"
                 , tostr(raypos).c_str(), tostr(raydir).c_str(), tostr(dir_lower).c_str()

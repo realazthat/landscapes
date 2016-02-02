@@ -195,4 +195,22 @@ float sdistancef3(float3_t start, float3_t end)
 }
 
 
+/**
+ * Tests if point is on the surface of (part of) a cube.
+ * 
+ * @param the point to be tested.
+ * @param dir_upper a corner of the cube; the three adjacent faces of this cube will be
+ *      tested against the point.
+ */
+static inline
+bool is_on_surface(float3_t point, float3_t dir_upper)
+{
+    return glm_any(glm_equal(point, dir_upper));
+}
+
+
+
+
+
+
 #endif
