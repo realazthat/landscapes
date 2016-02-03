@@ -171,29 +171,33 @@ namespace svo{
                     , glm::vec3 lod_source)
     {
         
-        int32_t source_max_width = svo_camera_quad_max_width(&(camera_mapping.source));
-        int32_t target_max_width = svo_camera_quad_max_width(&(camera_mapping.target));
+        auto compute_ray_scale_2 = [&camera_mapping, &screen_width](){
+            int32_t source_max_width = svo_camera_quad_max_width(&(camera_mapping.source));
+            int32_t target_max_width = svo_camera_quad_max_width(&(camera_mapping.target));
+            
+            int32_t triangle_height = target_max_width - source_max_width;
+            
+            svo_ray_t center_ray = svo_uv_to_ray(&camera_mapping, 0, 0);
+            int32_t triangle_base = glm_length(center_ray.target - center_ray.source);
+            
+            ///calculating this based on camera, even though LOD is independent of camera via
+            /// `lod_source`.
+            float horizontal_fov = glm_atan(triangle_height / triangle_base);
+            
+            ///See voxelpixelerror() function in raymarch.hpp
+            //float aA = camera.HorizontalFov();
+            float aA = horizontal_fov;
+            ///FOV for a single ray
+            float aa = aA / float(screen_width);
+            float rayScale = (1.0/(2.0*glm_tan(aa/2.0)));
+            float rayScale2 = rayScale*rayScale;
+            return rayScale2;
+        };
         
-        int32_t triangle_height = target_max_width - source_max_width;
-        
-        svo_ray_t center_ray = svo_uv_to_ray(&camera_mapping, 0, 0);
-        int32_t triangle_base = glm_length(center_ray.target - center_ray.source);
-        
-        ///calculating this based on camera, even though LOD is independent of camera via
-        /// `lod_source`.
-        float horizontal_fov = glm_atan(triangle_height / triangle_base);
-        
-        ///See voxelpixelerror() function in raymarch.hpp
-        //float aA = camera.HorizontalFov();
-        float aA = horizontal_fov;
-        ///FOV for a single ray
-        float aa = aA / float(screen_width);
-        float rayScale = (1.0/(2.0*glm_tan(aa/2.0)));
-        float rayScale2 = rayScale*rayScale;
+        float rayScale2 = compute_ray_scale_2();
         
         
-        
-        size_t hit_count = 0;
+        std::size_t hit_count = 0;
         
         float pixel_width = float(1) / float(screen_width);
         
@@ -218,7 +222,7 @@ namespace svo{
                                         , tree->root_block->root_shadow_cd_goffset
                                         , ray.source
                                         , raydir
-                                        , rayScale2, &normal, &t, &levels);
+                                        , rayScale2, &normal, &t, &levels, &iterations);
                                         
             if (hit)
                 hit_count++;
