@@ -203,9 +203,9 @@ float sdistancef3(float3_t start, float3_t end)
  *      tested against the point.
  */
 static inline
-bool is_on_surface(float3_t point, float3_t dir_upper)
+bool is_on_surface(float3_t point, float3_t dir_upper,float epsilon=.0001)
 {
-    return glm_any(glm_equal(point, dir_upper));
+    return glm_any(glm_lt(glm_abs(point - dir_upper), make_float3(epsilon)));
 }
 
 
