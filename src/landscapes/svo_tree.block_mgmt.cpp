@@ -80,6 +80,7 @@ svo_error_t slice_inserter_t::execute()
     //total_leafs0 -= duplicate_voxels;
     assert(total_leafs0 > 0);
     
+    ///classify each child descriptor to be in which of the newly split slices
     classify_child_descriptors();
     allocate_dst_blocks();
     
@@ -93,22 +94,37 @@ svo_error_t slice_inserter_t::execute()
         child_blocks.erase(std::remove(child_blocks.begin(),child_blocks.end(), block), child_blocks.end());
     }
     
-    
+    ///each of the new child slices has a collection of cds that will now reside in it,
     for (std::size_t classification = 0; classification < out_datas.size(); classification++){
+        ///for each new child slice,
         assert(classification < dst_blocks.size());
         assert(classification < out_datas.size());
         svo_block_t* dst_block = dst_blocks[classification];
         out_data_t& out_data = out_datas[classification];
     
-        
+        ///{ cd index => parent cd index }
+        ///initialize with invalid parent cd indices
         cd_indices_t cd_parent_indices(out_data.size(), std::size_t(-1));
+        ///calculate the parent indices
+        ///{ cd index => parent cd index }
         calculate_parent_indices(cd_parent_indices, out_data);
+        
+        ///{ cd index => offset off the parent }
+        ///initialize as invalid offsets
         std::vector<std::size_t> cd_reverse_boffsets(out_data.size(), std::size_t(-1));
+        ///{ cd index => bool: (is offset off the parent too far and require a "far ptr"?) }
+        ///initialize as all false
         std::vector<bool> cd_req_far_ptrs(out_data.size(), false);
+        ///{ cd index => offset off the parent }
+        ///{ cd index => bool: (is offset off the parent too far and require a "far ptr"?) }
+        ///calculate ^^
         calculate_reverse_offsets(cd_reverse_boffsets, cd_req_far_ptrs, cd_parent_indices, out_data, dst_block->trunk);
 
-
+        ///{ cd index => global offset location }
+        ///initialize as invalid offsets
         std::vector<goffset_t> cd_goffsets(out_data.size(), invalid_goffset);
+        ///{ cd index => global offset location }
+        ///calculate ^
         insert_classified_child_descriptors(cd_goffsets, dst_block, classification
                                             , uc_cd_goffsets, cd_req_far_ptrs, cd_parent_indices, out_data);
         
@@ -724,7 +740,7 @@ void slice_inserter_t::calculate_parent_indices(cd_indices_t& cd_parent_indices,
         assert(child_0_offset_in_cds || svo_get_cd_nonleaf_count(&cd) == 0 || allow_non_leafs);
         assert(out_data_index + child_0_offset_in_cds < out_data.size());
 
-
+        
         ///if this node has child CDs (non-leaf children).
         if (child_0_offset_in_cds)
         {
@@ -768,7 +784,7 @@ void slice_inserter_t::calculate_reverse_offsets(
     
     ///this is a tmp buffer for siblings that must be layed out next to eachother.
     std::vector< std::size_t > sibling_section_indices;
-    ///offset off the end off the black
+    ///offset off the end off the back
     std::size_t current_reverse_boffset = 0;
 
     ///now compute the locations and far pointers, by working backwards from the end.
@@ -808,7 +824,6 @@ void slice_inserter_t::calculate_reverse_offsets(
             if (trunk)
                 cd_section_byte_size = 8 * sizeof(child_descriptor_t);
 
-            std::size_t section_reverse_boffset0 = current_reverse_boffset + cd_section_byte_size;
 
 
 
@@ -817,6 +832,11 @@ void slice_inserter_t::calculate_reverse_offsets(
             ///calculte the number of far pointers in this section
             {
 
+                ///
+                ///|   |   |   |
+                ///
+                ///|  cds      |  far ptrs      |
+                ///
                 ///iterate the children in reverse
                 for (std::size_t sibling_data_index : ireversed(sibling_section_indices) )
                 {
@@ -827,7 +847,9 @@ void slice_inserter_t::calculate_reverse_offsets(
 
                     ///relative offset into @c out_data of the children of this voxel.
                     const offset_t& child_0_offset_in_cds = std::get<3>(sibling_voxel);
-
+      
+                    assert((child_0_offset_in_cds != 0) == (svo_get_cd_nonleaf_count(&cd) != 0));
+                    
                     if (svo_get_cd_nonleaf_count(&cd) == 0)
                         continue;
 
@@ -838,6 +860,13 @@ void slice_inserter_t::calculate_reverse_offsets(
 
                     ///calculate the position of child0 in the @c out_data vector
                     std::size_t child0_data_index = sibling_data_index + child_0_offset_in_cds;
+                    
+                    for (std::size_t child_i = 0; child_i < svo_get_cd_nonleaf_count(&cd); ++child_i)
+                    {
+                        std::size_t child_i_data_index = child0_data_index + child_i;
+                        
+                        assert(child_i_data_index < out_data.size());
+                    }
 
                     assert( child0_data_index < cd_reverse_boffsets.size() );
                     std::size_t child_0_reverse_boffset = cd_reverse_boffsets[child0_data_index];
@@ -846,18 +875,25 @@ void slice_inserter_t::calculate_reverse_offsets(
                     assert( child_0_reverse_boffset != std::size_t(-1) );
 
                     assert( sizeof(child_descriptor_t) % 4 == 0 );
-                    offset4_t child_0_offset4 = child_0_offset_in_cds*sizeof(child_descriptor_t) / 4;
+                    offset_t child_0_offset = (child_0_offset_in_cds*sizeof(child_descriptor_t));
+                    assert(child_0_offset % 4 == 0);
+                    offset4_t child_0_offset4 = child_0_offset / 4;
 
                     ///(over)estimate the number of pages this offset crosses
-                    std::size_t pages = (child_0_offset4 / SVO_PAGE_SIZE) + 2;
+                    std::size_t pages = (child_0_offset / SVO_PAGE_SIZE) + 2;
 
+                    ///each page starts with an info header, which is sizeof(cd)
                     std::size_t page_header_wasted_space = pages*sizeof(child_descriptor_t);
 
                     ///15 bits
-                    offset4_t max_child_offset4 = (1 << 16) - 1;
+                    offset4_t max_child_offset4 = (1 << 15) - 1;
+                    assert(max_child_offset4 == SVO_CHILD_PTR_MASK);
+                    
+                    ///minus some possible page headers, and far pointers
+                    max_child_offset4 -= page_header_wasted_space - 8*4;
 
 
-                    if (child_0_offset4 > max_child_offset4 - page_header_wasted_space || page_header_wasted_space > max_child_offset4)
+                    if ((child_0_offset4 >= max_child_offset4))
                     {
                         far_ptrs++;
                         cd_req_far_ptrs[sibling_data_index] = true;
@@ -877,22 +913,51 @@ void slice_inserter_t::calculate_reverse_offsets(
 
             cd_section_byte_size += far_ptr_section_byte_size;
 
+            
+            
             ///round it up to the nearest sizeof(child_descriptor_t) alignment
             //cd_section_byte_size += (cd_section_byte_size % sizeof(child_descriptor_t) == 0) ? 0 : 4;
             cd_section_byte_size = iceil(cd_section_byte_size, sizeof(child_descriptor_t));
             assert(cd_section_byte_size % sizeof(child_descriptor_t) == 0);
 
+            ///distance in bytes off the back of the buffer that the (the beginning of this) section of (up to) 8 CDs will be at.
             std::size_t cd_section_reverse_boffset = current_reverse_boffset + cd_section_byte_size;
 
-            ///and finally, compute the cd_reverse_boffsets for this section
+            ///and finally, compute the cd_reverse_boffsets for this section for each cd.
             std::size_t i = 0;
             for (std::size_t sibling_data_index : ireversed(sibling_section_indices) )
             {
                 std::size_t sibling_reverse_boffset = cd_section_reverse_boffset - i*sizeof(child_descriptor_t);
                 assert(sibling_data_index < cd_reverse_boffsets.size());
                 cd_reverse_boffsets[sibling_data_index] = sibling_reverse_boffset;
+                
+                if (cd_req_far_ptrs[sibling_data_index])
+                {
+                    const auto& sibling_voxel = out_data[ sibling_data_index ];
+                    const child_descriptor_t& cd = std::get<2>(sibling_voxel);
+
+                    ///relative offset into @c out_data of the children of this voxel.
+                    const offset_t& child_0_offset_in_cds = std::get<3>(sibling_voxel);
+
+                    
+                    std::size_t child0_data_index = sibling_data_index + child_0_offset_in_cds;
+                    assert(cd_parent_indices.at(child0_data_index) == sibling_data_index);
+                    
+                    assert(cd_reverse_boffsets.at(sibling_data_index) > cd_reverse_boffsets.at(child0_data_index));
+                    
+                    offset_t offset = cd_reverse_boffsets[sibling_data_index] - cd_reverse_boffsets[child0_data_index];
+                    assert(offset % 4 == 0);
+                    
+                    offset4_t offset4 = offset / 4;
+                    
+                    assert((SVO_CHILD_PTR_MASK & offset4) == offset4);
+                }
+                
                 i++;
             }
+            
+            ///record how much space is used
+            current_reverse_boffset = cd_section_reverse_boffset;
 
 
             sibling_section_indices.clear();
@@ -900,6 +965,10 @@ void slice_inserter_t::calculate_reverse_offsets(
 
     }
 
+    for (std::size_t out_data_index = 0; out_data_index < out_data.size(); ++out_data_index)
+    {
+        assert(cd_reverse_boffsets[out_data_index] != std::size_t(-1));
+    }
 }
 
 void slice_inserter_t::insert_classified_child_descriptors (
@@ -927,6 +996,7 @@ void slice_inserter_t::insert_classified_child_descriptors (
     std::size_t height_delta = expected_height - dst_block_height;
     std::size_t dst_block_root_level = block->root_level + height_delta;
 
+    /// reset the `dst_block`
     dst_block->reset_cd_data();
     dst_block->slice = dst_block_slice;
     dst_block->side = dst_block_side;
@@ -943,6 +1013,7 @@ void slice_inserter_t::insert_classified_child_descriptors (
     assert(dst_block->parent_block == 0);
     assert(dst_block->parent_root_cd_goffset == invalid_goffset);
     
+    /// add the `dst_block` to the parent block
     dst_block->parent_block = parent_block;
     parent_block->child_blocks->push_back(dst_block);
     
@@ -955,9 +1026,10 @@ void slice_inserter_t::insert_classified_child_descriptors (
         
         assert(classification < out_uc_root_offsets.size());
         
-        std::size_t root_out_data_index = out_uc_root_offsets[classification];
+        
+        offset_t root_out_data_index = out_uc_root_offsets[classification];
         ///special case when there is only one voxel
-        if (root_out_data_index == std::size_t(-1)) {
+        if (root_out_data_index == offset_t(-1)) {
             root_out_data_index = 0;
         } else {
             
@@ -1246,7 +1318,8 @@ void slice_inserter_t::insert_classified_child_descriptors (
                 svo_set_goffset_via_fp(tree->address_space, pcd_goffset, pcd, cd_goffset);
                 assert(svo_get_child_ptr_goffset(tree->address_space, pcd_goffset, pcd) == cd_goffset);
             }
-            ///else if the parent CD is not a far ptr and is unset. 
+            ///else if the parent CD does not have a far ptr and is unset. (it cannot be a far ptr and unset, because cds that use far ptrs will be pointing
+            /// to the far ptr).
             else if (svo_get_child_ptr_offset4(pcd) == 0)
             {
                 assert(svo_get_far(pcd) == false);
@@ -1257,6 +1330,12 @@ void slice_inserter_t::insert_classified_child_descriptors (
                 offset4_t offset4 = offset / 4;
                 assert(offset4 > 0);
                 
+//                if ((offset4 & SVO_CHILD_PTR_MASK) != offset4)
+//                    throw std::runtime_error(fmt::format(
+//                        "child descriptor at offset {} is too far from parent at offset {}"
+//                        , cd_goffset, pcd_goffset));
+                
+                ///this should be impossible, because cd_req_far_ptrs should have been calculated correctly
                 assert ((offset4 & SVO_CHILD_PTR_MASK) == offset4);
                 
                 svo_set_child_ptr(pcd, offset4);
