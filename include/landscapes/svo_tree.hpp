@@ -301,7 +301,11 @@ struct svo_tree_t{
 
     svo_block_t* root_block;
 
-
+    /**
+     * 
+     * @param size the amount of memory the tree should reserve
+     * @param block_size the size each SVO block
+     */
     svo_tree_t(std::size_t size, std::size_t block_size);
     svo_block_t* allocate_block(std::size_t size);
     void deallocate_block(svo_block_t* block);
