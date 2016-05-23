@@ -18,9 +18,6 @@
 
 namespace svo{
 
-/**
- * @param slice, should be a pointer to uninitialized memory.
- */
 svo_slice_t* svo_init_slice(std::size_t level, vside_t side, void* userdata)
 {
     svo_slice_t* slice = new svo_slice_t();
@@ -210,7 +207,7 @@ void svo_slice_attach_child(svo_slice_t* parent, svo_slice_t* child, vcurve_t pa
     assert(parent->level + 1 == child->level);
     assert(child->parent_vcurve_begin == 0);
     assert(child->side <= parent->side * 2);
-    assert(child->side < 256);
+    assert(child->side <= SVO_VSIDE_LIMIT);
 
     vcurvesize_t parent_size = vcurvesize(parent->side);
     vcurvesize_t child_size = vcurvesize(child->side);
