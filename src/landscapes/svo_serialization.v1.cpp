@@ -362,21 +362,26 @@ void serialize_buffers(std::ostream& out, const svo_cpu_buffers_t& buffers, std:
 
 void unserialize_buffers(std::istream& in, svo_cpu_buffers_t& buffers, std::size_t expected_entries)
 {
-    assert(buffers.buffers().size() == 0);
-    assert(buffers.schema().size() == 0);
-    
     auto schema = unserialize_schema(in);
+    
+    assert(buffers.buffers().size() == 0 || buffers.schema() == schema );
+    assert(buffers.schema().size() == 0 || buffers.schema() == schema);
+    
     
     assert(buffers.entries() == 0);
     
-    for (const auto& declaration : schema)
-    {
-        auto& buffer = buffers.add_buffer(declaration, expected_entries);
-        assert(buffers.entries() == expected_entries);
-        assert(buffer.entries() == expected_entries);
-    
-    }
+    if (!buffers.has_schema()) {
+        for (const auto& declaration : schema)
+        {
+            auto& buffer = buffers.add_buffer(declaration, expected_entries);
+            assert(buffers.entries() == expected_entries);
+            assert(buffer.entries() == expected_entries);
         
+        }
+    } else {
+        buffers.resize(expected_entries);
+    }
+    
     for (auto& buffer : buffers.buffers())
     {
         std::size_t buffer_entries = unserialize_uint<uint32_t>(in);
@@ -445,7 +450,6 @@ children_params_t unserialize_slice(std::istream& in, svo_slice_t* slice, bool l
     
     assert(slice->children->size() == 0);
     assert(slice->pos_data->size() == 0);
-    assert(slice->buffers->buffers().size() == 0);
 
     auto& pos_data = *slice->pos_data;
     auto& buffers = *slice->buffers;
@@ -466,10 +470,6 @@ children_params_t unserialize_slice(std::istream& in, svo_slice_t* slice, bool l
 
     auto children_params = unserialize_slice_child_info(in, slice);
 
-    if (load_empty_children)
-    {
-        slice_load_empty_children(slice, children_params);
-    }
 
     auto data_size = unserialize_uint<uint32_t>(in);
     pos_data.reserve(data_size);
@@ -485,6 +485,10 @@ children_params_t unserialize_slice(std::istream& in, svo_slice_t* slice, bool l
     ///unserialize buffer data
     unserialize_buffers(in, buffers, data_size);
     
+    if (load_empty_children)
+    {
+        slice_load_empty_children(slice, children_params);
+    }
 
     //if(auto error = svo_slice_sanity(slice, svo_sanity_t::enum_t(svo_sanity_t::all & ~(svo_sanity_t::children)), 0 /*recurse*/))
     //{
