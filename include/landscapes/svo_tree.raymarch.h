@@ -19,6 +19,7 @@
 #include <vector>
 #include <tuple>
 #include "landscapes/svo_formatters.hpp"
+#include "format.h"
 #include <bitset>
 
 #ifndef NDEBUG
@@ -798,7 +799,8 @@ svo_locate_node(svo_stack_t* stack
 
 #if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
         if (lower != calculate_abs_position_f3(stack,current_node.corner))
-            throw std::runtime_error(fmt::format("lower: {}, upper: {}, calculate_abs_position_f3(stack,current.corner): {}"
+            throw std::runtime_error(fmt::format("lower != calculate_abs_position_f3(stack,current_node.corner)"
+                                                 ", lower: {}, upper: {}, calculate_abs_position_f3(stack,current.corner): {}"
                                                  ", raypos: {}"
                     , tostr(lower).c_str(), tostr(upper).c_str()
                     , tostr(calculate_abs_position_f3(stack,current_node.corner)).c_str()
@@ -844,7 +846,8 @@ svo_locate_node(svo_stack_t* stack
     
 #if !defined(NDEBUG) && !defined(__OPENCL_VERSION__)
     if (lower != calculate_abs_position_f3(stack,current_node.corner))
-        throw std::runtime_error(fmt::format("lower: {}, upper: {}, calculate_abs_position_f3(stack,current.corner): {}"
+        throw std::runtime_error(fmt::format("lower != calculate_abs_position_f3(stack,current_node.corner)"
+                                             ", lower: {}, upper: {}, calculate_abs_position_f3(stack,current.corner): {}"
                                              ", raypos: {}"
                 , tostr(lower).c_str(), tostr(upper).c_str()
                 , tostr(calculate_abs_position_f3(stack,current_node.corner)).c_str()
