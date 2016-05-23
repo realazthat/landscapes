@@ -518,6 +518,7 @@ postorder_traverse_slices(svo_slice_type* node0, visitor_f visitor)
     while (stack.size())
     {
         svo_slice_type* node = stack.back(); stack.pop_back();
+        ///get the next node.
 
         assert(node);
         assert(node->children);
@@ -525,14 +526,22 @@ postorder_traverse_slices(svo_slice_type* node0, visitor_f visitor)
         
         auto& children = *node->children;
         
+        ///if there are no children,
         if (children.size() == 0)
         {
             assert(node_children_completed.count(node) == 0);
             
+            ///visit the current node
             metadata_t result = visitor(node, std::vector<metadata_t>());
+
+            ///store the results of visiting the current node
             finished_node_metadata[node] = result;
-            node_children_completed[node->parent_slice] += 1;
-            assert(node_children_completed.count(node) == 0);
+
+            if (node->parent_slice)
+                ///record this node was visited for the parent
+                node_children_completed[node->parent_slice] += 1;
+
+
             continue;
         }
         
