@@ -165,7 +165,8 @@ void svo_downsample_slice(svo_slice_t* parent_slice, const svo_slice_t* child_sl
     const auto& src_buffers = *(child_slice->buffers);
     src_buffers.assert_invariants();
     dst_buffers.assert_invariants();
-
+    
+    assert(src_buffers.has_schema());
     assert(parent_slice->level + 1 == child_slice->level);
 
     ///compute the length of the index-space of the parent slice volume.
@@ -264,7 +265,7 @@ void svo_downsample_slice(svo_slice_t* parent_slice, const svo_slice_t* child_sl
 
 svo_slice_t* svo_entree_slices(const volume_of_slices_t& volume_of_slices, std::size_t max_voxels_per_slice, std::size_t root_level)
 {
-    assert(volume_of_slices.volume_side % 2 == 0);
+    assert(volume_of_slices.volume_side % 2 == 0 || volume_of_slices.volume_side == 1);
 
     volume_of_slices_t current_level(volume_of_slices.volume_side, volume_of_slices.slice_side);
     volume_of_slices_t next_level(volume_of_slices.volume_side / 2, volume_of_slices.slice_side);
