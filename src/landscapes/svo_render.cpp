@@ -17,6 +17,7 @@
 #include <fstream>
 
 #define RAYMARCH_COMPUTE_LEVELS 1
+#define RAYMARCH_COMPUTE_ITERATIONS 1
 #include "landscapes/svo_tree.raymarch.h"
 
 
@@ -217,6 +218,7 @@ namespace svo{
             float3_t normal;
             float t;
             uint32_t levels;
+            uint32_t iterations;
             
             bool hit = svo_tree_raymarch( tree->address_space
                                         , tree->root_block->root_shadow_cd_goffset
@@ -227,10 +229,14 @@ namespace svo{
             if (hit)
                 hit_count++;
             
-            float4_t pixel = make_float4(0,0,0,0);
+            float4_t pixel = make_float4(0,0,0,.9);
+            
+            ///view iterations
+            pixel.x = float(iterations) / 30;
+            
             
             if (hit) {
-                pixel = make_float4(glm_sqrt(float(t) / 2));
+                //pixel.xyz = make_float3(glm_sqrt(float(iterations) / 30));
             }
             
             float* buffer_pixel_ptr = buffer + (nu + nv*screen_width)*4;
